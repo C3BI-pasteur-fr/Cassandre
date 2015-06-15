@@ -4,6 +4,8 @@ var color = require('colors');
 var _ = require('underscore');
 
 var Measurement = require('./measurement');
+var tsvParser = require('./tsvParser');
+
 var route = function(){
 	program.option('-c, --colors', 'Use colors for printing');
 
@@ -22,9 +24,32 @@ var route = function(){
 	program.command('load <fileName>')
 		   .alias('a')
 		   .description('Load a measurements file in the database')
-		   .action(function(lastName, firstName, env){
-				myContacts.add(lastName, firstName, function(newContact){
-					console.log("added a new measurement " + newContact.toString().red);
+		   .action(function(path, env){
+                		mongoose.connect('localhost', 'cassandre');
+				tsvParser(path, function(err, list){
+                                    var saveNextItem = function(list){
+					console.info(item);
+					console.error(list.length);
+                                        var item = list.pop();
+                                        console.error(list.length);
+                                        var newMeasurement = new Measurement({
+			                    "measId": path,
+			                    "expId": item.column,
+			                    "geneId": item.row,
+			                    "value": item.value
+                			});
+                                        newMeasurement.save(function(err,newMeasurement){
+                                            if (err) console.error(err);
+					    console.info('added item '.green + newMeasurement);
+					    if(list.length>0){
+					        saveNextItem(list);
+					    }else{
+					        console.info('done loading, exiting.'.green);
+						process.exit();
+					    }
+					});
+				}
+                                saveNextItem(list);
 				});
 			});
 
