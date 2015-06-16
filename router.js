@@ -3,7 +3,9 @@ var mongoose = require('mongoose');
 var color = require('colors');
 var _ = require('underscore');
 
-var Measurement = require('./measurement');
+var Measurement = require('./measurement').measurement;
+var MeasurementExp = require('./measurement').measurementExp;
+var MeasurementGene = require('./measurement').measurementGene;
 var tsvParser = require('./tsvParser');
 
 var route = function() {
@@ -37,6 +39,63 @@ var route = function() {
                         "value": item.value
                     });
                     newMeasurement.save(function(err, newMeasurement) {
+                        if (err) console.error(err, item);
+                        if (list.length > 0) {
+                            saveNextItem(list);
+                        } else {
+                            console.info('done loading, exiting.'.green);
+                            process.exit();
+                        }
+                    });
+                }
+                saveNextItem(list);
+            });
+        });
+
+    program.command('load-unchecked <fileName>')
+        .alias('lu')
+        .description('Load a measurements file in the database (using bulk inserts, with no data validation)')
+        .action(function(path, env) {
+            mongoose.connect('localhost', 'cassandre');
+            tsvParser(path, function(err, list) {
+                var saveNextItem = function(list) {
+                    var item = list.pop();
+                    item.value = item.value ? item.value : undefined;
+                    Measurement.collection.insert({
+                        "measId": path,
+                        "expId": item.column,
+                        "geneId": item.row,
+                        "value": item.value
+                    }, function(err, newMeasurement) {
+                        if (err) console.error(err, item);
+                        if (list.length > 0) {
+                            saveNextItem(list);
+                        } else {
+                            console.info('done loading, exiting.'.green);
+                            process.exit();
+                        }
+                    });
+                }
+                saveNextItem(list);
+            });
+        });
+
+    program.command('load-alternative <fileName>')
+        .alias('u')
+        .description('Load a measurements file in the database using the gene data model')
+        .action(function(path, env) {
+            mongoose.connect('localhost', 'cassandre');
+            tsvParser(path, function(err, list) {
+                var saveNextItem = function(list) {
+                    var measurementGene = new MeasurementGene();
+                    while(measurementGene.values.length==0 || list[0].geneId==measurementGene.geneId){
+                        var item = list.pop();
+                        item.value = item.value ? item.value : undefined;
+                        measurementGene.measId = item.measId;
+                        measurementGene.geneId = item.geneId;
+                        measurementGene.values.push(item.value);
+                    }
+                    measurementGene.save(function(err, newMeasurement) {
                         if (err) console.error(err, item);
                         if (list.length > 0) {
                             saveNextItem(list);
