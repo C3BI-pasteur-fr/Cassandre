@@ -4,5 +4,5 @@
  *
  */
 
-var cass = angular.module("Cassandre", []);
+angular.module("Cassandre", []);
 
