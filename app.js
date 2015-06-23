@@ -13,7 +13,8 @@ var pid = process.pid;
 
 // ----- Middlewares ---------------------------------------------------- //
 
-app.use(express.static(__dirname + "/public"));             // Setting static content directory
+// Setting static content directory
+app.use(express.static(__dirname + "/public"));
 
 // ----- Routing -------------------------------------------------------- //
 
@@ -23,8 +24,10 @@ mongoose.connect('mongodb://localhost/cassandre');
 app.get('/api/measurements/', function(req, res, next) {
   Measurement.find(
     function (err, list) {
-      if (err) throw err;
-      res.json(list);
+      if (err) {
+        return res.status(500).send("Error with the database : " + err.message);
+      }
+      return res.status(200).send(list);
   });
 });
 
@@ -34,8 +37,10 @@ app.get('/api/measurements/:mId/exp/:expId', function(req, res, next) {
       'measId': req.params.mId,
       'expId': req.params.expId
     },function (err, list) {
-      if (err) throw err;
-      res.json(list);
+      if (err) {
+        return res.status(500).send("Error with the database : " + err.message);
+      }
+      return res.status(200).send(list);
   });
 });
 
@@ -45,12 +50,12 @@ app.get('/api/measurements/:mId/gene/:geneId', function(req, res, next) {
       'measId': req.params.mId,
       'geneId': req.params.geneId
     },function (err, list) {
-      if (err) throw err;
-      res.json(list);
+      if (err) {
+        return res.status(500).send("Error with the database : " + err.message);
+      }
+      return res.status(200).send(list);
   });
 });
-
-
 
 // ----- Server --------------------------------------------------------- //
 

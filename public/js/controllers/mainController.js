@@ -7,14 +7,11 @@
 angular.module("Cassandre").controller("mainController", [
     "$scope", "$filter", "$http", function ($scope, $filter, $http) {
 
-    $scope.data = [
-        {one: "tata", two: "titi", three: "toto", four: "tutu"},
-        {one: "toto", two: "toto", three: "titi", four: "tutu"},
-        {one: "toto", two: "tutu", three: "tata", four: "titi"}
-    ];
+    $scope.data = [];           // Data to display
+    $scope.isLoading = false;   // Marker to know when data are loading
 
-    $scope.measurementID = "";
-    $scope.experimentID = "";
+    $scope.measID = "";
+    $scope.expID = "";
     $scope.geneID = "";
     $scope.dataID = "";
 
@@ -30,7 +27,7 @@ angular.module("Cassandre").controller("mainController", [
 
     // Reset the form properly
     $scope.reset = function () {
-        $scope.measurementID = "";
+        $scope.measID = "";
         $scope.expID = "";
         $scope.geneID = "";
         $scope.dataID = "";
@@ -38,25 +35,37 @@ angular.module("Cassandre").controller("mainController", [
 
     // Request to the database
     $scope.getData = function () {
-        var url = "/api/measurement/";
+        var url = "/api/measurements/";
 
-        if ($scope.dataID === "expID") {
-            url = url.concat($scope.measurementID, "/exp/", scope.expID);
+        // Build the URL if needed
+        if ($scope.dataID === "expID" && $scope.measID !== "") {
+            url = url.concat(
+                encodeURIComponent($scope.measID),
+                "/exp/",
+                encodeURIComponent($scope.expID)
+            );
         }
-        else if ($scope.dataID === "geneID") {
-            url = url.concat($scope.measurementID, "/gene/", scope.geneID);
+        else if ($scope.dataID === "geneID" && $scope.measID !== "") {
+            url = url.concat(
+                encodeURIComponent($scope.measID),
+                "/gene/",
+                encodeURIComponent($scope.geneID)
+            );
         }
-        else {
-            alert("You need to choose experiment ID or gene ID.");
+        else if ($scope.measID !== "") {
+            alert("Please select experiment or gene ID.");
             return;
         }
+        
+        $scope.isLoading = true;
 
         $http.get(url)
         .success(function (data) {
-            alert(data);
             $scope.data = data;
+            $scope.isLoading = false;
         })
         .error(function (error) {
+            $scope.isLoading = false;
             alert("There was an error : " + error);
         });
     };

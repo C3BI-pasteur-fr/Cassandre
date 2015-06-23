@@ -27,44 +27,52 @@
 
             <section ng-controller="mainController">
 
-                <h2 class="page-header">Results</h2>
-                
+                <h2 class="page-header">Results
+                    <small ng-show="isLoading">Loading data..</small>
+                </h2>
+
                 <form class="form-inline center-block" ng-submit="getData()">
                     <div class="form-group">
-                        <label for="mID">Measurement ID :</label>
-                        <input id="mID"
+                        <label for="measID">Measurement ID :</label>
+                        <input id="measID"
                                class="form-control"
                                type="text"
-                               ng-model="measurementID"
-                               required>
+                               ng-model="measID">
                     </div>
                     <div class="form-group">
                         <label for="expID">Experiment ID :</label>
                             <div class="input-group">
                                 <span class="input-group-addon">
-                                    <input type="radio" value="expID" ng-model="dataID">
+                                    <input type="radio"
+                                           value="expID"
+                                           ng-model="dataID"
+                                           ng-disabled="measID === ''">
                                 </span>
                                 <input id="expID"
                                        class="form-control"
                                        type="text"
                                        ng-model="expID"
-                                       ng-disabled="dataID === 'geneID'">
+                                       ng-disabled="dataID === 'geneID' || dataID === ''">
                             </div>
                     </div>
                     <div class="form-group">
                         <label for="geneID">Gene ID :</label>
                             <div class="input-group">
                                 <span class="input-group-addon">
-                                    <input type="radio" value="geneID" ng-model="dataID">
+                                    <input type="radio"
+                                           value="geneID"
+                                           ng-model="dataID"
+                                           ng-disabled="measID === ''">
                                 </span>
                                 <input id="geneID"
                                        class="form-control"
                                        type="text"
                                        ng-model="geneID"
-                                       ng-disabled="dataID === 'expID'">
+                                       ng-disabled="dataID === 'expID' || dataID === ''"
+                                       ng-required="measID !== ''">
                             </div>
                     </div>
-                    <input type="submit" class="btn btn-default" value="Search">
+                    <input type="submit" class="btn btn-default" value="Search" ng-disabled="isLoading">
                     <button type="button" class="btn btn-default" ng-click="reset()">Reset</button>
                 </form>
 
