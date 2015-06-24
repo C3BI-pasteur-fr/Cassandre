@@ -38,19 +38,18 @@ app.get('/api/measurements/list/', function(req, res, next) {
       if (err) {
         return res.status(500).send("Error with the database : " + err.message);
       }
-      return res.status(200).send(list);
+      return res.status(200).send(list.map(function (measID) { return {"measID": measID} }));
   });
 });
 
 /* list all the expIds for a given measId of the measurements collection */
 app.get('/api/measurements/:mId/exp/list/', function(req, res, next) {
-  console.log(req.params);
   Measurement.collection.distinct('expId',{'measId':req.params.mId},
     function (err, list) {
       if (err) {
         return res.status(500).send("Error with the database : " + err.message);
       }
-      return res.status(200).send(list);
+      return res.status(200).send(list.map(function (expID) { return {"expID": expID} }));
   });
 });
 
@@ -61,7 +60,7 @@ app.get('/api/measurements/:mId/gene/list/', function(req, res, next) {
       if (err) {
         return res.status(500).send("Error with the database : " + err.message);
       }
-      return res.status(200).send(list);
+      return res.status(200).send(list.map(function (geneID) { return {"geneID": geneID} }));
   });
 });
 

@@ -38,21 +38,30 @@ angular.module("Cassandre").controller("mainController", [
         var url = "/api/measurements/";
 
         // Build the URL if needed
-        if ($scope.dataID === "expID" && $scope.measID !== "") {
-            url = url.concat(
-                encodeURIComponent($scope.measID),
-                "/exp/",
-                encodeURIComponent($scope.expID)
-            );
+        if ($scope.measID === "") {
+            url = url.concat("list/");
+        }
+        else if ($scope.dataID === "expID" && $scope.measID !== "") {
+            url = url.concat(encodeURIComponent($scope.measID), "/exp/");
+            
+            if ($scope.expID !== "") {
+                url = url.concat(encodeURIComponent($scope.expID));
+            }
+            else {
+                url = url.concat("list/");
+            }
         }
         else if ($scope.dataID === "geneID" && $scope.measID !== "") {
-            url = url.concat(
-                encodeURIComponent($scope.measID),
-                "/gene/",
-                encodeURIComponent($scope.geneID)
-            );
+            url = url.concat(encodeURIComponent($scope.measID), "/gene/");
+            
+            if ($scope.geneID !== "") {
+                url = url.concat(encodeURIComponent($scope.geneID));
+            }
+            else {
+                url = url.concat("list/");
+            }
         }
-        else if ($scope.measID !== "") {
+        else if ($scope.dataID === "" && $scope.measID !== "") {
             alert("Please select experiment or gene ID.");
             return;
         }
