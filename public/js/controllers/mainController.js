@@ -95,7 +95,7 @@ angular.module("Cassandre").controller("mainController", [
     // Parse the dataFile depending on its type
     $scope.parseFile = function () {
         var file = document.getElementById("dataFile").files[0];
-        
+
         if (file.type === $scope.allowedTypes["xlsx"]) {
             xlsxToJson(file, function (err, json) {
                 $scope.dataFile = json;
@@ -103,7 +103,7 @@ angular.module("Cassandre").controller("mainController", [
             });
         }
 
-        else if (file.type === $scope.allowedTypes["tsv"] || dataFile.type === $scope.allowedTypes["txt"]) {
+        else if (file.type === $scope.allowedTypes["tsv"] || file.type === $scope.allowedTypes["txt"]) {
             tsvToJson(file, function (err, json) {
                 $scope.dataFile = json;
                 $scope.$digest();
