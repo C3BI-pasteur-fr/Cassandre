@@ -1,26 +1,12 @@
-#!/usr/bin/env node
-
-var express = require("express");
-var mongoose = require("mongoose");
-
+var express = require('express');
+var bodyParser = require('body-parser');
+var serveStatic = require('serve-static');
+var _ = require('underscore');
+var cluster = require('cluster');
 var Measurement = require("./measurement").measurement;
 
-// ----- Configuration -------------------------------------------------- //
+var router = function(app){
 
-var app = express();
-var port = 8080;
-var pid = process.pid;
-
-// ----- Middlewares ---------------------------------------------------- //
-
-// Setting static content directory
-app.use(express.static(__dirname + "/public"));
-
-// ----- Routing -------------------------------------------------------- //
-
-mongoose.connect('mongodb://localhost/cassandre');
-
-/* list all the contents of the measurements collection  - extremely slow, should it be removed? */
 app.get('/api/measurements/', function(req, res, next) {
   Measurement.collection.find().toArray(
     function (err, list) {
@@ -90,6 +76,20 @@ app.get('/api/measurements/:mId/gene/:geneId', function(req, res, next) {
   });
 });
 
-// ----- Server --------------------------------------------------------- //
+};
 
-app.listen(port);
+var WebServer = function(contacts){
+        var app = express();
+        app.use(bodyParser.urlencoded({ extended: false }));
+        app.use(bodyParser.json());
+        app.use(serveStatic('public', {'index': ['index.html']}));
+        server = app.listen(8080);
+        router(app);
+        console.log('Server listening at port 8080');
+}
+
+var launch = function(){
+        WebServer();
+};
+
+module.exports = launch;
