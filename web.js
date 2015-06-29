@@ -92,6 +92,13 @@ var router = function(app) {
         });
     });
 
+    // accept PUT request at /user
+    app.post('/api/measurements', function (req, res) {
+      res.setHeader('Content-Type', 'application/json');
+      res.send(req.body);
+      //TODO: insert data in the measurements collection
+    });
+
 };
 
 var WebServer = function(contacts) {
