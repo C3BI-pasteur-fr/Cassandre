@@ -12,7 +12,7 @@ angular.module("Cassandre").controller("mainController", [
     $scope.dataFile = [];           // Content of the uploaded File
     $scope.isLoading = false;       // Marker to know when data are loading
     $scope.isUploading = false;     // Marker to know when data are uploading
-    $scope.allowedTypes = {
+    $scope.allowedTypes = {         // Allowed MIME types for the uploaded files
         xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         txt: "text/plain",
         tsv: "text/tab-separated-values"
@@ -109,26 +109,35 @@ angular.module("Cassandre").controller("mainController", [
                 $scope.$digest();
             });
         }
-        
+
         else {
             alert("This file format is invalide.");
         }
     };
-    
+
     $scope.displayFile = function () {
         $scope.data = $scope.dataFile.slice(0, 49);
     };
-    
+
     $scope.sendData = function () {
+        var allData = new FormData();
+        
+        allData.append("dataFile", document.getElementById("dataFile").files[0]);
+
         $scope.isUploading = true;
         
-        $http.post("/api/measurements", $scope.dataFile)
+        $http.post("/api/measurements", allData, {
+            transformRequest: angular.identity,     // Override Angular's default serialization
+            headers: {                              // Let the browser set the Content-Type
+                "Content-Type": undefined           // to fill in the boundary parameter properly
+            }
+        })
         .success(function (message) {
-            alert(message);
+            alert("OK");
             $scope.isUploading = false;
         })
         .error(function (message) {
-            alert(message);
+            alert("Error : " + message);
             $scope.isUploading = false;
         });
     }

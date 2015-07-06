@@ -9,7 +9,7 @@ angular.module("Cassandre").factory("tsvToJson", function tsvToJsonFactory() {
     return function (fileObject, callback) {
         var reader = new FileReader();
         var collections = [];
-        
+
         reader.onload = function (e) {
             var arrays = e.target.result
                 .split(/\r\n|\n/g)                  // Get the lines into an array
@@ -28,7 +28,7 @@ angular.module("Cassandre").factory("tsvToJson", function tsvToJsonFactory() {
                     });
                 }
             });
-            
+
             return callback(null, collections);
         };
 
