@@ -1,9 +1,13 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var serveStatic = require('serve-static');
+var multer = require('multer');
+
 var _ = require('underscore');
 var cluster = require('cluster');
 var Measurement = require("./measurement").measurement;
+var loadMeasFile = require('./measurement').loadMeasFile;
+
 
 var router = function(app) {
 
@@ -95,8 +99,8 @@ var router = function(app) {
     // accept PUT request at /user
     app.post('/api/measurements', function (req, res) {
       res.setHeader('Content-Type', 'application/json');
-      res.send(req.body);
-      //TODO: insert data in the measurements collection
+      res.send({'message': 'file ' + req.files.dataFile.name});
+      loadMeasFile(req.files.dataFile.path);
     });
 
 };
@@ -109,6 +113,12 @@ var WebServer = function(contacts) {
     app.use(bodyParser.json());
     app.use(serveStatic('public', {
         'index': ['index.html']
+    }));
+    app.use(multer({
+        dest: './uploads/',
+        rename: function (fieldname, filename) {
+            return filename.replace(/\W+/g, '-').toLowerCase() + Date.now();
+        }
     }));
     server = app.listen(8080);
     router(app);
