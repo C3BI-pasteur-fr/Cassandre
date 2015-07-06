@@ -26,7 +26,7 @@ var MeasurementGeneSchema = mongoose.Schema({
 
 var MeasurementGene = mongoose.model('MeasurementGene', MeasurementGeneSchema);
 
-var loadMeasFile = function(path, env) {
+var loadMeasFile = function(path, env, callback) {
             tsvParser(path, function(err, list) {
                 var saveNextItem = function(list) {
                     var item = list.pop();
@@ -41,8 +41,9 @@ var loadMeasFile = function(path, env) {
                         if (list.length > 0) {
                             saveNextItem(list);
                         } else {
-                            console.info('done loading, exiting.'.green);
-                            process.exit();
+                            if(callback){
+                                callback();
+                            }
                         }
                     });
                 }

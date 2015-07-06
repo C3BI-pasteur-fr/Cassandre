@@ -55,7 +55,13 @@ var route = function() {
     program.command('load-unchecked <fileName>')
         .alias('lu')
         .description('Load a measurements file in the database (using bulk inserts, with no data validation)')
-        .action(loadMeasFile);
+        .action(function(){
+                    var exit = function(){
+                        console.info('done loading, exiting.'.green);
+                        process.exit();
+                    }
+                    loadMeasFile(exit);
+                });
 
     program.command('load-alternative <fileName>')
         .alias('u')
