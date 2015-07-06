@@ -113,7 +113,7 @@ var WebServer = function(contacts) {
     server = app.listen(8080);
     router(app);
     console.log('Server listening at port 8080');
-}
+};
 
 var launch = function() {
     WebServer();

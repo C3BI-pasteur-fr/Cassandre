@@ -115,6 +115,10 @@ angular.module("Cassandre").controller("mainController", [
         }
     };
     
+    $scope.displayFile = function () {
+        $scope.data = $scope.dataFile.slice(0, 49);
+    };
+    
     $scope.sendData = function () {
         $scope.isUploading = true;
         

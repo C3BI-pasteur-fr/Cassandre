@@ -129,8 +129,8 @@ var route = function() {
         .alias('s')
         .description('Launch HTTP server')
         .action(function(env){
-                                WebServer();
-                        });
+            WebServer();
+        });
 
     program.parse(process.argv);
 };
