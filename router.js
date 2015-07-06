@@ -10,8 +10,6 @@ var MeasurementGene = require('./measurement').measurementGene;
 var loadMeasFile = require('./measurement').loadMeasFile;
 var tsvParser = require('./tsvParser');
 
-mongoose.connect('localhost', 'cassandre');
-
 var route = function() {
     program.option('-c, --colors', 'Use colors for printing');
 

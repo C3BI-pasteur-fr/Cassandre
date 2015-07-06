@@ -1,3 +1,3 @@
 var route = require('./router');
-
-route();
+var connected = require('./db').connected
+connected(route, 'localhost');
