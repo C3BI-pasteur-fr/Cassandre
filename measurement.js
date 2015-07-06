@@ -8,7 +8,7 @@ var MeasurementSchema = mongoose.Schema({
       "expId": String,
       "geneId": String,
       "value": Number
-      }, {collection: "Measurement"});
+      });
 
 var Measurement = mongoose.model('Measurement', MeasurementSchema);
 
