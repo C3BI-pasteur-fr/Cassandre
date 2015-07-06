@@ -5,11 +5,12 @@
  */
 
 angular.module("Cassandre").controller("mainController", [
-    "$scope", "$filter", "$http", "xlsxToJson", "tsvToJson",
-    function ($scope, $filter, $http, xlsxToJson, tsvToJson) {
+    "$scope", "$filter", "$http", "xlsxToJson", "tsvToJson", "database",
+    function ($scope, $filter, $http, xlsxToJson, tsvToJson, database) {
 
     $scope.data = [];               // Data to display
     $scope.dataFile = [];           // Content of the uploaded File
+    $scope.datasets = [];           // Names of the differents database sets
     $scope.isLoading = false;       // Marker to know when data are loading
     $scope.isUploading = false;     // Marker to know when data are uploading
     $scope.allowedTypes = {         // Allowed MIME types for the uploaded files
@@ -18,6 +19,10 @@ angular.module("Cassandre").controller("mainController", [
         tsv: "text/tab-separated-values"
     };
 
+    $scope.$on("dataUpdate", function () {
+        $scope.datasets = database.getDatasets();
+    });
+    
     $scope.measID = "";
     $scope.expID = "";
     $scope.geneID = "";
@@ -115,10 +120,12 @@ angular.module("Cassandre").controller("mainController", [
         }
     };
 
+    // Display a part of the file in the results section
     $scope.displayFile = function () {
         $scope.data = $scope.dataFile.slice(0, 49);
     };
 
+    // Send the files to the server using a FormData
     $scope.sendData = function () {
         var allData = new FormData();
         
@@ -133,7 +140,7 @@ angular.module("Cassandre").controller("mainController", [
             }
         })
         .success(function (message) {
-            alert("OK");
+            alert(message);
             $scope.isUploading = false;
         })
         .error(function (message) {

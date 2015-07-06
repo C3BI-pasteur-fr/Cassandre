@@ -14,6 +14,7 @@
         <script src="js/directives/onFileChange.js"></script>
         <script src="js/services/xlsxToJson.js"></script>
         <script src="js/services/tsvToJson.js"></script>
+        <script src="js/services/database.js"></script>
         <script src="js/controllers/mainController.js"></script>
     </head>
 
@@ -30,6 +31,18 @@
             </nav>
 
             <section ng-controller="mainController">
+                
+                <h4 class="page-header">Data Sets</h4>
+
+                <input class="form-control" type="text">
+                <ul class="list-group">
+                    <li class="list-group-item" ng-repeat="set in datasets">
+                        <label>
+                            <input type="checkbox">
+                            {{ set.measID }}
+                        </label>
+                    </li>
+                </ul>
 
                 <h4 class="page-header">Add Data</h4>
 
@@ -90,19 +103,19 @@
                     </div>
                     <div class="form-group">
                         <label for="geneID">Gene ID :</label>
-                            <div class="input-group">
-                                <span class="input-group-addon">
-                                    <input type="radio"
-                                           value="geneID"
-                                           ng-model="dataID"
-                                           ng-disabled="measID === ''">
-                                </span>
-                                <input id="geneID"
-                                       class="form-control"
-                                       type="text"
-                                       ng-model="geneID"
-                                       ng-disabled="dataID === 'expID' || dataID === ''">
-                            </div>
+                        <div class="input-group">
+                            <span class="input-group-addon">
+                                <input type="radio"
+                                       value="geneID"
+                                       ng-model="dataID"
+                                       ng-disabled="measID === ''">
+                            </span>
+                            <input id="geneID"
+                                   class="form-control"
+                                   type="text"
+                                   ng-model="geneID"
+                                   ng-disabled="dataID === 'expID' || dataID === ''">
+                        </div>
                     </div>
                     <input type="submit" class="btn btn-default" value="Search" ng-disabled="isLoading">
                     <button type="button" class="btn btn-default" ng-click="reset()">Reset</button>

@@ -4,5 +4,18 @@
  *
  */
 
-angular.module("Cassandre", []);
+angular.module("Cassandre", [])
 
+// ----- Initialisation ------------------------------------------------- //
+
+.run(function ($http, database) {
+    $http.get("/api/measurements/list")
+    .success(function (datasets) {
+        database.setDatasets(datasets);
+    })
+    .error(function (message) {
+        alert("Error : " + message);
+    });
+});
+
+// ---------------------------------------------------------------------- //
