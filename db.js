@@ -23,7 +23,7 @@ var connected = function(connectedCall, db_server, db_port){
     process.on('SIGINT', gracefulExit).on('SIGTERM', gracefulExit);
     try{
         console.log("Trying to connect to DB " + db_server);
-        mongoose.connect(db_server, db_port);
+        mongoose.connect(db_server);
     }catch(err){
         console.log("Server initialization failed " , err.message);
     }

@@ -8,7 +8,6 @@ var Measurement = require('./measurement').measurement;
 var MeasurementExp = require('./measurement').measurementExp;
 var MeasurementGene = require('./measurement').measurementGene;
 var loadMeasFile = require('./measurement').loadMeasFile;
-var tsvParser = require('./tsvParser');
 
 var route = function() {
     program.option('-c, --colors', 'Use colors for printing');
@@ -24,34 +23,6 @@ var route = function() {
             });
         });
 
-    program.command('load <fileName>')
-        .alias('u')
-        .description('Load a measurements file in the database')
-        .action(function(path, env) {
-            tsvParser(path, function(err, list) {
-                var saveNextItem = function(list) {
-                    var item = list.pop();
-                    item.value = item.value ? item.value : undefined;
-                    var newMeasurement = new Measurement({
-                        "measId": path,
-                        "expId": item.column,
-                        "geneId": item.row,
-                        "value": item.value
-                    });
-                    newMeasurement.save(function(err, newMeasurement) {
-                        if (err) console.error(err, item);
-                        if (list.length > 0) {
-                            saveNextItem(list);
-                        } else {
-                            console.info('done loading, exiting.'.green);
-                            process.exit();
-                        }
-                    });
-                }
-                saveNextItem(list);
-            });
-        });
-
     program.command('load-unchecked <fileName>')
         .alias('lu')
         .description('Load a measurements file in the database (using bulk inserts, with no data validation)')
@@ -62,34 +33,6 @@ var route = function() {
                     }
                     loadMeasFile(exit);
                 });
-
-    program.command('load-alternative <fileName>')
-        .alias('u')
-        .description('Load a measurements file in the database using the gene data model')
-        .action(function(path, env) {
-            tsvParser(path, function(err, list) {
-                var saveNextItem = function(list) {
-                    var measurementGene = new MeasurementGene();
-                    while(measurementGene.values.length==0 || list[0].geneId==measurementGene.geneId){
-                        var item = list.pop();
-                        item.value = item.value ? item.value : undefined;
-                        measurementGene.measId = item.measId;
-                        measurementGene.geneId = item.geneId;
-                        measurementGene.values.push(item.value);
-                    }
-                    measurementGene.save(function(err, newMeasurement) {
-                        if (err) console.error(err, item);
-                        if (list.length > 0) {
-                            saveNextItem(list);
-                        } else {
-                            console.info('done loading, exiting.'.green);
-                            process.exit();
-                        }
-                    });
-                }
-                saveNextItem(list);
-            });
-        });
 
     program.command('addCell <measurement> <experience> <gene> <value>')
         .alias('a')
