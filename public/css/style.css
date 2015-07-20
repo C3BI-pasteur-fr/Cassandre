@@ -1,0 +1,26 @@
+/*
+ * Stylesheet for Cassandre.
+ *
+ */
+
+body {
+    padding-top: 50px;
+}
+
+th button {
+    background: transparent;
+    border: 0;
+    padding: 0;
+}
+
+.orderColumn {
+    color: #4169E1;
+}
+
+.orderColumn::after {
+    content: "▲";
+}
+
+.orderColumn.reverse::after {
+    content: "▼";
+}

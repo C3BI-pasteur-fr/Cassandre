@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+
+<html ng-app="Cassandre">
+    <head>
+        <title>Cassandre</title>
+        <meta charset="utf-8">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+        <link rel="stylesheet" href="css/style.css">
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>
+        <!--<script src="http://livejs.com/live.js"></script>-->
+        <script src="js/lib/xlsx.core.min.js"></script>
+        <script src="js/cassandre.js"></script>
+        <script src="js/directives/onFileChange.js"></script>
+        <script src="js/services/xlsxToJson.js"></script>
+        <script src="js/services/tsvToJson.js"></script>
+        <script src="js/services/database.js"></script>
+        <script src="js/controllers/mainController.js"></script>
+    </head>
+
+    <body>
+        <div class="container-fluid">
+            <nav class="navbar navbar-inverse navbar-fixed-top">
+                <div class="container-fluid">
+                    <div class="navbar-header">
+                        <a class="navbar-brand" href="#">
+                            Cassandre
+                        </a>
+                    </div>
+                </div>
+            </nav>
+
+            <section ng-controller="mainController">
+                
+                <h4 class="page-header">Data Sets</h4>
+
+                <input class="form-control" type="text">
+                <ul class="list-group">
+                    <li class="list-group-item" ng-repeat="set in datasets">
+                        <label>
+                            <input type="checkbox">
+                            {{ set.measID }}
+                        </label>
+                    </li>
+                </ul>
+
+                <h4 class="page-header">Add Data</h4>
+
+                <form id="uploadForm"
+                      name="uploadForm"
+                      class="form-inline"
+                      ng-submit="sendData()">
+
+                    <input id="dataFile"
+                           type=file
+                           on-file-change="parseFile()"
+                           required>
+                    <p class="help-block">Allowed formats :
+                        <strong>xlsx, tsv, txt</strong>
+                    </p>
+
+                    <div class="btn-group">
+                        <input type="button" ng-click="displayFile()" value="Display" class="btn btn-default">
+                        <input class="btn btn-default"
+                               type="submit"
+                               value="Send"
+                               ng-disabled="isUploading">
+                        <button class="btn btn-default"
+                                type="button"
+                                ng-click="resetUpload()">Reset
+                        </button>
+                    </div>
+                </form>
+
+                <h2 class="page-header">Results
+                    <small ng-show="isLoading">Loading data..</small>
+                    <small ng-show="isUploading">Uploading data..</small>
+                </h2>
+
+                <form class="form-inline center-block" ng-submit="getData()">
+                    <div class="form-group">
+                        <label for="measID">Measurement ID :</label>
+                        <input id="measID"
+                               class="form-control"
+                               type="text"
+                               ng-model="measID">
+                    </div>
+                    <div class="form-group">
+                        <label for="expID">Experiment ID :</label>
+                            <div class="input-group">
+                                <span class="input-group-addon">
+                                    <input type="radio"
+                                           value="expID"
+                                           ng-model="dataID"
+                                           ng-disabled="measID === ''">
+                                </span>
+                                <input id="expID"
+                                       class="form-control"
+                                       type="text"
+                                       ng-model="expID"
+                                       ng-disabled="dataID === 'geneID' || dataID === ''">
+                            </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="geneID">Gene ID :</label>
+                        <div class="input-group">
+                            <span class="input-group-addon">
+                                <input type="radio"
+                                       value="geneID"
+                                       ng-model="dataID"
+                                       ng-disabled="measID === ''">
+                            </span>
+                            <input id="geneID"
+                                   class="form-control"
+                                   type="text"
+                                   ng-model="geneID"
+                                   ng-disabled="dataID === 'expID' || dataID === ''">
+                        </div>
+                    </div>
+                    <input type="submit" class="btn btn-default" value="Search" ng-disabled="isLoading">
+                    <button type="button" class="btn btn-default" ng-click="reset()">Reset</button>
+                </form>
+
+                <table class="table table-hover">
+                    <thead>
+                        <tr>
+                            <th ng-repeat="(header, value) in data[0]"
+                                ng-class="{ orderColumn : predicate === header, reverse : reverse === true }">
+                                <button ng-click="order(header, !reverse)">
+                                    {{ header }}
+                                </button>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="row in data">
+                            <td ng-repeat="(header, value) in row">
+                                {{ value }}
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </section>
+        </div>
+    </body>
+</html>

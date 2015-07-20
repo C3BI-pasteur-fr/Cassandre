@@ -1,7 +1,7 @@
 {
-  "name": "bioweb",
+  "name": "cassandre",
   "version": "0.0.0",
-  "description": "Online catalog of bioinformatics programs and databanks",
+  "description": "This is the Cassandre project.",
   "main": "index.js",
   "dependencies": {
     "body-parser": "^1.13.1",
@@ -14,10 +14,14 @@
     "underscore": "^1.8.3"
   },
   "devDependencies": {},
+  "scripts": {
+    "start": "node app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
   "repository": {
     "type": "git",
-    "url": "https://projets.pasteur.fr/git/bioweb"
+    "url": "https://projets.pasteur.fr/git/cassandre"
   },
-  "author": "Hervé Ménager",
+  "author": "Simon Malesys, Hervé Ménager, Christophe Malabat",
   "license": "ISC"
 }
