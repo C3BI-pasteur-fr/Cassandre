@@ -108,7 +108,6 @@ var router = function(app) {
             var expIds = typeof req.query.expId == 'string' ? [req.query.expId] : req.query.expId;
             filter['expId'] = {'$in': expIds};
         }
-        console.log(filter); 
         Measurement.collection.find(filter).toArray(function(err, list) {
             if (err) {
                 return res.status(500).send("Error with the database : " + err.message);
