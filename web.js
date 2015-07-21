@@ -99,10 +99,9 @@ var router = function(app) {
     // accept PUT request at /user
     app.post('/api/measurements', function (req, res) {
       res.setHeader('Content-Type', 'application/json');
-      res.send({'message': 'file ' + req.files.dataFile.name});
+      res.send('file ' + req.files.dataFile.name);
       loadMeasFile(req.files.dataFile.path);
     });
-
 };
 
 var WebServer = function(contacts) {

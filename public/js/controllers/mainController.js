@@ -30,6 +30,16 @@ angular.module("Cassandre").controller("mainController", [
 
     $scope.predicate = "";
     $scope.reverse = false;
+    
+    // Contains the selected datasets for the db request
+    $scope.selectedDatasets = {};
+    // Lists from the request
+    $scope.geneList = [];
+    $scope.expList = [];
+    
+    $scope.searchData = function () {
+        $http()
+    };
 
     // Ordering function
     $scope.order = function (header, reverse) {
