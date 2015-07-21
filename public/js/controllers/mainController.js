@@ -5,8 +5,8 @@
  */
 
 angular.module("Cassandre").controller("mainController", [
-    "$scope", "$filter", "$http", "xlsxToJson", "tsvToJson", "database",
-    function ($scope, $filter, $http, xlsxToJson, tsvToJson, database) {
+    "$scope", "$filter", "$http", "xlsxToJson", "tsvToJson", "database", "geneData", "expData",
+    function ($scope, $filter, $http, xlsxToJson, tsvToJson, database, geneData, expData) {
 
     $scope.data = [];               // Data to display
     $scope.dataFile = [];           // Content of the uploaded File
@@ -36,9 +36,13 @@ angular.module("Cassandre").controller("mainController", [
     // Lists from the request
     $scope.geneList = [];
     $scope.expList = [];
+    $scope.selectedGene = "";
     
     $scope.searchData = function () {
-        $http()
+        var measID = encodeURIComponent(Object.keys($scope.selectedDatasets)[0]);
+
+        $scope.geneList = geneData.query({ mId: measID });
+        $scope.expList = expData.query({ mId: measID });
     };
 
     // Ordering function

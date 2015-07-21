@@ -6,15 +6,18 @@
         <meta charset="utf-8">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
         <link rel="stylesheet" href="css/style.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>
-        <script src="http://livejs.com/live.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.3/angular-resource.min.js"></script>
+        <!--<script src="http://livejs.com/live.js"></script>-->
         <script src="js/lib/xlsx.core.min.js"></script>
         <script src="js/cassandre.js"></script>
         <script src="js/directives/onFileChange.js"></script>
         <script src="js/services/xlsxToJson.js"></script>
         <script src="js/services/tsvToJson.js"></script>
         <script src="js/services/database.js"></script>
+        <script src="js/services/data.js"></script>
         <script src="js/controllers/mainController.js"></script>
     </head>
 
@@ -33,11 +36,11 @@
             <section ng-controller="mainController">
 
                 <h4 class="page-header">Data Sets</h4>
-                
+
                 <div class="container">
                     <div class="row">
                         <label for="datasetsFilter">Search filter</label>
-                        <input class="form-control" id="datasetsFilter" type="text">
+                        <input id="datasetsFilter" class="form-control" type="text">
                     </div>
                     <div class="row">
                         <ul class="col-lg-offset-2 col-lg-8 list-group">
@@ -50,32 +53,32 @@
                             </li>
                         </ul>
                     </div>
-                    <button class="btn btn-default" type="button">Search</button>
+                    <button class="btn btn-default" type="button" ng-click="searchData()">Search</button>
                 </div>
                 
                 <h4 class="page-header">Data</h4>
-                
+
                 <div class="container">
                     <div class="row">
                         <label for="datasetsFilter">Search filter</label>
-                        <input class="form-control" id="datasetsFilter" type="text">
+                        <input id="dataFilter" class="form-control" type="text">
                     </div>
                     <div class="row">
                         <ul class="col-lg-6 list-group">
                             <li class="list-group-item"
-                                ng-repeat="set in datasets">
+                                ng-repeat="exp in expList.slice(0, 49)">
                                 <label>
-                                    <input type="checkbox" ng-model="selectedDatasets[set.measID]">
-                                    {{ set.measID }}
+                                    <input type="checkbox" ng-model="">
+                                    {{ exp.expID }}
                                 </label>
                             </li>
                         </ul>
                         <ul class="col-lg-6 list-group">
                             <li class="list-group-item"
-                                ng-repeat="set in datasets">
+                                ng-repeat="gene in geneList.slice(0, 49)">
                                 <label>
-                                    <input type="checkbox" ng-model="selectedDatasets[set.measID]">
-                                    {{ set.measID }}
+                                    <input type="checkbox" ng-model="">
+                                    {{ gene.geneID }}
                                 </label>
                             </li>
                         </ul>
