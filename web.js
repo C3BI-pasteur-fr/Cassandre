@@ -96,6 +96,27 @@ var router = function(app) {
         });
     });
 
+    /* list all the values in a given measurement filtered by gene(s) and/or experiment(s) */
+    app.get('/api/measurements/:mId', function(req, res, next) {
+        var filter = {'measId': req.params.mId};
+        console.log(req.params);
+        if(req.query.geneId){
+            var geneIds = typeof req.query.geneId == 'string' ? [req.query.geneId] : req.query.geneId;
+            filter['geneId'] = {'$in': geneIds};
+        }
+        if(req.query.expId){
+            var expIds = typeof req.query.expId == 'string' ? [req.query.expId] : req.query.expId;
+            filter['expId'] = {'$in': expIds};
+        }
+        console.log(filter); 
+        Measurement.collection.find(filter).toArray(function(err, list) {
+            if (err) {
+                return res.status(500).send("Error with the database : " + err.message);
+            }
+            return res.status(200).send(list);
+        });
+    });
+
     // load measurements file
     app.post('/api/measurements', function (req, res) {
       res.setHeader('Content-Type', 'application/json');
