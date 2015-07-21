@@ -96,7 +96,7 @@ var router = function(app) {
         });
     });
 
-    // accept PUT request at /user
+    // load measurements file
     app.post('/api/measurements', function (req, res) {
       res.setHeader('Content-Type', 'application/json');
       res.send('file ' + req.files.dataFile.name);
