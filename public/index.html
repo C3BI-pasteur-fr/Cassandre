@@ -46,12 +46,13 @@
                                 <th colspan=2>
                                     <input class="form-control"
                                            type="text"
+                                           ng-model="datasetFilter"
                                            placeholder="Search...">
                                 </th>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr ng-repeat="set in datasets">
+                            <tr ng-repeat="set in datasets | filter:datasetFilter">
                                 <td>
                                     <input type="checkbox" ng-model="selectedDatasets[set.measID]">
                                 </td>
@@ -76,13 +77,14 @@
                                 <tr>
                                     <th colspan=2>
                                         <input class="form-control"
-                                            type="text"
-                                            placeholder="Search...">
+                                               type="text"
+                                               ng-model="expFilter"
+                                               placeholder="Search...">
                                     </th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr ng-repeat="exp in expList.slice(0, 49)">
+                                <tr ng-repeat="exp in expList.slice(0, 49) | filter:expFilter">
                                     <td>
                                         <input type="checkbox" ng-model="">
                                     </td>
@@ -99,13 +101,14 @@
                                 <tr>
                                     <th colspan=2>
                                         <input class="form-control"
-                                            type="text"
-                                            placeholder="Search...">
+                                               type="text"
+                                               ng-model="geneFilter"
+                                               placeholder="Search...">
                                     </th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr ng-repeat="gene in geneList.slice(0, 49)">
+                                <tr ng-repeat="gene in geneList.slice(0, 49) | filter:geneFilter">
                                     <td>
                                         <input type="checkbox" ng-model="">
                                     </td>

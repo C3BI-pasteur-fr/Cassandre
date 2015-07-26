@@ -37,6 +37,10 @@ angular.module("Cassandre").controller("mainController", [
     $scope.geneList = [];
     $scope.expList = [];
     $scope.selectedGene = "";
+    // Filters
+    $scope.datasetFilter = "";
+    $scope.expFilter = "";
+    $scope.geneFilter = "";
     
     $scope.searchData = function () {
         var measID = encodeURIComponent(Object.keys($scope.selectedDatasets)[0]);
