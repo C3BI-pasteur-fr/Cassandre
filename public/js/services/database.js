@@ -2,7 +2,7 @@
 
 angular.module("Cassandre").factory("database", ["$rootScope", function databaseFactory ($rootScope) {
     var data = {
-        datasets: ["haha"]
+        datasets: []
     };
     
     return {

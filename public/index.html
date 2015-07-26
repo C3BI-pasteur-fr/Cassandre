@@ -39,51 +39,85 @@
 
                 <div class="container">
                     <div class="row">
-                        <label for="datasetsFilter">Search filter</label>
-                        <input id="datasetsFilter" class="form-control" type="text">
-                    </div>
-                    <div class="row">
-                        <ul class="col-lg-offset-2 col-lg-8 list-group">
-                            <li class="list-group-item"
-                                ng-repeat="set in datasets">
-                                <label>
+                        <div class="col-lg-offset-2 col-lg-8">
+                        <table class="table">
+                            <thead>
+                            <tr>
+                                <th colspan=2>
+                                    <input class="form-control"
+                                           type="text"
+                                           placeholder="Search...">
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="set in datasets">
+                                <td>
                                     <input type="checkbox" ng-model="selectedDatasets[set.measID]">
+                                </td>
+                                <td>
                                     {{ set.measID }}
-                                </label>
-                            </li>
-                        </ul>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                        </div>
                     </div>
                     <button class="btn btn-default" type="button" ng-click="searchData()">Search</button>
                 </div>
-                
+
                 <h4 class="page-header">Data</h4>
 
-                <div class="container">
+                <div class="container" ng-show="expList.length !== 0 && geneList.length !== 0">
                     <div class="row">
-                        <label for="datasetsFilter">Search filter</label>
-                        <input id="dataFilter" class="form-control" type="text">
+                        <div class=col-lg-6>
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th colspan=2>
+                                        <input class="form-control"
+                                            type="text"
+                                            placeholder="Search...">
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat="exp in expList.slice(0, 49)">
+                                    <td>
+                                        <input type="checkbox" ng-model="">
+                                    </td>
+                                    <td>
+                                        {{ exp.expID }}
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        <div class=col-lg-6>
+                            <table class="table table-striped">
+                                <thead>
+                                <tr>
+                                    <th colspan=2>
+                                        <input class="form-control"
+                                            type="text"
+                                            placeholder="Search...">
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat="gene in geneList.slice(0, 49)">
+                                    <td>
+                                        <input type="checkbox" ng-model="">
+                                    </td>
+                                    <td>
+                                        {{ gene.geneID }}
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
-                    <div class="row">
-                        <ul class="col-lg-6 list-group">
-                            <li class="list-group-item"
-                                ng-repeat="exp in expList.slice(0, 49)">
-                                <label>
-                                    <input type="checkbox" ng-model="">
-                                    {{ exp.expID }}
-                                </label>
-                            </li>
-                        </ul>
-                        <ul class="col-lg-6 list-group">
-                            <li class="list-group-item"
-                                ng-repeat="gene in geneList.slice(0, 49)">
-                                <label>
-                                    <input type="checkbox" ng-model="">
-                                    {{ gene.geneID }}
-                                </label>
-                            </li>
-                        </ul>
-                    </div>
-                    <button class="btn btn-default" type="button">Display</button>
+                    <button class="btn btn-default" type="button" ng-click=displayData()>Display</button>
                 </div>
 
                 <h4 class="page-header">Add Data</h4>
@@ -102,15 +136,9 @@
                     </p>
 
                     <div class="btn-group">
-                        <input type="button" ng-click="displayFile()" value="Display" class="btn btn-default">
-                        <input class="btn btn-default"
-                               type="submit"
-                               value="Send"
-                               ng-disabled="isUploading">
-                        <button class="btn btn-default"
-                                type="button"
-                                ng-click="resetUpload()">Reset
-                        </button>
+                        <input class="btn btn-default" type="button" ng-click="displayFile()" value="Display">
+                        <input class="btn btn-default" type="submit" value="Send" ng-disabled="isUploading">
+                        <button class="btn btn-default" type="button" ng-click="resetUpload()">Reset</button>
                     </div>
                 </form>
 
@@ -140,7 +168,7 @@
                                        class="form-control"
                                        type="text"
                                        ng-model="expID"
-                                       ng-disabled="dataID === 'geneID' || dataID === ''">
+                                       ng-disabled="dataID !== 'expID'">
                             </div>
                     </div>
                     <div class="form-group">
@@ -156,7 +184,7 @@
                                    class="form-control"
                                    type="text"
                                    ng-model="geneID"
-                                   ng-disabled="dataID === 'expID' || dataID === ''">
+                                   ng-disabled="dataID !== 'geneID'">
                         </div>
                     </div>
                     <input type="submit" class="btn btn-default" value="Search" ng-disabled="isLoading">
