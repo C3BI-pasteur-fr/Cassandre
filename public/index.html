@@ -86,7 +86,7 @@
                                 <tbody>
                                 <tr ng-repeat="exp in expList.slice(0, 49) | filter:expFilter">
                                     <td>
-                                        <input type="checkbox" ng-model="">
+                                        <input type="checkbox" value="{{ exp.expID }}" ng-click="selectExp(exp.expID)">
                                     </td>
                                     <td>
                                         {{ exp.expID }}
@@ -110,7 +110,7 @@
                                 <tbody>
                                 <tr ng-repeat="gene in geneList.slice(0, 49) | filter:geneFilter">
                                     <td>
-                                        <input type="checkbox" ng-model="">
+                                        <input type="checkbox" value="{{ gene.geneID }}" ng-click="selectGene(gene.geneID)">
                                     </td>
                                     <td>
                                         {{ gene.geneID }}

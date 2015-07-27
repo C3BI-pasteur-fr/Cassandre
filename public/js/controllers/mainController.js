@@ -22,7 +22,7 @@ angular.module("Cassandre").controller("mainController", [
     $scope.$on("dataUpdate", function () {
         $scope.datasets = database.getDatasets();
     });
-    
+
     $scope.measID = "";
     $scope.expID = "";
     $scope.geneID = "";
@@ -30,9 +30,11 @@ angular.module("Cassandre").controller("mainController", [
 
     $scope.predicate = "";
     $scope.reverse = false;
-    
+
     // Contains the selected datasets for the db request
     $scope.selectedDatasets = {};
+    $scope.selectedGenes = [];
+    $scope.selectedExp = [];
     // Lists from the request
     $scope.geneList = [];
     $scope.expList = [];
@@ -41,18 +43,40 @@ angular.module("Cassandre").controller("mainController", [
     $scope.datasetFilter = "";
     $scope.expFilter = "";
     $scope.geneFilter = "";
+    // Functions to select exp or gene
+    $scope.selectExp = function (exp) {
+        var index = $scope.selectedExp.indexOf(exp);
+        
+        if ( index > -1) {
+            $scope.selectedExp.splice(index, 1);
+        }
+        else {
+            $scope.selectedExp.push(exp);
+        }
+    };
     
+    $scope.selectGene = function (gene) {
+        var index = $scope.selectedGenes.indexOf(gene);
+        
+        if ( index > -1) {
+            $scope.selectedGenes.splice(index, 1);
+        }
+        else {
+            $scope.selectedGenes.push(gene);
+        }
+    };
+
     $scope.searchData = function () {
         var measID = encodeURIComponent(Object.keys($scope.selectedDatasets)[0]);
         $scope.geneList = geneData.query({ mId: measID });
         $scope.expList = expData.query({ mId: measID });
     };
-    
+
     $scope.displayData = function () {
         $scope.data = dataValues.query({
-            mId: $scope.measID,
-            expID: scope.expID,
-            geneID: scope.geneID
+            mId: encodeURIComponent(Object.keys($scope.selectedDatasets)[0]),
+            expId: $scope.selectedExp,
+            geneId: $scope.selectedGenes
         });
     };
 
@@ -153,11 +177,11 @@ angular.module("Cassandre").controller("mainController", [
     // Send the files to the server using a FormData
     $scope.sendData = function () {
         var allData = new FormData();
-        
+
         allData.append("dataFile", document.getElementById("dataFile").files[0]);
 
         $scope.isUploading = true;
-        
+
         $http.post("/api/measurements", allData, {
             transformRequest: angular.identity,     // Override Angular's default serialization
             headers: {                              // Let the browser set the Content-Type

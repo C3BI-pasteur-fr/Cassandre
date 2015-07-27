@@ -8,5 +8,7 @@ angular.module("Cassandre").factory("expData", ["$resource", function expDataFac
 }]);
 
 angular.module("Cassandre").factory("dataValues", ["$resource", function dataValuesFactory ($resource) {
-    return $resource("/api/measurements/:mId/:expID.:geneID");
+    return $resource("/api/measurements/:mId/", {}, {
+        get: { params: { "expId[]": "@expId", "geneId[]": "@geneId"} }
+    });
 }]);
