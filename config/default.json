@@ -1,0 +1,11 @@
+{
+  "web": {
+    "host": "localhost",
+    "port": 8080
+  },
+  "db": {
+    "host": "localhost",
+    "port": 27017,
+    "dbName": "cassandre"
+  }
+}
