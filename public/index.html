@@ -120,7 +120,7 @@
                             </table>
                         </div>
                     </div>
-                    <button class="btn btn-default" type="button" ng-click=displayData()>Display</button>
+                    <button class="btn btn-default" type="button" ng-click=getData()>Display</button>
                 </div>
 
                 <h4 class="page-header">Add Data</h4>
@@ -149,50 +149,6 @@
                     <small ng-show="isLoading">Loading data..</small>
                     <small ng-show="isUploading">Uploading data..</small>
                 </h2>
-
-                <form class="form-inline center-block" ng-submit="getData()">
-                    <div class="form-group">
-                        <label for="measID">Measurement ID :</label>
-                        <input id="measID"
-                               class="form-control"
-                               type="text"
-                               ng-model="measID">
-                    </div>
-                    <div class="form-group">
-                        <label for="expID">Experiment ID :</label>
-                            <div class="input-group">
-                                <span class="input-group-addon">
-                                    <input type="radio"
-                                           value="expID"
-                                           ng-model="dataID"
-                                           ng-disabled="measID === ''">
-                                </span>
-                                <input id="expID"
-                                       class="form-control"
-                                       type="text"
-                                       ng-model="expID"
-                                       ng-disabled="dataID !== 'expID'">
-                            </div>
-                    </div>
-                    <div class="form-group">
-                        <label for="geneID">Gene ID :</label>
-                        <div class="input-group">
-                            <span class="input-group-addon">
-                                <input type="radio"
-                                       value="geneID"
-                                       ng-model="dataID"
-                                       ng-disabled="measID === ''">
-                            </span>
-                            <input id="geneID"
-                                   class="form-control"
-                                   type="text"
-                                   ng-model="geneID"
-                                   ng-disabled="dataID !== 'geneID'">
-                        </div>
-                    </div>
-                    <input type="submit" class="btn btn-default" value="Search" ng-disabled="isLoading">
-                    <button type="button" class="btn btn-default" ng-click="reset()">Reset</button>
-                </form>
 
                 <table class="table table-hover">
                     <thead>

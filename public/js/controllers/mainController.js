@@ -23,11 +23,7 @@ angular.module("Cassandre").controller("mainController", [
         $scope.datasets = database.getDatasets();
     });
 
-    $scope.measID = "";
-    $scope.expID = "";
-    $scope.geneID = "";
-    $scope.dataID = "";
-
+    // Used for ordering the results
     $scope.predicate = "";
     $scope.reverse = false;
 
@@ -35,14 +31,17 @@ angular.module("Cassandre").controller("mainController", [
     $scope.selectedDatasets = {};
     $scope.selectedGenes = [];
     $scope.selectedExp = [];
+    
     // Lists from the request
     $scope.geneList = [];
     $scope.expList = [];
     $scope.selectedGene = "";
+    
     // Filters
     $scope.datasetFilter = "";
     $scope.expFilter = "";
     $scope.geneFilter = "";
+    
     // Functions to select exp or gene
     $scope.selectExp = function (exp) {
         var index = $scope.selectedExp.indexOf(exp);
@@ -66,13 +65,15 @@ angular.module("Cassandre").controller("mainController", [
         }
     };
 
+    // Get the lists for the given datasets (only one currently)
     $scope.searchData = function () {
         var measID = encodeURIComponent(Object.keys($scope.selectedDatasets)[0]);
         $scope.geneList = geneData.query({ mId: measID });
         $scope.expList = expData.query({ mId: measID });
     };
 
-    $scope.displayData = function () {
+    // Get the data for the selected genes and/or exp (for only on measurement currently)
+    $scope.getData = function () {
         $scope.data = dataValues.query({
             mId: encodeURIComponent(Object.keys($scope.selectedDatasets)[0]),
             expId: $scope.selectedExp,
@@ -85,65 +86,6 @@ angular.module("Cassandre").controller("mainController", [
         $scope.predicate = header;
         $scope.reverse = reverse;
         $scope.data = $filter("orderBy")($scope.data, $scope.predicate, $scope.reverse);
-    };
-
-    // Reset the query form properly
-    $scope.reset = function () {
-        $scope.measID = "";
-        $scope.expID = "";
-        $scope.geneID = "";
-        $scope.dataID = "";
-    };
-
-    // Request to the database
-    $scope.getData = function () {
-        var url = "/api/measurements/";
-
-        // Build the URL if needed
-        if ($scope.measID === "") {
-            url = url.concat("list/");
-        }
-        else if ($scope.dataID === "expID" && $scope.measID !== "") {
-            url = url.concat(encodeURIComponent($scope.measID), "/exp/");
-
-            if ($scope.expID !== "") {
-                url = url.concat(encodeURIComponent($scope.expID));
-            }
-            else {
-                url = url.concat("list/");
-            }
-        }
-        else if ($scope.dataID === "geneID" && $scope.measID !== "") {
-            url = url.concat(encodeURIComponent($scope.measID), "/gene/");
-
-            if ($scope.geneID !== "") {
-                url = url.concat(encodeURIComponent($scope.geneID));
-            }
-            else {
-                url = url.concat("list/");
-            }
-        }
-        else if ($scope.dataID === "" && $scope.measID !== "") {
-            alert("Please select experiment or gene ID.");
-            return;
-        }
-
-        $scope.isLoading = true;
-
-        $http.get(url)
-        .success(function (data) {
-            $scope.data = data;
-            $scope.isLoading = false;
-        })
-        .error(function (error) {
-            $scope.isLoading = false;
-            alert("There was an error : " + error);
-        });
-    };
-
-    // Reset the query form properly
-    $scope.resetUpload = function () {
-        document.getElementById("uploadForm").reset();
     };
 
     // Parse the dataFile depending on its type
