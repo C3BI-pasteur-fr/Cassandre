@@ -2,9 +2,10 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var serveStatic = require('serve-static');
 var multer = require('multer');
-
 var _ = require('underscore');
 var cluster = require('cluster');
+
+var getConf = require('./config');
 var Measurement = require("./measurement").measurement;
 var loadMeasFile = require('./measurement').loadMeasFile;
 
@@ -139,9 +140,11 @@ var WebServer = function(contacts) {
             return filename.replace(/\W+/g, '-').toLowerCase() + Date.now();
         }
     }));
-    server = app.listen(8080);
+    var webPort = getConf("web.port",8080);
+    var webHost = getConf("web.host", "localhost");
+    server = app.listen(webPort, webHost);
     router(app);
-    console.log('Server listening at port 8080');
+    console.log("Server listening to " + webHost + ":" + webPort);
 };
 
 var launch = function() {
