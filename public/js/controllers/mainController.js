@@ -9,6 +9,7 @@ angular.module("Cassandre").controller("mainController", [
     function ($scope, $filter, $http, xlsxToJson, tsvToJson, database, geneData, expData, dataValues) {
 
     $scope.data = [];               // Data to display
+    $scope.dataRows = {};           // Date formatted by rows
     $scope.dataFile = [];           // Content of the uploaded File
     $scope.datasets = [];           // Names of the differents database sets
     $scope.isLoading = false;       // Marker to know when data are loading
@@ -78,6 +79,15 @@ angular.module("Cassandre").controller("mainController", [
             mId: encodeURIComponent(Object.keys($scope.selectedDatasets)[0]),
             expId: $scope.selectedExp,
             geneId: $scope.selectedGenes
+        }, function(data) {
+            // Format data in rows to ease the display in the view
+            data.forEach(function (cell) {
+                var gene = cell.geneId;
+                $scope.dataRows[gene] = {};
+                data.forEach(function (cell) {
+                    $scope.dataRows[gene][cell.expId] = cell.value;
+                });
+            });
         });
     };
 

@@ -34,6 +34,28 @@
             </nav>
 
             <section ng-controller="mainController">
+                
+                <h4 class="page-header">Add Data</h4>
+
+                <form id="uploadForm"
+                      name="uploadForm"
+                      class="form-inline"
+                      ng-submit="sendData()">
+
+                    <input id="dataFile"
+                           type=file
+                           on-file-change="parseFile()"
+                           required>
+                    <p class="help-block">Allowed formats :
+                        <strong>xlsx, tsv, txt</strong>
+                    </p>
+
+                    <div class="btn-group">
+                        <input class="btn btn-default" type="button" ng-click="displayFile()" value="Display">
+                        <input class="btn btn-default" type="submit" value="Send" ng-disabled="isUploading">
+                        <button class="btn btn-default" type="button" ng-click="resetUpload()">Reset</button>
+                    </div>
+                </form>
 
                 <h4 class="page-header">Data Sets</h4>
 
@@ -123,28 +145,6 @@
                     <button class="btn btn-default" type="button" ng-click=getData()>Display</button>
                 </div>
 
-                <h4 class="page-header">Add Data</h4>
-
-                <form id="uploadForm"
-                      name="uploadForm"
-                      class="form-inline"
-                      ng-submit="sendData()">
-
-                    <input id="dataFile"
-                           type=file
-                           on-file-change="parseFile()"
-                           required>
-                    <p class="help-block">Allowed formats :
-                        <strong>xlsx, tsv, txt</strong>
-                    </p>
-
-                    <div class="btn-group">
-                        <input class="btn btn-default" type="button" ng-click="displayFile()" value="Display">
-                        <input class="btn btn-default" type="submit" value="Send" ng-disabled="isUploading">
-                        <button class="btn btn-default" type="button" ng-click="resetUpload()">Reset</button>
-                    </div>
-                </form>
-
                 <h2 class="page-header">Results
                     <small ng-show="isLoading">Loading data..</small>
                     <small ng-show="isUploading">Uploading data..</small>
@@ -153,17 +153,21 @@
                 <table class="table table-hover">
                     <thead>
                         <tr>
-                            <th ng-repeat="(header, value) in data[0]"
-                                ng-class="{ orderColumn : predicate === header, reverse : reverse === true }">
-                                <button ng-click="order(header, !reverse)">
-                                    {{ header }}
+                            <th></th>
+                            <th ng-repeat="exp in selectedExp"
+                                ng-class="{ orderColumn : predicate === exp, reverse : reverse === true }">
+                                <button ng-click="order(exp, !reverse)">
+                                    {{ exp }}
                                 </button>
                             </th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="row in data">
-                            <td ng-repeat="(header, value) in row">
+                        <tr ng-repeat="gene in selectedGenes">
+                            <td>
+                                {{ gene }}
+                            </td>
+                            <td ng-repeat="(exp, value) in dataRows[gene]">
                                 {{ value }}
                             </td>
                         </tr>
