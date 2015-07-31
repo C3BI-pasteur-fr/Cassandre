@@ -1,6 +1,8 @@
 
 angular.module("Cassandre").factory("geneData", ["$resource", function geneDataFactory ($resource) {
-    return $resource("/api/measurements/:mId/gene/list/");
+    return $resource("/api/measurements/:mId/gene/list/", {}, {
+        get: { params: { "mId[]": "@mId"} }
+    });
 }]);
 
 angular.module("Cassandre").factory("expData", ["$resource", function expDataFactory ($resource) {

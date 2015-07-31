@@ -29,7 +29,7 @@ angular.module("Cassandre").controller("mainController", [
     $scope.reverse = false;
 
     // Contains the selected datasets for the db request
-    $scope.selectedDatasets = {};
+    $scope.selectedDatasets = [];
     $scope.selectedGenes = [];
     $scope.selectedExp = [];
     
@@ -43,7 +43,18 @@ angular.module("Cassandre").controller("mainController", [
     $scope.expFilter = "";
     $scope.geneFilter = "";
     
-    // Functions to select exp or gene
+    // Functions to select dataset, exp or gene
+    $scope.selectDataset = function (dataset) {
+        var index = $scope.selectedDatasets.indexOf(dataset);
+        
+        if ( index > -1) {
+            $scope.selectedDatasets.splice(index, 1);
+        }
+        else {
+            $scope.selectedDatasets.push(dataset);
+        }
+    };
+
     $scope.selectExp = function (exp) {
         var index = $scope.selectedExp.indexOf(exp);
         
@@ -66,11 +77,15 @@ angular.module("Cassandre").controller("mainController", [
         }
     };
 
-    // Get the lists for the given datasets (only one currently)
+    // Get the lists for the given datasets
     $scope.searchData = function () {
-        var measID = encodeURIComponent(Object.keys($scope.selectedDatasets)[0]);
-        $scope.geneList = geneData.query({ mId: measID });
-        $scope.expList = expData.query({ mId: measID });
+        $scope.geneList = geneData.query({
+            mId: encodeURIComponent($scope.selectedDatasets)
+        });
+
+        $scope.expList = expData.query({
+            mId: encodeURIComponent($scope.selectedDatasets)
+        });
     };
 
     // Get the data for the selected genes and/or exp (for only on measurement currently)
@@ -80,7 +95,8 @@ angular.module("Cassandre").controller("mainController", [
             expId: $scope.selectedExp,
             geneId: $scope.selectedGenes
         }, function(data) {
-            // Format data in rows to ease the display in the view
+            
+            // Format data into rows to ease the display in the view
             data.forEach(function (cell) {
                 var gene = cell.geneId;
                 $scope.dataRows[gene] = {};

@@ -58,7 +58,7 @@
                 </form>
 
                 <h4 class="page-header">Data Sets</h4>
-
+{{ selectedDatasets}}
                 <div class="container">
                     <div class="row">
                         <div class="col-lg-offset-2 col-lg-8">
@@ -76,7 +76,7 @@
                             <tbody>
                             <tr ng-repeat="set in datasets | filter:datasetFilter">
                                 <td>
-                                    <input type="checkbox" ng-model="selectedDatasets[set.measID]">
+                                    <input type="checkbox" ng-click="selectDataset(set.measID)" ng-checked="selectedDatasets.indexOf(set.measID) > -1">
                                 </td>
                                 <td>
                                     {{ set.measID }}
@@ -108,7 +108,7 @@
                                 <tbody>
                                 <tr ng-repeat="exp in expList.slice(0, 49) | filter:expFilter">
                                     <td>
-                                        <input type="checkbox" value="{{ exp.expID }}" ng-click="selectExp(exp.expID)">
+                                        <input type="checkbox" ng-click="selectExp(exp.expID)" ng-checked="selectedExp.indexOf(exp.expID) > -1">
                                     </td>
                                     <td>
                                         {{ exp.expID }}
@@ -132,7 +132,7 @@
                                 <tbody>
                                 <tr ng-repeat="gene in geneList.slice(0, 49) | filter:geneFilter">
                                     <td>
-                                        <input type="checkbox" value="{{ gene.geneID }}" ng-click="selectGene(gene.geneID)">
+                                        <input type="checkbox" ng-click="selectGene(gene.geneID)" ng-checked="selectGene.indexOf(gene.geneID) > -1">
                                     </td>
                                     <td>
                                         {{ gene.geneID }}
