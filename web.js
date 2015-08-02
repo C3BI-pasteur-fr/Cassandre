@@ -40,7 +40,7 @@ var router = function(app) {
     /* list all the expIds for a given measId of the measurements collection */
     app.get('/api/measurements/:mId/exp/list/', function(req, res, next) {
         Measurement.collection.distinct('expId', {
-                'measId': decodeURIComponent(req.params.mId)
+                'measId': { '$in' : decodeURIComponent(req.params.mId).split(',') }
             },
             function(err, list) {
                 if (err) {
@@ -57,7 +57,7 @@ var router = function(app) {
     /* list all the geneIds for a given measId of the measurements collection */
     app.get('/api/measurements/:mId/gene/list/', function(req, res, next) {
         Measurement.collection.distinct('geneId', {
-                'measId': decodeURIComponent(req.params.mId)
+                'measId': { '$in' : decodeURIComponent(req.params.mId).split(',') }
             },
             function(err, list) {
                 if (err) {

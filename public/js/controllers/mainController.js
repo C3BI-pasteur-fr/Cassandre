@@ -5,16 +5,16 @@
  */
 
 angular.module("Cassandre").controller("mainController", [
-    "$scope", "$filter", "$http", "xlsxToJson", "tsvToJson", "database", "geneData", "expData", "dataValues",
-    function ($scope, $filter, $http, xlsxToJson, tsvToJson, database, geneData, expData, dataValues) {
+    "$scope", "$filter", "$http", "xlsxToJson", "tsvToJson", "database", "measData", "geneData", "expData", "dataValues",
+    function ($scope, $filter, $http, xlsxToJson, tsvToJson, database, measData, geneData, expData, dataValues) {
 
-    $scope.data = [];               // Data to display
-    $scope.dataRows = {};           // Date formatted by rows
-    $scope.dataFile = [];           // Content of the uploaded File
-    $scope.datasets = [];           // Names of the differents database sets
-    $scope.isLoading = false;       // Marker to know when data are loading
-    $scope.isUploading = false;     // Marker to know when data are uploading
-    $scope.allowedTypes = {         // Allowed MIME types for the uploaded files
+    $scope.data = [];                   // Data to display
+    $scope.dataRows = {};               // Date formatted by rows
+    $scope.dataFile = [];               // Content of the uploaded File
+    $scope.datasets = measData.query(); // Names of the differents database sets
+    $scope.isLoading = false;           // Marker to know when data are loading
+    $scope.isUploading = false;         // Marker to know when data are uploading
+    $scope.allowedTypes = {             // Allowed MIME types for the uploaded files
         xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         txt: "text/plain",
         tsv: "text/tab-separated-values"
@@ -157,12 +157,13 @@ angular.module("Cassandre").controller("mainController", [
             }
         })
         .success(function (message) {
-            alert(message);
             $scope.isUploading = false;
+            alert(message);
+            
         })
         .error(function (message) {
-            alert("Error : " + message);
             $scope.isUploading = false;
+            alert("Error : " + message);
         });
     }
 }]);
