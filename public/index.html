@@ -10,7 +10,6 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.3.15/angular.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.3/angular-resource.min.js"></script>
-        <!--<script src="http://livejs.com/live.js"></script>-->
         <script src="js/lib/xlsx.core.min.js"></script>
         <script src="js/cassandre.js"></script>
         <script src="js/directives/onFileChange.js"></script>
@@ -58,7 +57,7 @@
                 </form>
 
                 <h4 class="page-header">Data Sets</h4>
-{{ selectedDatasets}}
+
                 <div class="container">
                     <div class="row">
                         <div class="col-lg-offset-2 col-lg-8">
@@ -78,7 +77,7 @@
                                 <td>
                                     <input type="checkbox" ng-click="selectDataset(set.measID)" ng-checked="selectedDatasets.indexOf(set.measID) > -1">
                                 </td>
-                                <td>
+                                <td class="buttonCell" ng-click="selectDataset(set.measID)">
                                     {{ set.measID }}
                                 </td>
                             </tr>
@@ -93,7 +92,7 @@
 
                 <div class="container" ng-show="expList.length !== 0 && geneList.length !== 0">
                     <div class="row">
-                        <div class=col-lg-6>
+                        <div class="col-lg-6">
                             <table class="table table-striped">
                                 <thead>
                                 <tr>
@@ -110,14 +109,14 @@
                                     <td>
                                         <input type="checkbox" ng-click="selectExp(exp.expID)" ng-checked="selectedExp.indexOf(exp.expID) > -1">
                                     </td>
-                                    <td>
+                                    <td class="buttonCell" ng-click="selectExp(exp.expID)">
                                         {{ exp.expID }}
                                     </td>
                                 </tr>
                                 </tbody>
                             </table>
                         </div>
-                        <div class=col-lg-6>
+                        <div class="col-lg-6">
                             <table class="table table-striped">
                                 <thead>
                                 <tr>
@@ -132,9 +131,9 @@
                                 <tbody>
                                 <tr ng-repeat="gene in geneList.slice(0, 49) | filter:geneFilter">
                                     <td>
-                                        <input type="checkbox" ng-click="selectGene(gene.geneID)" ng-checked="selectGene.indexOf(gene.geneID) > -1">
+                                        <input type="checkbox" ng-click="selectGene(gene.geneID)" ng-checked="selectedGenes.indexOf(gene.geneID) > -1">
                                     </td>
-                                    <td>
+                                    <td class="buttonCell" ng-click="selectGene(gene.geneID)">
                                         {{ gene.geneID }}
                                     </td>
                                 </tr>
@@ -150,24 +149,20 @@
                     <small ng-show="isUploading">Uploading data..</small>
                 </h2>
 
-                <table class="table table-hover">
+                <table class="table table-striped">
                     <thead>
                         <tr>
-                            <th></th>
-                            <th ng-repeat="exp in selectedExp"
-                                ng-class="{ orderColumn : predicate === exp, reverse : reverse === true }">
-                                <button ng-click="order(exp, !reverse)">
-                                    {{ exp }}
-                                </button>
+                            <th class="buttonCell"
+                                ng-repeat="(header, value) in dataRows[0]"
+                                ng-class="{ orderColumn : predicate === header, reverse : reverse === true }"
+                                ng-click="order(header, !reverse)">
+                                    {{ header }}
                             </th>
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="gene in selectedGenes">
-                            <td>
-                                {{ gene }}
-                            </td>
-                            <td ng-repeat="(exp, value) in dataRows[gene]">
+                        <tr ng-repeat="row in dataRows">
+                            <td ng-repeat="(header, value) in row">
                                 {{ value }}
                             </td>
                         </tr>

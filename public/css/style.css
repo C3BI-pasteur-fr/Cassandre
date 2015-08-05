@@ -7,14 +7,16 @@ body {
     padding-top: 50px;
 }
 
-th button {
-    background: transparent;
-    border: 0;
-    padding: 0;
+.buttonCell {
+    cursor: pointer;    
+}
+
+.buttonCell:hover {
+    color: #004C8F;
 }
 
 .orderColumn {
-    color: #4169E1;
+    color: #004C8F;
 }
 
 .orderColumn::after {

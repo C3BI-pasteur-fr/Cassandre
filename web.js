@@ -99,7 +99,7 @@ var router = function(app) {
 
     /* list all the values in a given measurement filtered by gene(s) and/or experiment(s) */
     app.get('/api/measurements/:mId', function(req, res, next) {
-        var filter = {'measId': decodeURIComponent(req.params.mId)};
+        var filter = {'measId': { '$in' : decodeURIComponent(req.params.mId).split(',') } };
 
         if(req.query.geneId){
             var geneIds = typeof req.query.geneId == 'string' ? [req.query.geneId] : req.query.geneId;

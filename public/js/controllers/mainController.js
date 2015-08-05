@@ -8,8 +8,8 @@ angular.module("Cassandre").controller("mainController", [
     "$scope", "$filter", "$http", "xlsxToJson", "tsvToJson", "database", "measData", "geneData", "expData", "dataValues",
     function ($scope, $filter, $http, xlsxToJson, tsvToJson, database, measData, geneData, expData, dataValues) {
 
-    $scope.data = [];                   // Data to display
-    $scope.dataRows = {};               // Date formatted by rows
+    $scope.dataCells = [];              // Data from database
+    $scope.dataRows = [];               // Data formatted in rows
     $scope.dataFile = [];               // Content of the uploaded File
     $scope.datasets = measData.query(); // Names of the differents database sets
     $scope.isLoading = false;           // Marker to know when data are loading
@@ -32,21 +32,21 @@ angular.module("Cassandre").controller("mainController", [
     $scope.selectedDatasets = [];
     $scope.selectedGenes = [];
     $scope.selectedExp = [];
-    
+
     // Lists from the request
     $scope.geneList = [];
     $scope.expList = [];
     $scope.selectedGene = "";
-    
+
     // Filters
     $scope.datasetFilter = "";
     $scope.expFilter = "";
     $scope.geneFilter = "";
-    
+
     // Functions to select dataset, exp or gene
     $scope.selectDataset = function (dataset) {
         var index = $scope.selectedDatasets.indexOf(dataset);
-        
+
         if ( index > -1) {
             $scope.selectedDatasets.splice(index, 1);
         }
@@ -57,7 +57,7 @@ angular.module("Cassandre").controller("mainController", [
 
     $scope.selectExp = function (exp) {
         var index = $scope.selectedExp.indexOf(exp);
-        
+
         if ( index > -1) {
             $scope.selectedExp.splice(index, 1);
         }
@@ -65,10 +65,10 @@ angular.module("Cassandre").controller("mainController", [
             $scope.selectedExp.push(exp);
         }
     };
-    
+
     $scope.selectGene = function (gene) {
         var index = $scope.selectedGenes.indexOf(gene);
-        
+
         if ( index > -1) {
             $scope.selectedGenes.splice(index, 1);
         }
@@ -90,28 +90,57 @@ angular.module("Cassandre").controller("mainController", [
 
     // Get the data for the selected genes and/or exp (for only on measurement currently)
     $scope.getData = function () {
-        $scope.data = dataValues.query({
-            mId: encodeURIComponent(Object.keys($scope.selectedDatasets)[0]),
+        $scope.dataCells = dataValues.query({
+            mId: encodeURIComponent($scope.selectedDatasets),
             expId: $scope.selectedExp,
             geneId: $scope.selectedGenes
         }, function(data) {
-            
+
             // Format data into rows to ease the display in the view
+            $scope.dataRows = [];
+            var headers = [];
+            var rows = {};
+            
+            // List the headers
             data.forEach(function (cell) {
-                var gene = cell.geneId;
-                $scope.dataRows[gene] = {};
-                data.forEach(function (cell) {
-                    $scope.dataRows[gene][cell.expId] = cell.value;
-                });
+                if (headers.indexOf(cell.expId) === -1) {
+                    headers.push(cell.expId);
+                }
             });
+
+            // Build the rows
+            data.forEach(function (cell) {
+            
+                // Add the row if not yet present
+                if (!rows[cell.geneId]) {
+                    rows[cell.geneId] = {};
+                    headers.forEach(function (header) {
+                        rows[cell.geneId][header] = null;
+                    });
+                }
+
+                // Add the value at the right place
+                rows[cell.geneId][cell.expId] = cell.value;
+            });
+
+            // Then format rows in an array of objects with headers as keys
+            for (var geneId in rows) {
+                var newRow = { "ID": geneId };
+            
+                for (var header in rows[geneId]) {
+                    newRow[header] = rows[geneId][header];
+                };
+            
+                $scope.dataRows.push(newRow);
+            }
         });
     };
-
+    
     // Ordering function
     $scope.order = function (header, reverse) {
         $scope.predicate = header;
         $scope.reverse = reverse;
-        $scope.data = $filter("orderBy")($scope.data, $scope.predicate, $scope.reverse);
+        $scope.dataRows = $filter("orderBy")($scope.dataRows, $scope.predicate, $scope.reverse);
     };
 
     // Parse the dataFile depending on its type
@@ -139,7 +168,7 @@ angular.module("Cassandre").controller("mainController", [
 
     // Display a part of the file in the results section
     $scope.displayFile = function () {
-        $scope.data = $scope.dataFile.slice(0, 49);
+        $scope.dataRows = $scope.dataFile.slice(0, 49);
     };
 
     // Send the files to the server using a FormData
@@ -159,7 +188,7 @@ angular.module("Cassandre").controller("mainController", [
         .success(function (message) {
             $scope.isUploading = false;
             alert(message);
-            
+
         })
         .error(function (message) {
             $scope.isUploading = false;

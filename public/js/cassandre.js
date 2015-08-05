@@ -4,8 +4,4 @@
  *
  */
 
-angular.module("Cassandre", ["ngResource"])
-
-// ----- Initialisation ------------------------------------------------- //
-
-// ---------------------------------------------------------------------- //
+angular.module("Cassandre", ["ngResource"]);
