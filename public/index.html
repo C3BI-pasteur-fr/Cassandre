@@ -15,6 +15,7 @@
         <script src="js/directives/onFileChange.js"></script>
         <script src="js/services/xlsxToJson.js"></script>
         <script src="js/services/tsvToJson.js"></script>
+        <script src="js/services/jsonToTsv.js"></script>
         <script src="js/services/database.js"></script>
         <script src="js/services/data.js"></script>
         <script src="js/controllers/mainController.js"></script>
@@ -33,7 +34,7 @@
             </nav>
 
             <section ng-controller="mainController">
-                
+
                 <h4 class="page-header">Add Data</h4>
 
                 <form id="uploadForm"
@@ -50,8 +51,8 @@
                     </p>
 
                     <div class="btn-group">
-                        <button class="btn btn-default" type="button" ng-click="displayFile()">Display</button>
                         <input class="btn btn-default" type="submit" value="Send" ng-disabled="isUploading">
+                        <button class="btn btn-default" type="button" ng-click="displayFile()">Display</button>
                         <button class="btn btn-default" type="button" ng-click="resetUpload()">Reset</button>
                     </div>
                 </form>
@@ -65,19 +66,34 @@
                             <thead>
                             <tr>
                                 <th colspan=2>
-                                    <input class="form-control"
-                                           type="text"
-                                           ng-model="datasetFilter"
-                                           placeholder="Search...">
+                                    <form class="form-inline">
+                                        <div class="input-group">
+                                            <span class="input-group-btn">
+                                                <button class="btn btn-default" type="button" ng-click="selectAll('datasets')">Check All</button>
+                                            </span>
+                                            <input class="form-control"
+                                                   id="datasetsFilter"
+                                                   type="text"
+                                                   ng-model="filters.datasets"
+                                                   placeholder="Search...">
+                                        </div>
+                                        <div class="input-group" id="datasetsLimit">
+                                            <span class="input-group-addon">Limit</span>
+                                            <input class="form-control"
+                                                   type="number"
+                                                   ng-model="limits.datasets"
+                                                   min=0>
+                                        </div>
+                                    </form>
                                 </th>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr ng-repeat="set in datasets | filter:datasetFilter">
+                            <tr ng-repeat="set in lists.datasets.slice(0, limits.datasets) | filter:filters.datasets">
                                 <td>
-                                    <input type="checkbox" ng-click="selectDataset(set.measID)" ng-checked="selectedDatasets.indexOf(set.measID) > -1">
+                                    <input type="checkbox" ng-click="select('datasets', set.measID)" ng-checked="selected.datasets.indexOf(set.measID) > -1">
                                 </td>
-                                <td class="buttonCell" ng-click="selectDataset(set.measID)">
+                                <td class="buttonCell" ng-click="select('datasets', set.measID)">
                                     {{ set.measID }}
                                 </td>
                             </tr>
@@ -87,29 +103,45 @@
                     </div>
                     <button class="btn btn-default" type="button" ng-click="searchData()">Search</button>
                 </div>
-
+{{ lists.datasets }}
+{{ selected.datasets }}
                 <h4 class="page-header">Data</h4>
 
-                <div class="container" ng-show="expList.length !== 0 && geneList.length !== 0">
+                <div class="container" ng-show="lists.exp.length !== 0 && lists.genes.length !== 0">
                     <div class="row">
                         <div class="col-lg-6">
                             <table class="table table-striped">
                                 <thead>
                                 <tr>
                                     <th colspan=2>
-                                        <input class="form-control"
-                                               type="text"
-                                               ng-model="expFilter"
-                                               placeholder="Search...">
+                                        <form class="form-inline">
+                                            <div class="input-group">
+                                                <span class="input-group-btn">
+                                                    <button class="btn btn-default" type="button" ng-click="selectAll('exp')">Check All</button>
+                                                </span>
+                                                <input class="form-control"
+                                                       id="expFilter"
+                                                       type="text"
+                                                       ng-model="filters.exp"
+                                                       placeholder="Search...">
+                                            </div>
+                                            <div class="input-group" id="limits.exp">
+                                                <span class="input-group-addon">Limit</span>
+                                                <input class="form-control"
+                                                       type="number"
+                                                       ng-model="limits.exp"
+                                                       min=0>
+                                            </div>
+                                        </form>
                                     </th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr ng-repeat="exp in expList.slice(0, 49) | filter:expFilter">
+                                <tr ng-repeat="exp in lists.exp.slice(0, limits.exp) | filter:filters.exp">
                                     <td>
-                                        <input type="checkbox" ng-click="selectExp(exp.expID)" ng-checked="selectedExp.indexOf(exp.expID) > -1">
+                                        <input type="checkbox" ng-click="select('exp', exp.expID)" ng-checked="selected.exp.indexOf(exp.expID) > -1">
                                     </td>
-                                    <td class="buttonCell" ng-click="selectExp(exp.expID)">
+                                    <td class="buttonCell" ng-click="select('exp', exp.expID)">
                                         {{ exp.expID }}
                                     </td>
                                 </tr>
@@ -121,19 +153,34 @@
                                 <thead>
                                 <tr>
                                     <th colspan=2>
-                                        <input class="form-control"
-                                               type="text"
-                                               ng-model="geneFilter"
-                                               placeholder="Search...">
+                                        <form class="form-inline">
+                                            <div class="input-group">
+                                                <span class="input-group-btn">
+                                                    <button class="btn btn-default" type="button" ng-click="selectAll('genes')">Check All</button>
+                                                </span>
+                                                <input class="form-control"
+                                                       id="geneFilter"
+                                                       type="text"
+                                                       ng-model="filters.genes"
+                                                       placeholder="Search...">
+                                            </div>
+                                            <div class="input-group" id="limits.genes">
+                                                <span class="input-group-addon">Limit</span>
+                                                <input class="form-control"
+                                                       type="number"
+                                                       ng-model="limits.genes"
+                                                       min=0>
+                                            </div>
+                                        </form>
                                     </th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr ng-repeat="gene in geneList.slice(0, 49) | filter:geneFilter">
+                                <tr ng-repeat="gene in lists.genes.slice(0, limits.genes) | filter:filters.genes">
                                     <td>
-                                        <input type="checkbox" ng-click="selectGene(gene.geneID)" ng-checked="selectedGenes.indexOf(gene.geneID) > -1">
+                                        <input type="checkbox" ng-click="select('genes', gene.geneID)" ng-checked="selected.genes.indexOf(gene.geneID) > -1">
                                     </td>
-                                    <td class="buttonCell" ng-click="selectGene(gene.geneID)">
+                                    <td class="buttonCell" ng-click="select('genes', gene.geneID)">
                                         {{ gene.geneID }}
                                     </td>
                                 </tr>
@@ -148,6 +195,13 @@
                     <small ng-show="isLoading">Loading data..</small>
                     <small ng-show="isUploading">Uploading data..</small>
                 </h2>
+
+                <a class="pull-right"
+                   ng-href="{{ dataHref }}"
+                   download="Data.txt"
+                   ng-click="download()"
+                   ng-show="dataRows.length > 0"><span class="glyphicon glyphicon-download"></span> Download in TSV
+                </a>
 
                 <table class="table table-striped">
                     <thead>

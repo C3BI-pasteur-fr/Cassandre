@@ -26,3 +26,15 @@ body {
 .orderColumn.reverse::after {
     content: "▼";
 }
+
+#datasetsFilter {
+    width: 500px;
+}
+
+#expFilter, #geneFilter {
+    width: 300px;
+}
+
+#datasetsLimit, #expLimit, #geneLimit {
+    width: 130px;
+}

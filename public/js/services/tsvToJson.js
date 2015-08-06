@@ -1,6 +1,7 @@
+
 /*
  * Service to read and parse a TSV file.
- * Return the content in JSON, formatted for the database.
+ * Return the content in JSON, formatted in cells for the database.
  *
  */
 
