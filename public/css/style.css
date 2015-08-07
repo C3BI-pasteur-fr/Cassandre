@@ -31,10 +31,10 @@ body {
     width: 500px;
 }
 
-#expFilter, #geneFilter {
+#expFilter, #genesFilter {
     width: 300px;
 }
 
-#datasetsLimit, #expLimit, #geneLimit {
+#datasetsLimit, #expLimit, #genesLimit {
     width: 130px;
 }

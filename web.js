@@ -29,11 +29,7 @@ var router = function(app) {
                 if (err) {
                     return res.status(500).send("Error with the database : " + err.message);
                 }
-                return res.status(200).send(list.map(function(measID) {
-                    return {
-                        "measID": measID
-                    }
-                }));
+                return res.status(200).send(list);
             });
     });
 
@@ -46,11 +42,7 @@ var router = function(app) {
                 if (err) {
                     return res.status(500).send("Error with the database : " + err.message);
                 }
-                return res.status(200).send(list.map(function(expID) {
-                    return {
-                        "expID": expID
-                    }
-                }));
+                return res.status(200).send(list);
             });
     });
 
@@ -63,11 +55,7 @@ var router = function(app) {
                 if (err) {
                     return res.status(500).send("Error with the database : " + err.message);
                 }
-                return res.status(200).send(list.map(function(geneID) {
-                    return {
-                        "geneID": geneID
-                    }
-                }));
+                return res.status(200).send(list);
             });
     });
 

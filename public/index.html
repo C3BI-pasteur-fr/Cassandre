@@ -89,12 +89,9 @@
                             </tr>
                             </thead>
                             <tbody>
-                            <tr ng-repeat="set in lists.datasets.slice(0, limits.datasets) | filter:filters.datasets">
-                                <td>
-                                    <input type="checkbox" ng-click="select('datasets', set.measID)" ng-checked="selected.datasets.indexOf(set.measID) > -1">
-                                </td>
-                                <td class="buttonCell" ng-click="select('datasets', set.measID)">
-                                    {{ set.measID }}
+                            <tr ng-repeat="set in filtered('datasets')">
+                                <td class="buttonCell" ng-class="{ info: selected.datasets.indexOf(set) > -1 }" ng-click="select('datasets', set)">
+                                    {{ set }}
                                 </td>
                             </tr>
                             </tbody>
@@ -103,8 +100,7 @@
                     </div>
                     <button class="btn btn-default" type="button" ng-click="searchData()">Search</button>
                 </div>
-{{ lists.datasets }}
-{{ selected.datasets }}
+
                 <h4 class="page-header">Data</h4>
 
                 <div class="container" ng-show="lists.exp.length !== 0 && lists.genes.length !== 0">
@@ -125,7 +121,7 @@
                                                        ng-model="filters.exp"
                                                        placeholder="Search...">
                                             </div>
-                                            <div class="input-group" id="limits.exp">
+                                            <div class="input-group" id="expLimit">
                                                 <span class="input-group-addon">Limit</span>
                                                 <input class="form-control"
                                                        type="number"
@@ -137,12 +133,9 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr ng-repeat="exp in lists.exp.slice(0, limits.exp) | filter:filters.exp">
-                                    <td>
-                                        <input type="checkbox" ng-click="select('exp', exp.expID)" ng-checked="selected.exp.indexOf(exp.expID) > -1">
-                                    </td>
-                                    <td class="buttonCell" ng-click="select('exp', exp.expID)">
-                                        {{ exp.expID }}
+                                <tr ng-repeat="exp in filtered('exp')">
+                                    <td class="buttonCell" ng-class="{ info: selected.exp.indexOf(exp) > -1 }" ng-click="select('exp', exp)">
+                                        {{ exp }}
                                     </td>
                                 </tr>
                                 </tbody>
@@ -159,12 +152,12 @@
                                                     <button class="btn btn-default" type="button" ng-click="selectAll('genes')">Check All</button>
                                                 </span>
                                                 <input class="form-control"
-                                                       id="geneFilter"
+                                                       id="genesFilter"
                                                        type="text"
                                                        ng-model="filters.genes"
                                                        placeholder="Search...">
                                             </div>
-                                            <div class="input-group" id="limits.genes">
+                                            <div class="input-group" id="genesLimit">
                                                 <span class="input-group-addon">Limit</span>
                                                 <input class="form-control"
                                                        type="number"
@@ -176,12 +169,9 @@
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr ng-repeat="gene in lists.genes.slice(0, limits.genes) | filter:filters.genes">
-                                    <td>
-                                        <input type="checkbox" ng-click="select('genes', gene.geneID)" ng-checked="selected.genes.indexOf(gene.geneID) > -1">
-                                    </td>
-                                    <td class="buttonCell" ng-click="select('genes', gene.geneID)">
-                                        {{ gene.geneID }}
+                                <tr ng-repeat="gene in filtered('genes')">
+                                    <td class="buttonCell" ng-class="{ info: selected.genes.indexOf(gene) > -1 }" ng-click="select('genes', gene)">
+                                        {{ gene }}
                                     </td>
                                 </tr>
                                 </tbody>

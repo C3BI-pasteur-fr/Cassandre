@@ -42,6 +42,16 @@ angular.module("Cassandre").controller("mainController", [
         exp: []
     };
 
+    // Return the filtered lists that appear in the menus
+    $scope.filtered = function (list) {
+        var filteredList = $scope.lists[list];
+
+        filteredList = $filter("filter")(filteredList, $scope.filters[list]);
+        filteredList = $filter("limitTo")(filteredList, $scope.limits[list]);
+
+        return filteredList;
+    };
+
     // Filters
     $scope.filters = {
         datasets: "",
@@ -56,7 +66,7 @@ angular.module("Cassandre").controller("mainController", [
         exp: 50
     };
 
-    // Functions to select dataset, exp or gene
+    // Function to select dataset, exp or gene
     $scope.select = function (list, element) {
         var index = $scope.selected[list].indexOf(element);
 
@@ -68,10 +78,10 @@ angular.module("Cassandre").controller("mainController", [
         }
     };
 
-    // Functions to check/uncheck all
+    // Function to check/uncheck all
     $scope.selectAll = function (list) {
-        if ($scope.selected[list].length < $scope.lists[list].length) {
-            $scope.selected[list] = $scope.lists[list];
+        if ($scope.selected[list].length !== $scope.filtered(list).length) {
+            $scope.selected[list] = $scope.filtered(list);
         }
         else {
             $scope.selected[list] = [];
