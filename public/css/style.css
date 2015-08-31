@@ -35,6 +35,6 @@ body {
     width: 300px;
 }
 
-#datasetsLimit, #expLimit, #genesLimit {
+#datasetsLimit, #expLimit, #genesLimit, #resultsLimit {
     width: 130px;
 }

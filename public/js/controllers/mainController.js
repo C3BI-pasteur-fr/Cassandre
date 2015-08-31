@@ -42,16 +42,6 @@ angular.module("Cassandre").controller("mainController", [
         exp: []
     };
 
-    // Return the filtered lists that appear in the menus
-    $scope.filtered = function (list) {
-        var filteredList = $scope.lists[list];
-
-        filteredList = $filter("filter")(filteredList, $scope.filters[list]);
-        filteredList = $filter("limitTo")(filteredList, $scope.limits[list]);
-
-        return filteredList;
-    };
-
     // Filters
     $scope.filters = {
         datasets: "",
@@ -63,7 +53,18 @@ angular.module("Cassandre").controller("mainController", [
     $scope.limits = {
         datasets: 50,
         genes: 50,
-        exp: 50
+        exp: 50,
+        results: 50
+    };
+    
+    // Return the filtered lists that appear in the menus
+    $scope.filtered = function (list) {
+        var filteredList = $scope.lists[list];
+
+        filteredList = $filter("filter")(filteredList, $scope.filters[list]);
+        filteredList = $filter("limitTo")(filteredList, $scope.limits[list]);
+
+        return filteredList;
     };
 
     // Function to select dataset, exp or gene

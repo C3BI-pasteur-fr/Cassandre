@@ -184,6 +184,14 @@
                 <h2 class="page-header">Results
                     <small ng-show="isLoading">Loading data..</small>
                     <small ng-show="isUploading">Uploading data..</small>
+                    <small ng-show="dataRows.length > 0">{{ dataRows.slice(0, limits.results).length }} lines displayed on {{ dataRows.length }}</small>
+                    <small class="pull-right">
+                        <label for="resultsLimit">Limit</label>
+                        <input id="resultsLimit"
+                               type="number"
+                               ng-model="limits.results"
+                               min=0>
+                    </small>
                 </h2>
 
                 <a class="pull-right"
@@ -205,7 +213,7 @@
                         </tr>
                     </thead>
                     <tbody>
-                        <tr ng-repeat="row in dataRows">
+                        <tr ng-repeat="row in dataRows.slice(0, limits.results)">
                             <td ng-repeat="(header, value) in row">
                                 {{ value }}
                             </td>
