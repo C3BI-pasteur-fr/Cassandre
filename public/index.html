@@ -34,78 +34,41 @@
             </nav>
 
             <section ng-controller="mainController">
+                
+                <div class="container-fluid">
 
-                <h4 class="page-header">Add Data</h4>
-
-                <form id="uploadForm"
-                      name="uploadForm"
-                      class="form-inline"
-                      ng-submit="sendData()">
-
-                    <input id="dataFile"
-                           type=file
-                           on-file-change="parseFile()"
-                           required>
-                    <p class="help-block">Allowed formats :
-                        <strong>xlsx, tsv, txt</strong>
-                    </p>
-
-                    <div class="btn-group">
-                        <input class="btn btn-default" type="submit" value="Send" ng-disabled="isUploading">
-                        <button class="btn btn-default" type="button" ng-click="displayFile()">Display</button>
-                        <button class="btn btn-default" type="button" ng-click="resetUpload()">Reset</button>
-                    </div>
-                </form>
-
-                <h4 class="page-header">Data Sets</h4>
-
-                <div class="container">
-                    <div class="row">
-                        <div class="col-lg-offset-2 col-lg-8">
-                        <table class="table table-striped">
-                            <thead>
-                            <tr>
-                                <th colspan=2>
-                                    <form class="form-inline">
-                                        <div class="input-group">
-                                            <span class="input-group-btn">
-                                                <button class="btn btn-default" type="button" ng-click="selectAll('datasets')">Check All</button>
-                                            </span>
-                                            <input class="form-control"
-                                                   id="datasetsFilter"
-                                                   type="text"
-                                                   ng-model="filters.datasets"
-                                                   placeholder="Search...">
-                                        </div>
-                                        <div class="input-group" id="datasetsLimit">
-                                            <span class="input-group-addon">Limit</span>
-                                            <input class="form-control"
-                                                   type="number"
-                                                   ng-model="limits.datasets"
-                                                   min=0>
-                                        </div>
-                                    </form>
-                                </th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr ng-repeat="set in filtered('datasets')">
-                                <td class="buttonCell" ng-class="{ info: selected.datasets.indexOf(set) > -1 }" ng-click="select('datasets', set)">
-                                    {{ set }}
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
+                    <h3 class="page-header">
+                        Add Data
+                        <small ng-show="isUploading">Uploading data..</small>
+                    </h3>
+    
+                    <form id="uploadForm"
+                        name="uploadForm"
+                        class="form-inline"
+                        ng-submit="sendData()">
+    
+                        <input id="dataFile"
+                            type=file
+                            on-file-change="parseFile()"
+                            required>
+                        <p class="help-block">Allowed formats :
+                            <strong>xlsx, tsv, txt</strong>
+                        </p>
+    
+                        <div class="btn-group">
+                            <input class="btn btn-default" type="submit" value="Send" ng-disabled="isUploading">
+                            <button class="btn btn-default" type="button" ng-click="displayFile()">Display</button>
+                            <button class="btn btn-default" type="button" ng-click="resetUpload()">Reset</button>
                         </div>
-                    </div>
-                    <button class="btn btn-default" type="button" ng-click="searchData()">Search</button>
-                </div>
-
-                <h4 class="page-header">Data</h4>
-
-                <div class="container" ng-show="lists.exp.length !== 0 && lists.genes.length !== 0">
+                    </form>
+                    
+                    <h3 class="page-header">
+                        Data Sets
+                        <small>{{ lists.datasets.slice(0, limits.datasets).length }} lines displayed on {{ lists.datasets.length }}</small>
+                    </h3>
+                    
                     <div class="row">
-                        <div class="col-lg-6">
+                        <div class="col-lg-offset-2 col-lg-7">
                             <table class="table table-striped">
                                 <thead>
                                 <tr>
@@ -113,7 +76,53 @@
                                         <form class="form-inline">
                                             <div class="input-group">
                                                 <span class="input-group-btn">
-                                                    <button class="btn btn-default" type="button" ng-click="selectAll('exp')">Check All</button>
+                                                    <button class="btn btn-default" type="button" ng-click="selectAll('datasets')">Select All</button>
+                                                </span>
+                                                <input class="form-control"
+                                                    id="datasetsFilter"
+                                                    type="text"
+                                                    ng-model="filters.datasets"
+                                                    placeholder="Search...">
+                                            </div>
+                                            <div class="input-group" id="datasetsLimit">
+                                                <span class="input-group-addon">Limit</span>
+                                                <input class="form-control"
+                                                    type="number"
+                                                    ng-model="limits.datasets"
+                                                    min=0>
+                                            </div>
+                                        </form>
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody>
+                                <tr ng-repeat="set in filtered('datasets')">
+                                    <td class="buttonCell" ng-class="{ info: selected.datasets.indexOf(set) > -1 }" ng-click="select('datasets', set)">
+                                        {{ set }}
+                                    </td>
+                                </tr>
+                                </tbody>
+                            </table>
+                            <button class="btn btn-default" type="button" ng-click="searchData()">Search</button>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-lg-6">
+
+                            <h3 class="page-header">
+                                Experiments
+                                <small>{{ lists.exp.slice(0, limits.exp).length }} lines displayed on {{ lists.exp.length }}</small>
+                            </h3>
+
+                            <table class="table table-striped" ng-show="lists.exp.length !== 0 && lists.genes.length !== 0">
+                                <thead>
+                                <tr>
+                                    <th colspan=2>
+                                        <form class="form-inline">
+                                            <div class="input-group">
+                                                <span class="input-group-btn">
+                                                    <button class="btn btn-default" type="button" ng-click="selectAll('exp')">Select All</button>
                                                 </span>
                                                 <input class="form-control"
                                                        id="expFilter"
@@ -142,14 +151,20 @@
                             </table>
                         </div>
                         <div class="col-lg-6">
-                            <table class="table table-striped">
+
+                            <h3 class="page-header">
+                                Genes
+                                <small>{{ lists.genes.slice(0, limits.genes).length }} lines displayed on {{ lists.genes.length }}</small>
+                            </h3>
+
+                            <table class="table table-striped" ng-show="lists.exp.length !== 0 && lists.genes.length !== 0">
                                 <thead>
                                 <tr>
                                     <th colspan=2>
                                         <form class="form-inline">
                                             <div class="input-group">
                                                 <span class="input-group-btn">
-                                                    <button class="btn btn-default" type="button" ng-click="selectAll('genes')">Check All</button>
+                                                    <button class="btn btn-default" type="button" ng-click="selectAll('genes')">Select All</button>
                                                 </span>
                                                 <input class="form-control"
                                                        id="genesFilter"
@@ -179,47 +194,46 @@
                         </div>
                     </div>
                     <button class="btn btn-default" type="button" ng-click=getData()>Display</button>
+
+                    <h2 class="page-header">Results
+                        <small ng-show="isLoading">Loading data..</small>
+                        <small ng-show="dataRows.length > 0">{{ dataRows.slice(0, limits.results).length }} lines displayed on {{ dataRows.length }}</small>
+                        <small class="pull-right">
+                            <label for="resultsLimit">Limit</label>
+                            <input id="resultsLimit"
+                                   type="number"
+                                   ng-model="limits.results"
+                                   min=0>
+                        </small>
+                    </h2>
+    
+                    <a class="pull-right"
+                       ng-href="{{ dataHref }}"
+                       download="Data.txt"
+                       ng-click="download()"
+                       ng-show="dataRows.length > 0"><span class="glyphicon glyphicon-download"></span> Download in TSV
+                    </a>
+    
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th class="buttonCell"
+                                    ng-repeat="(header, value) in dataRows[0]"
+                                    ng-class="{ orderColumn : predicate === header, reverse : reverse === true }"
+                                    ng-click="order(header, !reverse)">
+                                        {{ header }}
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="row in dataRows.slice(0, limits.results)">
+                                <td ng-repeat="(header, value) in row">
+                                    {{ value }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
                 </div>
-
-                <h2 class="page-header">Results
-                    <small ng-show="isLoading">Loading data..</small>
-                    <small ng-show="isUploading">Uploading data..</small>
-                    <small ng-show="dataRows.length > 0">{{ dataRows.slice(0, limits.results).length }} lines displayed on {{ dataRows.length }}</small>
-                    <small class="pull-right">
-                        <label for="resultsLimit">Limit</label>
-                        <input id="resultsLimit"
-                               type="number"
-                               ng-model="limits.results"
-                               min=0>
-                    </small>
-                </h2>
-
-                <a class="pull-right"
-                   ng-href="{{ dataHref }}"
-                   download="Data.txt"
-                   ng-click="download()"
-                   ng-show="dataRows.length > 0"><span class="glyphicon glyphicon-download"></span> Download in TSV
-                </a>
-
-                <table class="table table-striped">
-                    <thead>
-                        <tr>
-                            <th class="buttonCell"
-                                ng-repeat="(header, value) in dataRows[0]"
-                                ng-class="{ orderColumn : predicate === header, reverse : reverse === true }"
-                                ng-click="order(header, !reverse)">
-                                    {{ header }}
-                            </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr ng-repeat="row in dataRows.slice(0, limits.results)">
-                            <td ng-repeat="(header, value) in row">
-                                {{ value }}
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
             </section>
         </div>
     </body>

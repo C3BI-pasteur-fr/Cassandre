@@ -108,9 +108,13 @@ var router = function(app) {
 
     // load measurements file
     app.post('/api/measurements', function (req, res) {
-      res.setHeader('Content-Type', 'application/json');
-      res.send('file ' + req.files.dataFile.name);
-      loadMeasFile(req.files.dataFile.path);
+        loadMeasFile(req.files.dataFile.path, req.files.dataFile.mimetype, function (err) {
+            if (err) {
+                return res.status(400).send(err.message);
+            }
+
+            return res.status(200).send("Data successfully stored");
+        });
     });
 };
 

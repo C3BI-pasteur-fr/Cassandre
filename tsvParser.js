@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /*
- * Read a tsv data file and turn it into a array of objects
+ * Read a tsv data file and turn it into a array of cells
  * to insert in a Mongo database.
  *
  */
@@ -14,7 +14,7 @@ module.exports = function (path, callback) {
             return callback(err);
         }
 
-        var collections = [];
+        var cells = [];
         var data = tsvData
             .split(/\r\n|\n/g)                  // Get the lines into an array
             .map(function (element) {
@@ -25,7 +25,7 @@ module.exports = function (path, callback) {
 
         data.forEach(function (row) {
             for (var i = 1; i < row.length; i++) {
-                collections.push({
+                cells.push({
                     column: headers[i],
                     row: row[0],
                     value: row[i]
@@ -33,6 +33,6 @@ module.exports = function (path, callback) {
             }
         });
 
-        return callback(null, collections);
+        return callback(null, cells);
     });
 };

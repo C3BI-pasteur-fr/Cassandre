@@ -51,10 +51,10 @@ angular.module("Cassandre").controller("mainController", [
 
     // Limits for display
     $scope.limits = {
-        datasets: 50,
-        genes: 50,
-        exp: 50,
-        results: 50
+        datasets: 10,
+        genes: 10,
+        exp: 10,
+        results: 10
     };
     
     // Return the filtered lists that appear in the menus

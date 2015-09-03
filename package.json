@@ -12,7 +12,8 @@
     "mongoose": "^4.0.5",
     "multer": "^0.1.8",
     "serve-static": "^1.10.0",
-    "underscore": "^1.8.3"
+    "underscore": "^1.8.3",
+    "xlsx": "^0.8.0"
   },
   "devDependencies": {},
   "scripts": {
