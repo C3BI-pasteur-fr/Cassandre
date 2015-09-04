@@ -1,3 +1,4 @@
+var path = require('path');
 var mongoose = require('mongoose');
 var _ = require('underscore');
 var exports = {};
@@ -50,23 +51,25 @@ var insertCells = function(fileName, cells, callback) {
     saveNextItem(cells);
 };
 
-var loadMeasFile = function(path, fileType, callback) {
+var loadMeasFile = function(filePath, fileType, callback) {
+    var fileName = path.basename(filePath, path.extname(filePath));
+    
     if (fileType === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
-        xlsxParser(path, function (err, cells) {
+        xlsxParser(filePath, function (err, cells) {
             if (err) {
                 return callback(err);
             }
             
-            return insertCells(path, cells, callback);
+            return insertCells(fileName, cells, callback);
         });
     }
     else {
-        tsvParser(path, function (err, cells) {
+        tsvParser(filePath, function (err, cells) {
             if (err) {
                 return callback(err);
             }
         
-            return insertCells(path, cells, callback);
+            return insertCells(fileName, cells, callback);
         });
     }
 };
