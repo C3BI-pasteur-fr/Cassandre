@@ -10,7 +10,6 @@ angular.module("Cassandre").controller("mainController", [
 
     $scope.dataCells = [];              // Data from database
     $scope.dataRows = [];               // Data formatted in rows
-    $scope.dataFile = [];               // Content of the uploaded File
     $scope.dataHref = "#";              // Data URI of the display table for the download
     $scope.isLoading = false;           // Marker to know when data are loading
     $scope.isUploading = false;         // Marker to know when data are uploading
@@ -56,7 +55,7 @@ angular.module("Cassandre").controller("mainController", [
         exp: 10,
         results: 10
     };
-    
+
     // Return the filtered lists that appear in the menus
     $scope.filtered = function (list) {
         var filteredList = $scope.lists[list];
@@ -166,14 +165,14 @@ angular.module("Cassandre").controller("mainController", [
 
         if (file.type === $scope.allowedTypes["xlsx"]) {
             xlsxToJson(file, function (err, json) {
-                $scope.dataFile = json;
+                $scope.dataRows = json;
                 $scope.$digest();
             });
         }
 
         else if (file.type === $scope.allowedTypes["tsv"] || file.type === $scope.allowedTypes["txt"]) {
             tsvToJson(file, function (err, json) {
-                $scope.dataFile = json;
+                $scope.dataRows = json;
                 $scope.$digest();
             });
         }
@@ -181,11 +180,6 @@ angular.module("Cassandre").controller("mainController", [
         else {
             alert("This file format is invalide.");
         }
-    };
-
-    // Display a part of the file in the results section
-    $scope.displayFile = function () {
-        $scope.dataRows = $scope.dataFile.slice(0, 49);
     };
 
     // Send the files to the server using a FormData

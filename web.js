@@ -12,7 +12,9 @@ var loadMeasFile = require('./measurement').loadMeasFile;
 
 var router = function(app) {
 
-    app.get('/api/measurements/', function(req, res, next) {
+    app.route('/api/measurements/')
+    
+    .get(function(req, res, next) {
         Measurement.collection.find().toArray(
             function(err, list) {
                 if (err) {
@@ -20,6 +22,17 @@ var router = function(app) {
                 }
                 return res.status(200).send(list);
             });
+    })
+    
+     // load measurements file
+    .post(function (req, res) {
+        loadMeasFile(req.files.dataFile.path, req.files.dataFile.mimetype, function (err) {
+            if (err) {
+                return res.status(400).send(err.message);
+            }
+
+            return res.status(200).send("Data successfully stored");
+        });
     });
 
     /* list all the measIds of the measurements collection */
@@ -103,17 +116,6 @@ var router = function(app) {
                 return res.status(500).send("Error with the database : " + err.message);
             }
             return res.status(200).send(list);
-        });
-    });
-
-    // load measurements file
-    app.post('/api/measurements', function (req, res) {
-        loadMeasFile(req.files.dataFile.path, req.files.dataFile.mimetype, function (err) {
-            if (err) {
-                return res.status(400).send(err.message);
-            }
-
-            return res.status(200).send("Data successfully stored");
         });
     });
 };

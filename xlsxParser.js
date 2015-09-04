@@ -39,11 +39,3 @@ module.exports = function (path, callback) {
         return callback(null, cells);
     });
 };
-
-//parse("/home/simon/Projects-Repositories/cassandre/example_data/analyses.xlsx", function (err, json) {
-//    if (err) {
-//        console.log("Error : \n" + err);
-//    }
-//
-//    console.log(json);
-//});

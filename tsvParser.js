@@ -16,10 +16,11 @@ module.exports = function (path, callback) {
 
         var cells = [];
         var data = tsvData
+            .trim()
             .split(/\r\n|\n/g)                  // Get the lines into an array
-            .map(function (element) {
-                return element.split("\t");     // Split each line into an array
-        })
+            .map(function (line) {
+                return line.split("\t");        // Split each line into an array
+            });
 
         var headers = data.shift();             // Separate headers from the rest
 

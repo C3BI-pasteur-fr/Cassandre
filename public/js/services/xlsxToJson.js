@@ -1,7 +1,7 @@
 
 /*
  * Service to read and parse a XLSX file.
- * Return the content in JSON format.
+ * Return the content in JSON, formatted in rows for the display.
  *
  */
 
