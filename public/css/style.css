@@ -7,12 +7,20 @@ body {
     padding-top: 50px;
 }
 
-.buttonCell {
+.buttonCell, .buttonCellHide, .buttonCellRemove{
     cursor: pointer;    
 }
 
 .buttonCell:hover {
     color: #004C8F;
+}
+
+.buttonCellHide:hover {
+    color: #6600CC;
+}
+
+.buttonCellRemove:hover {
+    color: #B80000;
 }
 
 .orderColumn {

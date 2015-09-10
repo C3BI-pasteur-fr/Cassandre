@@ -5,8 +5,8 @@
  */
 
 angular.module("Cassandre").controller("mainController", [
-    "$scope", "$filter", "$http", "xlsxToJson", "tsvToJson", "jsonToTsv", "database", "measData", "geneData", "expData", "dataValues",
-    function ($scope, $filter, $http, xlsxToJson, tsvToJson, jsonToTsv, database, measData, geneData, expData, dataValues) {
+    "$scope", "$filter", "$http", "xlsxToJson", "tsvToJson", "jsonToTsv", "database", "datasets", "genesList", "expList", "data",
+    function ($scope, $filter, $http, xlsxToJson, tsvToJson, jsonToTsv, database, datasets, genesList, expList, data) {
 
     $scope.dataCells = [];              // Data from database
     $scope.dataRows = [];               // Data formatted in rows
@@ -29,7 +29,7 @@ angular.module("Cassandre").controller("mainController", [
 
     // Lists from the request
     $scope.lists = {
-        datasets: measData.query(),
+        datasets: datasets.query(),
         genes: [],
         exp: []
     };
@@ -90,18 +90,18 @@ angular.module("Cassandre").controller("mainController", [
 
     // Get the lists for the given datasets
     $scope.searchData = function () {
-        $scope.lists.exp = expData.query({
+        $scope.lists.exp = expList.query({
             mId: encodeURIComponent($scope.selected.datasets)
         });
 
-        $scope.lists.genes = geneData.query({
+        $scope.lists.genes = genesList.query({
             mId: encodeURIComponent($scope.selected.datasets)
         });
     };
 
     // Get the data for the selected genes and/or exp (for only on measurement currently)
     $scope.getData = function () {
-        $scope.dataCells = dataValues.query({
+        $scope.dataCells = data.query({
             mId: encodeURIComponent($scope.selected.datasets),
             expId: $scope.selected.exp,
             geneId: $scope.selected.genes
@@ -146,6 +146,13 @@ angular.module("Cassandre").controller("mainController", [
             }
         });
     };
+    
+    ////////////////////////////////////////
+    // TODO
+    $scope.removeData = function (dataset) {
+        data.delete(dataset);
+    };
+    ////////////////////////////////////////
 
     // Ordering function
     $scope.order = function (header, reverse) {

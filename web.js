@@ -12,72 +12,58 @@ var loadMeasFile = require('./measurement').loadMeasFile;
 
 var router = function(app) {
 
+// ROUTES
+// =========================================================================
+
     app.route('/api/measurements/')
-    
+
+    // Get the list of datasets
     .get(function(req, res, next) {
-        Measurement.collection.find().toArray(
-            function(err, list) {
-                if (err) {
-                    return res.status(500).send("Error with the database : " + err.message);
-                }
-                return res.status(200).send(list);
-            });
+        Measurement.collection.distinct('measId', function(err, list) {
+            if (err) {
+                return res.status(500).send("Error with the database : " + err.message);
+            }
+            return res.status(200).send(list);
+        });
     })
-    
-     // load measurements file
+
+     // Insert the measurements file into the database
     .post(function (req, res) {
         loadMeasFile(req.files.dataFile.path, req.files.dataFile.mimetype, function (err) {
             if (err) {
                 return res.status(400).send(err.message);
             }
-
-            return res.status(200).send("Data successfully stored");
+            return res.status(200).send("Data successfully stored.");
         });
     });
 
-    /* list all the measIds of the measurements collection */
-    app.get('/api/measurements/list/', function(req, res, next) {
-        Measurement.collection.distinct('measId',
-            function(err, list) {
-                if (err) {
-                    return res.status(500).send("Error with the database : " + err.message);
-                }
-                return res.status(200).send(list);
-            });
-    });
+// =========================================================================
 
-    /* list all the expIds for a given measId of the measurements collection */
-    app.get('/api/measurements/:mId/exp/list/', function(req, res, next) {
+    app.route('/api/measurements/:mId/exp/')
+
+    // List all the columns for given datasets
+    .get(function (req, res, next) {
         Measurement.collection.distinct('expId', {
-                'measId': { '$in' : decodeURIComponent(req.params.mId).split(',') }
-            },
-            function(err, list) {
-                if (err) {
-                    return res.status(500).send("Error with the database : " + err.message);
-                }
-                return res.status(200).send(list);
-            });
+            'measId': { '$in' : decodeURIComponent(req.params.mId).split(',') }
+        },
+        function (err, list) {
+            if (err) {
+                return res.status(500).send("Error with the database : " + err.message);
+            }
+            return res.status(200).send(list);
+        });
     });
 
-    /* list all the geneIds for a given measId of the measurements collection */
-    app.get('/api/measurements/:mId/gene/list/', function(req, res, next) {
+// =========================================================================
+
+    app.route('/api/measurements/:mId/genes/')
+
+    // List all the lines for given datasets
+    .get(function (req, res, next) {
         Measurement.collection.distinct('geneId', {
-                'measId': { '$in' : decodeURIComponent(req.params.mId).split(',') }
-            },
-            function(err, list) {
-                if (err) {
-                    return res.status(500).send("Error with the database : " + err.message);
-                }
-                return res.status(200).send(list);
-            });
-    });
-
-    /* list all the values for a given experiment in a given measurement */
-    app.get('/api/measurements/:mId/exp/:expId', function(req, res, next) {
-        Measurement.collection.find({
-            'measId': req.params.mId,
-            'expId': req.params.expId
-        }).toArray(function(err, list) {
+            'measId': { '$in' : decodeURIComponent(req.params.mId).split(',') }
+        },
+        function (err, list) {
             if (err) {
                 return res.status(500).send("Error with the database : " + err.message);
             }
@@ -85,37 +71,41 @@ var router = function(app) {
         });
     });
 
-    /* list all the values for a given gene in a given measurement */
-    app.get('/api/measurements/:mId/gene/:geneId', function(req, res, next) {
-        Measurement.collection.find({
-            'measId': req.params.mId,
-            'geneId': req.params.geneId
-        }).toArray(function(err, list) {
-            if (err) {
-                return res.status(500).send("Error with the database : " + err.message);
-            }
-            return res.status(200).send(list);
-        });
-    });
+// =========================================================================
 
-    /* list all the values in a given measurement filtered by gene(s) and/or experiment(s) */
-    app.get('/api/measurements/:mId', function(req, res, next) {
+    app.route('/api/measurements/:mId')
+
+    // Get the values for given datasets, possibly filtered by lines and/or columns
+    .get(function (req, res, next) {
         var filter = {'measId': { '$in' : decodeURIComponent(req.params.mId).split(',') } };
 
-        if(req.query.geneId){
+        if (req.query.geneId){
             var geneIds = typeof req.query.geneId == 'string' ? [req.query.geneId] : req.query.geneId;
             filter['geneId'] = {'$in': geneIds};
         }
-        if(req.query.expId){
+
+        if (req.query.expId){
             var expIds = typeof req.query.expId == 'string' ? [req.query.expId] : req.query.expId;
             filter['expId'] = {'$in': expIds};
         }
 
-        Measurement.collection.find(filter).toArray(function(err, list) {
+        Measurement.collection.find(filter).toArray(function (err, list) {
             if (err) {
                 return res.status(500).send("Error with the database : " + err.message);
             }
             return res.status(200).send(list);
+        });
+    })
+
+    // Remove the given datasets from the database
+    .delete(function (req, res, next) {
+        var datasets = {'measId': { '$in' : decodeURIComponent(req.params.mId).split(',') } };
+        
+        Measurement.collection.remove(datasets, function (err, list) {
+            if (err) {
+                return res.status(500).send("Error with the database : " + err.message);
+            }
+            return res.status(200).send("Data successfully removed.");
         });
     });
 };
