@@ -33,7 +33,7 @@ var router = function(app) {
             if (err) {
                 return res.status(400).send(err.message);
             }
-            return res.status(200).send("Data successfully stored.");
+            return res.sendStatus(201);
         });
     });
 
@@ -76,7 +76,7 @@ var router = function(app) {
     app.route('/api/measurements/:mId')
 
     // Get the values for given datasets, possibly filtered by lines and/or columns
-    .get(function (req, res, next) {
+    .get(function (req, res) {
         var filter = {'measId': { '$in' : decodeURIComponent(req.params.mId).split(',') } };
 
         if (req.query.geneId){
@@ -98,15 +98,22 @@ var router = function(app) {
     })
 
     // Remove the given datasets from the database
-    .delete(function (req, res, next) {
-        var datasets = {'measId': { '$in' : decodeURIComponent(req.params.mId).split(',') } };
-        
-        Measurement.collection.remove(datasets, function (err, list) {
+    .delete(function (req, res) {
+        Measurement.collection.remove({
+            'measId': decodeURIComponent(req.params.mId)
+        }, function (err) {
             if (err) {
-                return res.status(500).send("Error with the database : " + err.message);
+                return res.status(500).send(err.message);
             }
-            return res.status(200).send("Data successfully removed.");
+            return res.sendStatus(200);
         });
+    })
+    
+    // Add or remove a field "hidden" for a given dataset
+    .patch(function (req, res) {
+        // UPDATE
+        // SET { hidden: true }
+        // or remove hidden field
     });
 };
 

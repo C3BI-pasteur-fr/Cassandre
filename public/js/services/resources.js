@@ -1,23 +1,45 @@
+/*
+ * Angular resources to interact with the RESTful backend of Cassandre.
+ *
+ */
 
-angular.module("Cassandre").factory("datasets", ["$resource", function datasetsFactory ($resource) {
+angular.module("Cassandre")
+
+// Resource to get the list of datasets and POST new datasets to the server
+.factory("datasets", ["$resource", function datasetsFactory ($resource) {
     return $resource("/api/measurements/");
-}]);
+}])
 
-angular.module("Cassandre").factory("expList", ["$resource", function expListFactory ($resource) {
+// Resource to get the list of exp (columns) for the given datasets
+.factory("expList", ["$resource", function expListFactory ($resource) {
     return $resource("/api/measurements/:mId/exp/", {}, {
-        get: { params: { "mId[]": "@mId"} }
+        get: {
+            method: "GET",
+            params: { "mId[]": "@mId"}
+        }
     });
-}]);
+}])
 
-angular.module("Cassandre").factory("genesList", ["$resource", function geneListFactory ($resource) {
+// Resource to get the list of genes (rows) for the given datasets
+.factory("genesList", ["$resource", function geneListFactory ($resource) {
     return $resource("/api/measurements/:mId/genes/", {}, {
-        get: { params: { "mId[]": "@mId"} }
+        get: {
+            method: "GET",
+            params: { "mId[]": "@mId"}
+        }
     });
-}]);
+}])
 
-angular.module("Cassandre").factory("data", ["$resource", function dataFactory ($resource) {
+// Resource to get the data stored in the database or delete some of the datasets
+.factory("data", ["$resource", function dataFactory ($resource) {
     return $resource("/api/measurements/:mId", {}, {
-        get: { params: { "mId[]": "@mId", "expId[]": "@expId", "geneId[]": "@geneId"} },
-        delete: { params: { "mId[]": "@mId" } }
+        get: {
+            method: "GET",
+            params: { "mId[]": "@mId", "expId[]": "@expId", "geneId[]": "@geneId"}
+        },
+        remove: {
+            method: "DELETE",
+            params: { "mId[]": "@mId" }
+        }
     });
 }]);

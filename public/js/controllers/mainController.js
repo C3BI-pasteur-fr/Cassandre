@@ -146,13 +146,17 @@ angular.module("Cassandre").controller("mainController", [
             }
         });
     };
-    
-    ////////////////////////////////////////
-    // TODO
-    $scope.removeData = function (dataset) {
-        data.delete(dataset);
+
+    // Remove a dataset
+    $scope.remove = function (dataset) {
+        data.remove({
+            mId: encodeURIComponent(dataset)
+        }, function () {
+            alert("Data successfully removed.");
+        }, function (err) {
+            alert("Error : " + err);
+        });
     };
-    ////////////////////////////////////////
 
     // Ordering function
     $scope.order = function (header, reverse) {
