@@ -19,15 +19,22 @@ var router = function(app) {
 
     // Get the list of datasets
     .get(function(req, res, next) {
-        Measurement.collection.distinct('measId', function(err, list) {
+        Measurement.collection.aggregate([{
+            $group: {
+                _id: {
+                    measId: "$measId", hidden: "$hidden"
+                }
+            }
+        }],
+        function(err, list) {
             if (err) {
                 return res.status(500).send("Error with the database : " + err.message);
             }
-            return res.status(200).send(list);
+            return res.status(200).send(list.map(function (set) { return set._id }));
         });
     })
 
-     // Insert the measurements file into the database
+    // Insert the measurements file into the database
     .post(function (req, res) {
         loadMeasFile(req.files.dataFile.path, req.files.dataFile.mimetype, function (err) {
             if (err) {
@@ -44,7 +51,9 @@ var router = function(app) {
     // List all the columns for given datasets
     .get(function (req, res, next) {
         Measurement.collection.distinct('expId', {
-            'measId': { '$in' : decodeURIComponent(req.params.mId).split(',') }
+            'measId': {
+                '$in' : decodeURIComponent(req.params.mId).split(',')
+            }
         },
         function (err, list) {
             if (err) {
@@ -61,7 +70,9 @@ var router = function(app) {
     // List all the lines for given datasets
     .get(function (req, res, next) {
         Measurement.collection.distinct('geneId', {
-            'measId': { '$in' : decodeURIComponent(req.params.mId).split(',') }
+            'measId': {
+                '$in' : decodeURIComponent(req.params.mId).split(',')
+            }
         },
         function (err, list) {
             if (err) {
@@ -77,16 +88,20 @@ var router = function(app) {
 
     // Get the values for given datasets, possibly filtered by lines and/or columns
     .get(function (req, res) {
-        var filter = {'measId': { '$in' : decodeURIComponent(req.params.mId).split(',') } };
+        var filter = {
+            'measId': {
+                '$in' : decodeURIComponent(req.params.mId).split(',')
+            }
+        };
 
         if (req.query.geneId){
             var geneIds = typeof req.query.geneId == 'string' ? [req.query.geneId] : req.query.geneId;
-            filter['geneId'] = {'$in': geneIds};
+            filter['geneId'] = { '$in': geneIds };
         }
 
         if (req.query.expId){
             var expIds = typeof req.query.expId == 'string' ? [req.query.expId] : req.query.expId;
-            filter['expId'] = {'$in': expIds};
+            filter['expId'] = { '$in': expIds };
         }
 
         Measurement.collection.find(filter).toArray(function (err, list) {
@@ -108,12 +123,29 @@ var router = function(app) {
             return res.sendStatus(200);
         });
     })
-    
+
     // Add or remove a field "hidden" for a given dataset
     .patch(function (req, res) {
-        // UPDATE
-        // SET { hidden: true }
-        // or remove hidden field
+        var setting = {};
+
+        if (req.query.hidden === 'true') {
+            setting.$set = { 'hidden': true };
+        }
+        else {
+            setting.$unset = { 'hidden': "" };
+        }
+
+        Measurement.collection.update({
+            'measId': decodeURIComponent(req.params.mId)
+        }, setting, {
+            'multi': true
+        }, function (err, results) {
+            console.log(results);
+            if (err) {
+                return res.status(500).send(err.message);
+            }
+            return res.sendStatus(200);
+        });
     });
 };
 

@@ -5,8 +5,8 @@
  */
 
 angular.module("Cassandre").controller("mainController", [
-    "$scope", "$filter", "$http", "xlsxToJson", "tsvToJson", "jsonToTsv", "database", "datasets", "genesList", "expList", "data",
-    function ($scope, $filter, $http, xlsxToJson, tsvToJson, jsonToTsv, database, datasets, genesList, expList, data) {
+    "$scope", "$filter", "$http", "xlsxToJson", "tsvToJson", "jsonToTsv", "database", "datasets", "genes", "exp", "data",
+    function ($scope, $filter, $http, xlsxToJson, tsvToJson, jsonToTsv, database, datasets, genes, exp, data) {
 
     $scope.dataCells = [];              // Data from database
     $scope.dataRows = [];               // Data formatted in rows
@@ -27,9 +27,12 @@ angular.module("Cassandre").controller("mainController", [
     $scope.predicate = "";
     $scope.reverse = false;
 
+    // Marker for the datasets menu
+    $scope.showHiddenDatasets = false;
+
     // Lists from the request
     $scope.lists = {
-        datasets: datasets.query(),
+        datasets: datasets.list(),
         genes: [],
         exp: []
     };
@@ -57,8 +60,15 @@ angular.module("Cassandre").controller("mainController", [
     };
 
     // Return the filtered lists that appear in the menus
-    $scope.filtered = function (list) {
+    $scope.filtered = function (list, showHidden) {
         var filteredList = $scope.lists[list];
+
+        // Special filtering only for the datasets
+        if (list === "datasets" && !showHidden) {
+            filteredList = filteredList.filter(function (element) {
+                return !element.hidden;
+            });
+        }
 
         filteredList = $filter("filter")(filteredList, $scope.filters[list]);
         filteredList = $filter("limitTo")(filteredList, $scope.limits[list]);
@@ -90,11 +100,11 @@ angular.module("Cassandre").controller("mainController", [
 
     // Get the lists for the given datasets
     $scope.searchData = function () {
-        $scope.lists.exp = expList.query({
+        $scope.lists.exp = exp.list({
             mId: encodeURIComponent($scope.selected.datasets)
         });
 
-        $scope.lists.genes = genesList.query({
+        $scope.lists.genes = genes.list({
             mId: encodeURIComponent($scope.selected.datasets)
         });
     };
@@ -149,10 +159,34 @@ angular.module("Cassandre").controller("mainController", [
 
     // Remove a dataset
     $scope.remove = function (dataset) {
-        data.remove({
+        if (confirm("Do you really want to remove this dataset permanently?")) {
+            data.remove({
+                mId: encodeURIComponent(dataset)
+            }, function () {
+                $scope.lists.datasets = datasets.query();
+            }, function (err) {
+                alert("Error : " + err);
+            });
+        }
+    };
+
+    // Hide a dataset in the menu
+    $scope.hide = function (dataset) {
+        data.hide({
             mId: encodeURIComponent(dataset)
         }, function () {
-            alert("Data successfully removed.");
+            $scope.lists.datasets = datasets.list();
+        }, function (err) {
+            alert("Error : " + err);
+        });
+    };
+
+    // Make a dataset visible in the menu
+    $scope.show = function (dataset) {
+        data.show({
+            mId: encodeURIComponent(dataset)
+        }, function () {
+            $scope.lists.datasets = datasets.list();
         }, function (err) {
             alert("Error : " + err);
         });
@@ -201,20 +235,13 @@ angular.module("Cassandre").controller("mainController", [
 
         $scope.isUploading = true;
 
-        $http.post("/api/measurements", allData, {
-            transformRequest: angular.identity,     // Override Angular's default serialization
-            headers: {                              // Let the browser set the Content-Type
-                "Content-Type": undefined           // to fill in the boundary parameter properly
-            }
-        })
-        .success(function (message) {
+        datasets.create(allData, function () {
             $scope.isUploading = false;
-            alert(message);
-
-        })
-        .error(function (message) {
+            $scope.lists.datasets = datasets.list();
+            alert("Data successfully stored.");
+        }, function (err) {
             $scope.isUploading = false;
-            alert("Error : " + message);
+            alert("Error : " + err);
         });
     }
 }]);

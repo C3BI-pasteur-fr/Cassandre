@@ -65,7 +65,7 @@
                         Data Sets
                         <small>{{ lists.datasets.slice(0, limits.datasets).length }} lines displayed on {{ lists.datasets.length }}</small>
                     </h3>
-{{ test }}
+
                     <div class="row">
                         <div class="col-lg-offset-2 col-lg-7">
                             <table class="table table-striped">
@@ -90,20 +90,27 @@
                                                     ng-model="limits.datasets"
                                                     min=0>
                                             </div>
+                                            <button class="btn btn-default" type="button" ng-show="!showHiddenDatasets" ng-click="showHiddenDatasets = true">Show hidden data</button>
+                                            <button class="btn btn-default" type="button" ng-show="showHiddenDatasets" ng-click="showHiddenDatasets = false">Hide data</button>
                                         </form>
                                     </th>
                                 </tr>
                                 </thead>
                                 <tbody>
-                                <tr ng-repeat="set in filtered('datasets')">
-                                    <td class="buttonCell" ng-class="{ info: selected.datasets.indexOf(set) > -1 }" ng-click="select('datasets', set)">
-                                        {{ set }}
+                                <tr ng-repeat="set in filtered('datasets', showHiddenDatasets)">
+                                    <td class="buttonCell"
+                                        ng-class="{ info: selected.datasets.indexOf(set.measId) > -1 }"
+                                        ng-click="select('datasets', set.measId)">
+                                        {{ set.measId }}
                                     </td>
-                                    <td class="buttonCellHide">
-                                        <span class="glyphicon glyphicon-eye-close center"></span>
+                                    <td class="buttonCellHide" ng-show="!set.hidden" ng-click="hide(set.measId)">
+                                        <span class="glyphicon glyphicon-eye-close"></span>
                                     </td>
-                                    <td class="buttonCellRemove" ng-click="remove(set)">
-                                        <span class="glyphicon glyphicon-remove center"></span>
+                                    <td class="buttonCellHide" ng-show="set.hidden" ng-click="show(set.measId)">
+                                        <span class="glyphicon glyphicon-eye-open"></span>
+                                    </td>
+                                    <td class="buttonCellRemove" ng-click="remove(set.measId)">
+                                        <span class="glyphicon glyphicon-remove"></span>
                                     </td>
                                 </tr>
                                 </tbody>

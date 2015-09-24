@@ -7,25 +7,43 @@ angular.module("Cassandre")
 
 // Resource to get the list of datasets and POST new datasets to the server
 .factory("datasets", ["$resource", function datasetsFactory ($resource) {
-    return $resource("/api/measurements/");
+    return $resource("/api/measurements/", {}, {
+        list: {
+            method: "GET",
+            isArray: true
+        },
+        create: {
+            method: "POST",
+            transformRequest: angular.identity,     // Override Angular's default serialization
+            headers: {                              // Let the browser set the Content-Type
+                "Content-Type": undefined           // to fill in the boundary parameter properly
+            }
+        }
+    });
 }])
 
 // Resource to get the list of exp (columns) for the given datasets
-.factory("expList", ["$resource", function expListFactory ($resource) {
+.factory("exp", ["$resource", function expFactory ($resource) {
     return $resource("/api/measurements/:mId/exp/", {}, {
-        get: {
+        list: {
             method: "GET",
-            params: { "mId[]": "@mId"}
+            isArray: true,
+            params: {
+                "mId[]": "@mId"
+            }
         }
     });
 }])
 
 // Resource to get the list of genes (rows) for the given datasets
-.factory("genesList", ["$resource", function geneListFactory ($resource) {
+.factory("genes", ["$resource", function geneFactory ($resource) {
     return $resource("/api/measurements/:mId/genes/", {}, {
-        get: {
+        list: {
             method: "GET",
-            params: { "mId[]": "@mId"}
+            isArray: true,
+            params: {
+                "mId[]": "@mId"
+            }
         }
     });
 }])
@@ -35,11 +53,31 @@ angular.module("Cassandre")
     return $resource("/api/measurements/:mId", {}, {
         get: {
             method: "GET",
-            params: { "mId[]": "@mId", "expId[]": "@expId", "geneId[]": "@geneId"}
+            params: {
+                "mId[]": "@mId",
+                "expId[]": "@expId",
+                "geneId[]": "@geneId"
+            }
         },
         remove: {
             method: "DELETE",
-            params: { "mId[]": "@mId" }
+            params: {
+                "mId[]": "@mId"
+            }
+        },
+        hide: {
+            method: "PATCH",
+            params: {
+                "mId": "@mId",
+                "hidden": true
+            }
+        },
+        show: {
+            method: "PATCH",
+            params: {
+                "mId": "@mId",
+                "hidden": false
+            }
         }
     });
 }]);
