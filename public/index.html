@@ -134,13 +134,13 @@
                                         ng-click="select('datasets', set.measId)">
                                         {{ set.measId }}
                                     </td>
-                                    <td class="buttonCellHide" ng-show="!set.hidden" ng-click="hide(set.measId)">
+                                    <td class="buttonCellHide" title="Hide this dataset" ng-show="!set.hidden" ng-click="hide(set.measId)">
                                         <span class="glyphicon glyphicon-eye-close"></span>
                                     </td>
-                                    <td class="buttonCellHide" ng-show="set.hidden" ng-click="show(set.measId)">
+                                    <td class="buttonCellHide" title="Display this dataset" ng-show="set.hidden" ng-click="show(set.measId)">
                                         <span class="glyphicon glyphicon-eye-open"></span>
                                     </td>
-                                    <td class="buttonCellRemove" ng-click="remove(set.measId)">
+                                    <td class="buttonCellRemove" title="Delete this dataset" ng-click="remove(set.measId)">
                                         <span class="glyphicon glyphicon-remove"></span>
                                     </td>
                                 </tr>

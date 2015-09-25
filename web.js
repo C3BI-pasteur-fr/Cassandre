@@ -48,10 +48,10 @@ var router = function(app) {
 // =========================================================================
 
     app.route('/api/metadata/')
-    
+
     // Get all the metadata
     .get(function(req, res) {
-        Metadata.collection.find({}, function(err, list) {
+        Metadata.collection.find().toArray(function(err, list) {
             if (err) {
                 return res.status(500).send("Error with the database : " + err.message);
             }
