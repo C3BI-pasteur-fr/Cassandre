@@ -5,14 +5,15 @@
  */
 
 angular.module("Cassandre").controller("mainController", [
-    "$scope", "$filter", "$http", "xlsxToJson", "tsvToJson", "jsonToTsv", "database", "datasets", "genes", "exp", "data",
-    function ($scope, $filter, $http, xlsxToJson, tsvToJson, jsonToTsv, database, datasets, genes, exp, data) {
+    "$scope", "$filter", "$http", "xlsxToJson", "tsvToJson", "jsonToTsv", "database", "datasets", "genes", "exp", "data", "metadata",
+    function ($scope, $filter, $http, xlsxToJson, tsvToJson, jsonToTsv, database, datasets, genes, exp, data, metadata) {
 
     $scope.dataCells = [];              // Data from database
     $scope.dataRows = [];               // Data formatted in rows
     $scope.dataHref = "#";              // Data URI of the display table for the download
     $scope.isLoading = false;           // Marker to know when data are loading
-    $scope.isUploading = false;         // Marker to know when data are uploading
+    $scope.isDataUploading = false;     // Marker to know when data are uploading
+    $scope.isMetaUploading = false;     // Marker to know when metadata are uploading
     $scope.allowedTypes = {             // Allowed MIME types for the uploaded files
         xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         txt: "text/plain",
@@ -63,7 +64,7 @@ angular.module("Cassandre").controller("mainController", [
     $scope.filtered = function (list, showHidden) {
         var filteredList = $scope.lists[list];
 
-        // Special filtering only for the datasets
+        // Special filtering for datasets only
         if (list === "datasets" && !showHidden) {
             filteredList = filteredList.filter(function (element) {
                 return !element.hidden;
@@ -109,52 +110,62 @@ angular.module("Cassandre").controller("mainController", [
         });
     };
 
-    // Get the data for the selected genes and/or exp (for only on measurement currently)
+    // Get the data for the selected genes and/or exp
     $scope.getData = function () {
         $scope.dataCells = data.query({
             mId: encodeURIComponent($scope.selected.datasets),
             expId: $scope.selected.exp,
             geneId: $scope.selected.genes
-        }, function(data) {
+        }, function (data) {
+            $scope.cellsToRows(data);
+        });
+    };
 
-            // Format data into rows to ease the display in the view
-            $scope.dataRows = [];
-            var headers = [];
-            var rows = {};
+    // Get all metadata
+    $scope.getMetadata = function () {
+        $scope.dataCells = metadata.get({}, function (data) {
+            $scope.cellsToRows(data);
+        });
+    };
 
-            // List the headers
-            data.forEach(function (cell) {
-                if (headers.indexOf(cell.expId) === -1) {
-                    headers.push(cell.expId);
-                }
-            });
+    // Format data into rows to ease the display in the view
+    $scope.cellsToRows = function(data) {
+        $scope.dataRows = [];
+        var headers = [];
+        var rows = {};
 
-            // Build the rows
-            data.forEach(function (cell) {
-
-                // Add the row if not yet present
-                if (!rows[cell.geneId]) {
-                    rows[cell.geneId] = {};
-                    headers.forEach(function (header) {
-                        rows[cell.geneId][header] = null;
-                    });
-                }
-
-                // Add the value at the right place
-                rows[cell.geneId][cell.expId] = cell.value;
-            });
-
-            // Then format rows in an array of objects with headers as keys
-            for (var geneId in rows) {
-                var newRow = { "ID": geneId };
-
-                for (var header in rows[geneId]) {
-                    newRow[header] = rows[geneId][header];
-                };
-
-                $scope.dataRows.push(newRow);
+        // List the headers
+        data.forEach(function (cell) {
+            if (headers.indexOf(cell.expId) === -1) {
+                headers.push(cell.expId);
             }
         });
+
+        // Build the rows
+        data.forEach(function (cell) {
+
+            // Add the row if not yet present
+            if (!rows[cell.geneId]) {
+                rows[cell.geneId] = {};
+                headers.forEach(function (header) {
+                    rows[cell.geneId][header] = null;
+                });
+            }
+
+            // Add the value at the right place
+            rows[cell.geneId][cell.expId] = cell.value;
+        });
+
+        // Then format rows in an array of objects with headers as keys
+        for (var geneId in rows) {
+            var newRow = { "ID": geneId };
+
+            for (var header in rows[geneId]) {
+                newRow[header] = rows[geneId][header];
+            };
+
+            $scope.dataRows.push(newRow);
+        }
     };
 
     // Remove a dataset
@@ -204,9 +215,14 @@ angular.module("Cassandre").controller("mainController", [
         $scope.dataHref = "data:text/plain;charset=utf-8," + encodeURI(jsonToTsv($scope.dataRows));
     };
 
-    // Parse the dataFile depending on its type
-    $scope.parseFile = function () {
-        var file = document.getElementById("dataFile").files[0];
+    // Parse the file depending on its type
+    $scope.parseFile = function (isMeta) {
+        if (isMeta) {
+            var file = document.getElementById("metaFile").files[0];
+        }
+        else {
+            var file = document.getElementById("dataFile").files[0];
+        }
 
         if (file.type === $scope.allowedTypes["xlsx"]) {
             xlsxToJson(file, function (err, json) {
@@ -227,21 +243,38 @@ angular.module("Cassandre").controller("mainController", [
         }
     };
 
-    // Send the files to the server using a FormData
+    // Send the data file to the server using a FormData
     $scope.sendData = function () {
         var allData = new FormData();
 
         allData.append("dataFile", document.getElementById("dataFile").files[0]);
 
-        $scope.isUploading = true;
+        $scope.isDataUploading = true;
 
         datasets.create(allData, function () {
-            $scope.isUploading = false;
+            $scope.isDataUploading = false;
             $scope.lists.datasets = datasets.list();
             alert("Data successfully stored.");
         }, function (err) {
-            $scope.isUploading = false;
-            alert("Error : " + err);
+            $scope.isDataUploading = false;
+            alert("Error : " + err.message);
+        });
+    }
+
+    // Send the metadata file to the server using a FormData
+    $scope.sendMeta = function () {
+        var allData = new FormData();
+
+        allData.append("metaFile", document.getElementById("metaFile").files[0]);
+
+        $scope.isMetaUploading = true;
+
+        metadata.add(allData, function () {
+            $scope.isMetaUploading = false;
+            alert("Metadata successfully stored.");
+        }, function (err) {
+            $scope.isMetaUploading = false;
+            alert("Error : " + err.message);
         });
     }
 }]);

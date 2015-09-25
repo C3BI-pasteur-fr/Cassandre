@@ -7,8 +7,9 @@ var cluster = require('cluster');
 
 var getConf = require('./config');
 var Measurement = require("./measurement").measurement;
-var loadMeasFile = require('./measurement').loadMeasFile;
-
+var loadFile = require('./measurement').loadFile;
+var Metadata = require('./metadata').metadata;
+var loadMetaFile = require('./metadata').loadMetaFile;
 
 var router = function(app) {
 
@@ -18,7 +19,7 @@ var router = function(app) {
     app.route('/api/measurements/')
 
     // Get the list of datasets
-    .get(function(req, res, next) {
+    .get(function(req, res) {
         Measurement.collection.aggregate([{
             $group: {
                 _id: {
@@ -36,7 +37,31 @@ var router = function(app) {
 
     // Insert the measurements file into the database
     .post(function (req, res) {
-        loadMeasFile(req.files.dataFile.path, req.files.dataFile.mimetype, function (err) {
+        loadFile(req.files.dataFile.path, req.files.dataFile.mimetype, function (err) {
+            if (err) {
+                return res.status(400).send(err.message);
+            }
+            return res.sendStatus(201);
+        });
+    });
+
+// =========================================================================
+
+    app.route('/api/metadata/')
+    
+    // Get all the metadata
+    .get(function(req, res) {
+        Metadata.collection.find({}, function(err, list) {
+            if (err) {
+                return res.status(500).send("Error with the database : " + err.message);
+            }
+            return res.status(200).send(list);
+        });
+    })
+
+    // Insert the general metadata file into the database
+    .post(function (req, res) {
+        loadMetaFile(req.files.metaFile.path, req.files.metaFile.mimetype, function (err) {
             if (err) {
                 return res.status(400).send(err.message);
             }
@@ -140,7 +165,6 @@ var router = function(app) {
         }, setting, {
             'multi': true
         }, function (err, results) {
-            console.log(results);
             if (err) {
                 return res.status(500).send(err.message);
             }

@@ -22,6 +22,23 @@ angular.module("Cassandre")
     });
 }])
 
+// Resource to manage the general metadata
+.factory("metadata", ["$resource", function metadataFactory ($resource) {
+    return $resource("/api/metadata", {}, {
+        get: {
+            method: "GET",
+            isArray: true
+        },
+        add: {
+            method: "POST",
+            transformRequest: angular.identity,     // Override Angular's default serialization
+            headers: {                              // Let the browser set the Content-Type
+                "Content-Type": undefined           // to fill in the boundary parameter properly
+            }
+        }
+    });
+}])
+
 // Resource to get the list of exp (columns) for the given datasets
 .factory("exp", ["$resource", function expFactory ($resource) {
     return $resource("/api/measurements/:mId/exp/", {}, {

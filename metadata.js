@@ -5,23 +5,21 @@ var exports = {};
 var tsvParser = require('./tsvParser');
 var xlsxParser = require('./xlsxParser');
 
-var Measurement = mongoose.model('Measurement', mongoose.Schema({
-    "measId": String,
-    "expId": String,
-    "geneId": String,
-    "value": Number
+var Metadata = mongoose.model('Metadata', mongoose.Schema({
+    "column": String,
+    "row": String,
+    "value": {}
 }));
 
 var insertCells = function(fileName, cells, callback) {
     var saveNextItem = function(cells) {
         var item = cells.pop();
         item.value = item.value ? item.value : undefined;
-        Measurement.collection.insert({
-            "measId": fileName,
-            "expId": item.column,
-            "geneId": item.row,
+        Metadata.collection.insert({
+            "column": item.column,
+            "row": item.row,
             "value": item.value
-        }, function(err, newMeasurement) {
+        }, function(err) {
             if (err) callback(err);
             if (cells.length > 0) {
                 saveNextItem(cells);
@@ -34,7 +32,7 @@ var insertCells = function(fileName, cells, callback) {
     saveNextItem(cells);
 };
 
-var loadFile = function(filePath, fileType, callback) {
+var loadMetaFile = function(filePath, fileType, callback) {
     var fileName = path.basename(filePath, path.extname(filePath));
     
     if (fileType === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
@@ -58,6 +56,6 @@ var loadFile = function(filePath, fileType, callback) {
 };
 
 module.exports = {
-    measurement: Measurement,
-    loadFile: loadFile
+    metadata: Metadata,
+    loadMetaFile: loadMetaFile
 };

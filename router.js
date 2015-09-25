@@ -5,9 +5,7 @@ var _ = require('underscore');
 
 var WebServer = require('./web');
 var Measurement = require('./measurement').measurement;
-var MeasurementExp = require('./measurement').measurementExp;
-var MeasurementGene = require('./measurement').measurementGene;
-var loadMeasFile = require('./measurement').loadMeasFile;
+var loadFile = require('./measurement').loadFile;
 var tsvParser = require('./tsvParser');
 
 var route = function() {
@@ -56,56 +54,11 @@ var route = function() {
         .alias('lu')
         .description('Load a measurements file in the database (using bulk inserts, with no data validation)')
         .action(function(){
-                    var exit = function(){
-                        console.info('done loading, exiting.'.green);
-                        process.exit();
-                    }
-                    loadMeasFile(exit);
-                });
-
-    program.command('load-alternative <fileName>')
-        .alias('u')
-        .description('Load a measurements file in the database using the gene data model')
-        .action(function(path, env) {
-            tsvParser(path, function(err, list) {
-                var saveNextItem = function(list) {
-                    var measurementGene = new MeasurementGene();
-                    while(measurementGene.values.length==0 || list[0].geneId==measurementGene.geneId){
-                        var item = list.pop();
-                        item.value = item.value ? item.value : undefined;
-                        measurementGene.measId = item.measId;
-                        measurementGene.geneId = item.geneId;
-                        measurementGene.values.push(item.value);
-                    }
-                    measurementGene.save(function(err, newMeasurement) {
-                        if (err) console.error(err, item);
-                        if (list.length > 0) {
-                            saveNextItem(list);
-                        } else {
-                            console.info('done loading, exiting.'.green);
-                            process.exit();
-                        }
-                    });
-                }
-                saveNextItem(list);
-            });
-        });
-
-    program.command('addCell <measurement> <experience> <gene> <value>')
-        .alias('a')
-        .description('add a single measuremet entry in the database')
-        .action(function(measurement, experience, gene, value, env) {
-            var newMeasurement = new Measurement({
-                "measId": measurement,
-                "expId": experience,
-                "geneId": gene,
-                "value": value
-            });
-            newMeasurement.save(function(err, newMeasurement) {
-                if (err) return console.error(err);
-                console.log("added a new measurement " + newMeasurement.toString().red);
+            var exit = function(){
+                console.info('done loading, exiting.'.green);
                 process.exit();
-            });
+            }
+            loadFile(exit);
         });
 
     program.command('serve')
