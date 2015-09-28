@@ -99,7 +99,7 @@
 
                     <div class="row">
                         <div class="col-lg-offset-2 col-lg-7">
-                            <table class="table table-striped">
+                            <table class="table table-striped table-hover">
                                 <thead>
                                 <tr>
                                     <th colspan=3>
@@ -121,8 +121,11 @@
                                                     ng-model="limits.datasets"
                                                     min=0>
                                             </div>
-                                            <button class="btn btn-default" type="button" ng-show="!showHiddenDatasets" ng-click="showHiddenDatasets = true">Show hidden data</button>
-                                            <button class="btn btn-default" type="button" ng-show="showHiddenDatasets" ng-click="showHiddenDatasets = false">Hide data</button>
+                                            
+                                            <div class="btn-group" role="group">
+                                                <button class="btn" type="button" title="Show only active datasets" ng-click="showHiddenDatasets = false" ng-class="{ 'btn-info': !showHiddenDatasets }">OFF</button>
+                                                <button class="btn" type="button" title="Show hidden datasets" ng-click="showHiddenDatasets = true" ng-class="{ 'btn-success': showHiddenDatasets }">ON</button>
+                                            </div>
                                         </form>
                                     </th>
                                 </tr>
@@ -134,11 +137,11 @@
                                         ng-click="select('datasets', set.measId)">
                                         {{ set.measId }}
                                     </td>
-                                    <td class="buttonCellHide" title="Hide this dataset" ng-show="!set.hidden" ng-click="hide(set.measId)">
-                                        <span class="glyphicon glyphicon-eye-close"></span>
-                                    </td>
-                                    <td class="buttonCellHide" title="Display this dataset" ng-show="set.hidden" ng-click="show(set.measId)">
-                                        <span class="glyphicon glyphicon-eye-open"></span>
+                                    <td class="buttonCellHide">
+                                        <div class="btn-group" ng-show="showHiddenDatasets">
+                                            <button class="btn btn-xs" type="button" title="Hide this dataset" ng-click="hide(set.measId)" ng-class="{ 'btn-danger': set.hidden }">OFF</button>
+                                            <button class="btn btn-xs" type="button" title="Show this dataset" ng-click="show(set.measId)" ng-class="{ 'btn-primary': !set.hidden }">ON</button>
+                                        </div>
                                     </td>
                                     <td class="buttonCellRemove" title="Delete this dataset" ng-click="remove(set.measId)">
                                         <span class="glyphicon glyphicon-remove"></span>
