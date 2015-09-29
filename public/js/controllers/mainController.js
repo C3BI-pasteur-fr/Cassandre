@@ -5,8 +5,8 @@
  */
 
 angular.module("Cassandre").controller("mainController", [
-    "$scope", "$filter", "$http", "xlsxToJson", "tsvToJson", "jsonToTsv", "database", "datasets", "genes", "exp", "data", "metadata",
-    function ($scope, $filter, $http, xlsxToJson, tsvToJson, jsonToTsv, database, datasets, genes, exp, data, metadata) {
+    "$scope", "$filter", "$http", "xlsxToJson", "tsvToJson", "jsonToTsv", "datasets", "genes", "exp", "data", "metadata",
+    function ($scope, $filter, $http, xlsxToJson, tsvToJson, jsonToTsv, datasets, genes, exp, data, metadata) {
 
     $scope.dataCells = [];              // Data from database
     $scope.dataRows = [];               // Data formatted in rows
@@ -20,9 +20,22 @@ angular.module("Cassandre").controller("mainController", [
         tsv: "text/tab-separated-values"
     };
 
-    $scope.$on("dataUpdate", function () {
-        $scope.datasets = database.getDatasets();
-    });
+    // File to upload
+    $scope.dataFile = {
+        content: "",        // Will contain the File Object
+        newName: ""         // Will contain the name modified by the user
+    };
+
+    // Metadata File
+    $scope.metaFile = {
+        content: ""
+    };
+
+    /////// TO MODIFY //////////
+    $scope.resetDataFile = function () {
+        $scope.dataFile.content = "";
+        $scope.dataFile.name = "";
+    };
 
     // Used for ordering the results
     $scope.predicate = "";
@@ -217,12 +230,7 @@ angular.module("Cassandre").controller("mainController", [
 
     // Parse the file depending on its type
     $scope.parseFile = function (isMeta) {
-        if (isMeta) {
-            var file = document.getElementById("metaFile").files[0];
-        }
-        else {
-            var file = document.getElementById("dataFile").files[0];
-        }
+        var file = isMeta ? $scope.metaFile.content : $scope.dataFile.content
 
         if (file.type === $scope.allowedTypes["xlsx"]) {
             xlsxToJson(file, function (err, json) {
@@ -247,7 +255,9 @@ angular.module("Cassandre").controller("mainController", [
     $scope.sendData = function () {
         var allData = new FormData();
 
-        allData.append("dataFile", document.getElementById("dataFile").files[0]);
+        // Put the name before the file to avoid problems with Multer on server side
+        allData.append("newName", $scope.dataFile.newName);
+        allData.append("dataFile", $scope.dataFile.content);
 
         $scope.isDataUploading = true;
 
@@ -257,7 +267,7 @@ angular.module("Cassandre").controller("mainController", [
             alert("Data successfully stored.");
         }, function (err) {
             $scope.isDataUploading = false;
-            alert("Error : " + err.message);
+            alert("Error : " + err);
         });
     }
 
@@ -265,7 +275,7 @@ angular.module("Cassandre").controller("mainController", [
     $scope.sendMeta = function () {
         var allData = new FormData();
 
-        allData.append("metaFile", document.getElementById("metaFile").files[0]);
+        allData.append("metaFile", $scope.metaFile.content);
 
         $scope.isMetaUploading = true;
 
@@ -274,7 +284,7 @@ angular.module("Cassandre").controller("mainController", [
             alert("Metadata successfully stored.");
         }, function (err) {
             $scope.isMetaUploading = false;
-            alert("Error : " + err.message);
+            alert("Error : " + err);
         });
     }
 }]);

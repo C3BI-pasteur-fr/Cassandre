@@ -12,11 +12,10 @@
         <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.3/angular-resource.min.js"></script>
         <script src="js/lib/xlsx.core.min.js"></script>
         <script src="js/cassandre.js"></script>
-        <script src="js/directives/onFileChange.js"></script>
+        <script src="js/directives/ngFileModel.js"></script>
         <script src="js/services/xlsxToJson.js"></script>
         <script src="js/services/tsvToJson.js"></script>
         <script src="js/services/jsonToTsv.js"></script>
-        <script src="js/services/database.js"></script>
         <script src="js/services/resources.js"></script>
         <script src="js/controllers/mainController.js"></script>
     </head>
@@ -41,7 +40,7 @@
                         <div class="col-lg-6">
                             <h3 class="page-header">
                                 Add Data
-                                <small ng-show="isUploading">Uploading data..</small>
+                                <small ng-show="isDataUploading">Uploading data..</small>
                             </h3>
 
                             <form id="uploadDataForm"
@@ -51,15 +50,25 @@
 
                                 <input id="dataFile"
                                     type=file
+                                    ng-file-model="dataFile.content"
+                                    ng-file-name="dataFile.newName"
                                     required>
                                 <p class="help-block">Allowed formats :
                                     <strong>xlsx, tsv, txt</strong>
                                 </p>
 
+                                <input id=dataName
+                                       class="form-control"
+                                       type="text"
+                                       placeholder="Dataset name"
+                                       title="You can rename the dataset"
+                                       ng-model="dataFile.newName"
+                                       required>
+
                                 <div class="btn-group">
                                     <input class="btn btn-default" type="submit" value="Send" ng-disabled="isUploading">
                                     <button class="btn btn-default" type="button" ng-click="parseFile()">Display</button>
-                                    <button disabled class="btn btn-default" type="button" ng-click="resetUpload()">Reset</button>
+                                    <button class="btn btn-default" type="button" ng-click="resetDataFile()">Reset</button>
                                 </div>
                             </form>
                         </div>
@@ -67,7 +76,7 @@
                         <div class="col-lg-6">
                             <h3 class="page-header">
                                 Add Metadata
-                                <small ng-show="isUploading">Uploading data..</small>
+                                <small ng-show="isMetaUploading">Uploading data..</small>
                             </h3>
 
                             <form id="uploadMetaForm"
@@ -77,6 +86,8 @@
 
                                 <input id="metaFile"
                                     type=file
+                                    ng-file-model="metaFile.content"
+                                    ng-file-name="metaFile.newName"
                                     required>
                                 <p class="help-block">Allowed formats :
                                     <strong>xlsx, tsv, txt</strong>
@@ -85,7 +96,7 @@
                                 <div class="btn-group">
                                     <input class="btn btn-default" type="submit" value="Send" ng-disabled="isUploading">
                                     <button class="btn btn-default" type="button" ng-click="parseFile(true)">Display</button>
-                                    <button disabled class="btn btn-default" type="button" ng-click="resetUpload()">Reset</button>
+                                    <button disabled class="btn btn-default" type="button" ng-click="resetMetaFile()">Reset</button>
                                 </div>
                                 <button class="btn btn-primary" type="button" ng-click="getMetadata()">Show Metadata</button>
                             </form>
@@ -121,7 +132,7 @@
                                                     ng-model="limits.datasets"
                                                     min=0>
                                             </div>
-                                            
+
                                             <div class="btn-group" role="group">
                                                 <button class="btn" type="button" title="Show only active datasets" ng-click="showHiddenDatasets = false" ng-class="{ 'btn-info': !showHiddenDatasets }">OFF</button>
                                                 <button class="btn" type="button" title="Show hidden datasets" ng-click="showHiddenDatasets = true" ng-class="{ 'btn-success': showHiddenDatasets }">ON</button>

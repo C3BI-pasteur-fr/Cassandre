@@ -13,13 +13,31 @@ var loadMetaFile = require('./metadata').loadMetaFile;
 
 var router = function(app) {
 
+// CONGIGURATION
+// =========================================================================
+
+    // Multer middleware to handle file uploads
+    var storage = multer.diskStorage({
+        destination: './uploads/',
+        filename: function (req, file, callback) {
+            var newName = req.body.newName || file.originalname;
+            return callback(null, newName + Date.now());
+        }
+    });
+
+    var upload = multer({
+        storage: storage
+        // fileFilter
+        // limits
+    });
+
 // ROUTES
 // =========================================================================
 
     app.route('/api/measurements/')
 
     // Get the list of datasets
-    .get(function(req, res) {
+    .get(function (req, res) {
         Measurement.collection.aggregate([{
             $group: {
                 _id: {
@@ -36,8 +54,11 @@ var router = function(app) {
     })
 
     // Insert the measurements file into the database
-    .post(function (req, res) {
-        loadFile(req.files.dataFile.path, req.files.dataFile.mimetype, function (err) {
+    .post(upload.single('dataFile'), function (err, req, res) {
+        if (err) {
+            return res.status(400).send(err.message);
+        }
+        loadFile(req.file.path, req.file.mimetype, function (err) {
             if (err) {
                 return res.status(400).send(err.message);
             }
@@ -60,8 +81,11 @@ var router = function(app) {
     })
 
     // Insert the general metadata file into the database
-    .post(function (req, res) {
-        loadMetaFile(req.files.metaFile.path, req.files.metaFile.mimetype, function (err) {
+    .post(upload.single('metaFile'),function (err, req, res) {
+        if (err) {
+            return res.status(400).send(err.message);
+        }
+        loadMetaFile(req.file.path, req.file.mimetype, function (err) {
             if (err) {
                 return res.status(400).send(err.message);
             }
@@ -175,6 +199,7 @@ var router = function(app) {
 
 var WebServer = function(contacts) {
     var app = express();
+    
     app.use(bodyParser.urlencoded({
         extended: false
     }));
@@ -182,13 +207,8 @@ var WebServer = function(contacts) {
     app.use(serveStatic('public', {
         'index': ['index.html']
     }));
-    app.use(multer({
-        dest: './uploads/',
-        rename: function (fieldname, filename) {
-            return filename.replace(/\W+/g, '-').toLowerCase() + Date.now();
-        }
-    }));
-    var webPort = getConf("web.port",8080);
+    
+    var webPort = getConf("web.port", 8080);
     var webHost = getConf("web.host", "localhost");
     server = app.listen(webPort, webHost);
     router(app);
