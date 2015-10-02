@@ -7,7 +7,7 @@ body {
     padding-top: 50px;
 }
 
-.buttonCell, .buttonCellRemove{
+.buttonCell, .buttonCellEdit, .buttonCellRemove{
     cursor: pointer;    
 }
 
@@ -17,6 +17,10 @@ body {
 
 .buttonCellRemove:hover {
     color: #B80000;
+}
+
+.buttonCellEdit:hover {
+    color: #337AB7;
 }
 
 .orderColumn {

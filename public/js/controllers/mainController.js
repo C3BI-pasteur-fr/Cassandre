@@ -12,8 +12,8 @@ angular.module("Cassandre").controller("mainController", [
     $scope.dataRows = [];               // Data formatted in rows
     $scope.dataHref = "#";              // Data URI of the display table for the download
     $scope.isLoading = false;           // Marker to know when data are loading
-    $scope.isDataUploading = false;     // Marker to know when data are uploading
-    $scope.isMetaUploading = false;     // Marker to know when metadata are uploading
+    $scope.dataIsUploading = false;     // Marker to know when data are uploading
+    $scope.metaIsUploading = false;     // Marker to know when metadata are uploading
     $scope.allowedTypes = {             // Allowed MIME types for the uploaded files
         xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         txt: "text/plain",
@@ -22,19 +22,14 @@ angular.module("Cassandre").controller("mainController", [
 
     // File to upload
     $scope.dataFile = {
-        content: "",        // Will contain the File Object
-        newName: ""         // Will contain the name modified by the user
+        content: "",        // The File Object
+        newName: "",        // The name modified by the user
+        description: ""     // A description of the dataset
     };
 
     // Metadata File
     $scope.metaFile = {
         content: ""
-    };
-
-    /////// TO MODIFY //////////
-    $scope.resetDataFile = function () {
-        $scope.dataFile.content = "";
-        $scope.dataFile.name = "";
     };
 
     // Used for ordering the results
@@ -125,7 +120,7 @@ angular.module("Cassandre").controller("mainController", [
 
     // Get the data for the selected genes and/or exp
     $scope.getData = function () {
-        $scope.dataCells = data.query({
+        $scope.dataCells = data.get({
             mId: encodeURIComponent($scope.selected.datasets),
             expId: $scope.selected.exp,
             geneId: $scope.selected.genes
@@ -187,9 +182,10 @@ angular.module("Cassandre").controller("mainController", [
             data.remove({
                 mId: encodeURIComponent(dataset)
             }, function () {
-                $scope.lists.datasets = datasets.query();
+                // TO CHANGE
+                $scope.lists.datasets = datasets.list();
             }, function (err) {
-                alert("Error : " + err);
+                alert("Error : " + err.data);
             });
         }
     };
@@ -199,9 +195,10 @@ angular.module("Cassandre").controller("mainController", [
         data.hide({
             mId: encodeURIComponent(dataset)
         }, function () {
+            // TO CHANGE
             $scope.lists.datasets = datasets.list();
         }, function (err) {
-            alert("Error : " + err);
+            alert("Error : " + err.data);
         });
     };
 
@@ -210,9 +207,10 @@ angular.module("Cassandre").controller("mainController", [
         data.show({
             mId: encodeURIComponent(dataset)
         }, function () {
+            // TO CHANGE
             $scope.lists.datasets = datasets.list();
         }, function (err) {
-            alert("Error : " + err);
+            alert("Error : " + err.data);
         });
     };
 
@@ -258,16 +256,18 @@ angular.module("Cassandre").controller("mainController", [
         // Put the name before the file to avoid problems with Multer on server side
         allData.append("newName", $scope.dataFile.newName);
         allData.append("dataFile", $scope.dataFile.content);
+        allData.append("description", $scope.dataFile.description);
 
-        $scope.isDataUploading = true;
+        $scope.dataIsUploading = true;
 
         datasets.create(allData, function () {
-            $scope.isDataUploading = false;
+            $scope.dataIsUploading = false;
             $scope.lists.datasets = datasets.list();
             alert("Data successfully stored.");
+            document.getElementById("dataUploadForm").reset(); // No better solution found with Angular
         }, function (err) {
-            $scope.isDataUploading = false;
-            alert("Error : " + err);
+            $scope.dataIsUploading = false;
+            alert("Error : " + err.data);
         });
     }
 
@@ -277,14 +277,15 @@ angular.module("Cassandre").controller("mainController", [
 
         allData.append("metaFile", $scope.metaFile.content);
 
-        $scope.isMetaUploading = true;
+        $scope.metaIsUploading = true;
 
         metadata.add(allData, function () {
-            $scope.isMetaUploading = false;
+            $scope.metaIsUploading = false;
             alert("Metadata successfully stored.");
+            document.getElementById("metaUploadForm").reset();
         }, function (err) {
-            $scope.isMetaUploading = false;
-            alert("Error : " + err);
+            $scope.metaIsUploading = false;
+            alert("Error : " + err.data);
         });
     }
 }]);

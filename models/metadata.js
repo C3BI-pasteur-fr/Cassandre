@@ -1,9 +1,7 @@
 var path = require('path');
 var mongoose = require('mongoose');
-var _ = require('underscore');
-var exports = {};
-var tsvParser = require('./tsvParser');
-var xlsxParser = require('./xlsxParser');
+var tsvParser = require('../lib/tsvParser');
+var xlsxParser = require('../lib/xlsxParser');
 
 var Metadata = mongoose.model('Metadata', mongoose.Schema({
     "column": String,
@@ -11,7 +9,7 @@ var Metadata = mongoose.model('Metadata', mongoose.Schema({
     "value": {}
 }));
 
-var insertCells = function(fileName, cells, callback) {
+var insertCells = function(cells, callback) {
     var saveNextItem = function(cells) {
         var item = cells.pop();
         item.value = item.value ? item.value : undefined;
@@ -33,24 +31,23 @@ var insertCells = function(fileName, cells, callback) {
 };
 
 var loadMetaFile = function(filePath, fileType, callback) {
-    var fileName = path.basename(filePath, path.extname(filePath));
-    
     if (fileType === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
         xlsxParser(filePath, function (err, cells) {
             if (err) {
                 return callback(err);
             }
-            
-            return insertCells(fileName, cells, callback);
+
+            return insertCells(cells, callback);
         });
     }
+
     else {
         tsvParser(filePath, function (err, cells) {
             if (err) {
                 return callback(err);
             }
-        
-            return insertCells(fileName, cells, callback);
+
+            return insertCells(cells, callback);
         });
     }
 };

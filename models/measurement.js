@@ -1,9 +1,7 @@
 var path = require('path');
 var mongoose = require('mongoose');
-var _ = require('underscore');
-var exports = {};
-var tsvParser = require('./tsvParser');
-var xlsxParser = require('./xlsxParser');
+var tsvParser = require('../lib/tsvParser');
+var xlsxParser = require('../lib/xlsxParser');
 
 var Measurement = mongoose.model('Measurement', mongoose.Schema({
     "measId": String,
@@ -34,25 +32,23 @@ var insertCells = function(fileName, cells, callback) {
     saveNextItem(cells);
 };
 
-var loadFile = function(filePath, fileType, callback) {
-    var fileName = path.basename(filePath, path.extname(filePath));
-    
-    if (fileType === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
-        xlsxParser(filePath, function (err, cells) {
+var loadFile = function(file, callback) {
+    if (file.mimetype === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
+        xlsxParser(file.path, function (err, cells) {
             if (err) {
                 return callback(err);
             }
-            
-            return insertCells(fileName, cells, callback);
+
+            return insertCells(file.filename, cells, callback);
         });
     }
     else {
-        tsvParser(filePath, function (err, cells) {
+        tsvParser(file.path, function (err, cells) {
             if (err) {
                 return callback(err);
             }
         
-            return insertCells(fileName, cells, callback);
+            return insertCells(file.filename, cells, callback);
         });
     }
 };

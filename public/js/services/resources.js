@@ -7,7 +7,7 @@ angular.module("Cassandre")
 
 // Resource to get the list of datasets and POST new datasets to the server
 .factory("datasets", ["$resource", function datasetsFactory ($resource) {
-    return $resource("/api/measurements/", {}, {
+    return $resource("/api/measurements", {}, {
         list: {
             method: "GET",
             isArray: true
@@ -41,7 +41,7 @@ angular.module("Cassandre")
 
 // Resource to get the list of exp (columns) for the given datasets
 .factory("exp", ["$resource", function expFactory ($resource) {
-    return $resource("/api/measurements/:mId/exp/", {}, {
+    return $resource("/api/measurements/:mId/exp", {}, {
         list: {
             method: "GET",
             isArray: true,
@@ -54,7 +54,7 @@ angular.module("Cassandre")
 
 // Resource to get the list of genes (rows) for the given datasets
 .factory("genes", ["$resource", function geneFactory ($resource) {
-    return $resource("/api/measurements/:mId/genes/", {}, {
+    return $resource("/api/measurements/:mId/genes", {}, {
         list: {
             method: "GET",
             isArray: true,
@@ -70,6 +70,7 @@ angular.module("Cassandre")
     return $resource("/api/measurements/:mId", {}, {
         get: {
             method: "GET",
+            isArray: true,
             params: {
                 "mId[]": "@mId",
                 "expId[]": "@expId",

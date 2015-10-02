@@ -40,35 +40,54 @@
                         <div class="col-lg-6">
                             <h3 class="page-header">
                                 Add Data
-                                <small ng-show="isDataUploading">Uploading data..</small>
+                                <small ng-show="dataIsUploading">Uploading..</small>
                             </h3>
 
-                            <form id="uploadDataForm"
-                                name="uploadDataForm"
-                                class="form-inline"
+                            <form id="dataUploadForm"
+                                name="dataUploadForm"
+                                
                                 ng-submit="sendData()">
+                                
+                                <div class="row">
+                                    <div class="col-lg-4">
+                                        <input id="dataFile"
+                                            type=file
+                                            ng-file-model="dataFile.content"
+                                            ng-file-name="dataFile.newName"
+                                            required>
+                                        <p class="help-block">Allowed formats :
+                                            <strong>xlsx, tsv, txt</strong>
+                                        </p>
+                                        
+                                        <div class="btn-group">
+                                            <input class="btn btn-default" type="submit" value="Send" ng-disabled="dataIsUploading">
+                                            <button class="btn btn-default" type="button" ng-click="parseFile()">Display</button>
+                                            <button class="btn btn-default" type="reset">Reset</button>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="col-lg-7">
+                                        <div class="form-group">
+                                            <label for="dataName">Dataset name</label>
+                                            <input id="dataName"
+                                               class="form-control"
+                                               type="text"
+                                               title="You can rename the dataset"
+                                               ng-model="dataFile.newName"
+                                               required>
+                                        </div>
 
-                                <input id="dataFile"
-                                    type=file
-                                    ng-file-model="dataFile.content"
-                                    ng-file-name="dataFile.newName"
-                                    required>
-                                <p class="help-block">Allowed formats :
-                                    <strong>xlsx, tsv, txt</strong>
-                                </p>
-
-                                <input id=dataName
-                                       class="form-control"
-                                       type="text"
-                                       placeholder="Dataset name"
-                                       title="You can rename the dataset"
-                                       ng-model="dataFile.newName"
-                                       required>
-
-                                <div class="btn-group">
-                                    <input class="btn btn-default" type="submit" value="Send" ng-disabled="isUploading">
-                                    <button class="btn btn-default" type="button" ng-click="parseFile()">Display</button>
-                                    <button class="btn btn-default" type="button" ng-click="resetDataFile()">Reset</button>
+                                        <div class="form-group">
+                                            <label for="dataDescription">Description</label>
+                                            <textarea id="dataDescription"
+                                                  class="form-control"
+                                                  ng-model="dataFile.description"
+                                                  title="Write a description here"
+                                                  cols=40
+                                                  rows=3
+                                                  required></textarea>
+                                        </div>
+                                    </div>
                                 </div>
                             </form>
                         </div>
@@ -76,11 +95,11 @@
                         <div class="col-lg-6">
                             <h3 class="page-header">
                                 Add Metadata
-                                <small ng-show="isMetaUploading">Uploading data..</small>
+                                <small ng-show="metaIsUploading">Uploading..</small>
                             </h3>
 
-                            <form id="uploadMetaForm"
-                                name="uploadMetaForm"
+                            <form id="metaUploadForm"
+                                name="metaUploadForm"
                                 class="form-inline"
                                 ng-submit="sendMeta()">
 
@@ -94,9 +113,9 @@
                                 </p>
 
                                 <div class="btn-group">
-                                    <input class="btn btn-default" type="submit" value="Send" ng-disabled="isUploading">
+                                    <input class="btn btn-default" type="submit" value="Send" ng-disabled="metaIsUploading">
                                     <button class="btn btn-default" type="button" ng-click="parseFile(true)">Display</button>
-                                    <button disabled class="btn btn-default" type="button" ng-click="resetMetaFile()">Reset</button>
+                                    <button class="btn btn-default" type="reset">Reset</button>
                                 </div>
                                 <button class="btn btn-primary" type="button" ng-click="getMetadata()">Show Metadata</button>
                             </form>
@@ -109,28 +128,30 @@
                     </h3>
 
                     <div class="row">
+                        <h2 class="col-lg-offset-5 text-muted" ng-show="lists.datasets.length === 0">No Data</h2>
+
                         <div class="col-lg-offset-2 col-lg-7">
-                            <table class="table table-striped table-hover">
+                            <table class="table table-striped table-hover" ng-show="lists.datasets.length !== 0">
                                 <thead>
                                 <tr>
-                                    <th colspan=3>
+                                    <th colspan=4>
                                         <form class="form-inline">
                                             <div class="input-group">
                                                 <span class="input-group-btn">
                                                     <button class="btn btn-default" type="button" ng-click="selectAll('datasets')">Select All</button>
                                                 </span>
                                                 <input class="form-control"
-                                                    id="datasetsFilter"
-                                                    type="text"
-                                                    ng-model="filters.datasets"
-                                                    placeholder="Search...">
+                                                       id="datasetsFilter"
+                                                       type="text"
+                                                       ng-model="filters.datasets"
+                                                       placeholder="Search...">
                                             </div>
                                             <div class="input-group" id="datasetsLimit">
                                                 <span class="input-group-addon">Limit</span>
                                                 <input class="form-control"
-                                                    type="number"
-                                                    ng-model="limits.datasets"
-                                                    min=0>
+                                                       type="number"
+                                                       ng-model="limits.datasets"
+                                                       min=0>
                                             </div>
 
                                             <div class="btn-group" role="group">
@@ -144,23 +165,30 @@
                                 <tbody>
                                 <tr ng-repeat="set in filtered('datasets', showHiddenDatasets)">
                                     <td class="buttonCell"
-                                        ng-class="{ info: selected.datasets.indexOf(set.measId) > -1 }"
-                                        ng-click="select('datasets', set.measId)">
-                                        {{ set.measId }}
+                                        ng-class="{ info: selected.datasets.indexOf(set.name) > -1 }"
+                                        ng-click="select('datasets', set.name)"
+                                        title="{{ set.description }}">
+                                        {{ set.name }}
                                     </td>
                                     <td class="buttonCellHide">
                                         <div class="btn-group" ng-show="showHiddenDatasets">
-                                            <button class="btn btn-xs" type="button" title="Hide this dataset" ng-click="hide(set.measId)" ng-class="{ 'btn-danger': set.hidden }">OFF</button>
-                                            <button class="btn btn-xs" type="button" title="Show this dataset" ng-click="show(set.measId)" ng-class="{ 'btn-primary': !set.hidden }">ON</button>
+                                            <button class="btn btn-xs" type="button" title="Hide this dataset" ng-click="hide(set.name)" ng-class="{ 'btn-danger': set.hidden }">OFF</button>
+                                            <button class="btn btn-xs" type="button" title="Show this dataset" ng-click="show(set.name)" ng-class="{ 'btn-primary': !set.hidden }">ON</button>
                                         </div>
                                     </td>
-                                    <td class="buttonCellRemove" title="Delete this dataset" ng-click="remove(set.measId)">
+                                    <td class="buttonCellEdit" title="Edit the description" ng-click="">
+                                        <span class="glyphicon glyphicon-pencil"></span>
+                                    </td>
+                                    <td class="buttonCellRemove" title="Delete this dataset" ng-click="remove(set.name)">
                                         <span class="glyphicon glyphicon-remove"></span>
                                     </td>
                                 </tr>
                                 </tbody>
                             </table>
-                            <button class="btn btn-default" type="button" ng-click="searchData()">Search</button>
+                            <button class="btn btn-default"
+                                    type="button"
+                                    ng-click="searchData()"
+                                    ng-show="lists.datasets.length !== 0">Search</button>
                         </div>
                     </div>
 

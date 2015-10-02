@@ -4,9 +4,9 @@ var color = require('colors');
 var _ = require('underscore');
 
 var WebServer = require('./web');
-var Measurement = require('./measurement').measurement;
-var loadFile = require('./measurement').loadFile;
-var tsvParser = require('./tsvParser');
+var Measurement = require('./models/measurement').measurement;
+var loadFile = require('./models/measurement').loadFile;
+var tsvParser = require('./lib/tsvParser');
 
 var route = function() {
     program.option('-c, --colors', 'Use colors for printing');
