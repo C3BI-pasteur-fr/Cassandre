@@ -26,6 +26,13 @@ angular.module("Cassandre").controller("mainController", [
         newName: "",        // The name modified by the user
         description: ""     // A description of the dataset
     };
+    
+    // When making changes to a dataset
+    $scope.datasetChanges = {
+        id: "",
+        newName: "",
+        newDescription : ""
+    };
 
     // Metadata File
     $scope.metaFile = {
@@ -176,6 +183,43 @@ angular.module("Cassandre").controller("mainController", [
         }
     };
 
+    // Hide a dataset in the menu
+    $scope.hide = function (id) {
+        datasets.hide({
+            id: encodeURIComponent(id)
+        }, function () {
+            // TO CHANGE
+            $scope.lists.datasets = datasets.list();
+        }, function (err) {
+            alert("Error : " + err.data);
+        });
+    };
+
+    // Make a dataset visible in the menu
+    $scope.show = function (id) {
+        datasets.show({
+            id: encodeURIComponent(id)
+        }, function () {
+            // TO CHANGE
+            $scope.lists.datasets = datasets.list();
+        }, function (err) {
+            alert("Error : " + err.data);
+        });
+    };
+    
+    $scope.update = function () {
+        datasets.update({
+            id: encodeURIComponent($scope.datasetChanges.id),
+            newName: encodeURIComponent($scope.datasetChanges.newName),
+            newDescription: encodeURIComponent($scope.datasetChanges.newDescription)
+        }, function () {
+            // TO CHANGE
+            $scope.lists.datasets = datasets.list();
+        }, function (err) {
+            alert("Error : " + err.data);
+        });
+    };
+
     // Remove a dataset
     $scope.remove = function (dataset) {
         if (confirm("Do you really want to remove this dataset permanently?")) {
@@ -188,30 +232,6 @@ angular.module("Cassandre").controller("mainController", [
                 alert("Error : " + err.data);
             });
         }
-    };
-
-    // Hide a dataset in the menu
-    $scope.hide = function (dataset) {
-        data.hide({
-            mId: encodeURIComponent(dataset)
-        }, function () {
-            // TO CHANGE
-            $scope.lists.datasets = datasets.list();
-        }, function (err) {
-            alert("Error : " + err.data);
-        });
-    };
-
-    // Make a dataset visible in the menu
-    $scope.show = function (dataset) {
-        data.show({
-            mId: encodeURIComponent(dataset)
-        }, function () {
-            // TO CHANGE
-            $scope.lists.datasets = datasets.list();
-        }, function (err) {
-            alert("Error : " + err.data);
-        });
     };
 
     // Ordering function

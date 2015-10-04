@@ -18,6 +18,28 @@ angular.module("Cassandre")
             headers: {                              // Let the browser set the Content-Type
                 "Content-Type": undefined           // to fill in the boundary parameter properly
             }
+        },
+        update: {
+            method: "PUT",
+            params: {
+                id: "@id",
+                newName: "@newName",
+                newDescription : "@newDescription"
+            }
+        },
+        hide: {
+            method: "PUT",
+            params: {
+                id: "@id",
+                hidden: true
+            }
+        },
+        show: {
+            method: "PUT",
+            params: {
+                id: "@id",
+                hidden: false
+            }
         }
     });
 }])
@@ -81,20 +103,6 @@ angular.module("Cassandre")
             method: "DELETE",
             params: {
                 "mId[]": "@mId"
-            }
-        },
-        hide: {
-            method: "PATCH",
-            params: {
-                "mId": "@mId",
-                "hidden": true
-            }
-        },
-        show: {
-            method: "PATCH",
-            params: {
-                "mId": "@mId",
-                "hidden": false
             }
         }
     });

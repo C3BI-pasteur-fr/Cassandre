@@ -2,6 +2,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var multer = require('multer');
 var _ = require('underscore');
+var ObjectId = require('mongoose').Types.ObjectId;
 
 var getConf = require('./config');
 var Measurement = require('./models/measurement').measurement;
@@ -59,7 +60,7 @@ var router = function(app) {
 
                 return res.status(400).send(err.message);
             }
-            
+
             loadFile(req.file, function (err) {
                 if (err) {
                     return res.status(400).send(err.message);
@@ -67,6 +68,43 @@ var router = function(app) {
 
                 return res.sendStatus(201);
             });
+        });
+    })
+
+    // Update datasets informations
+    .put(function (req, res) {
+        var settings = { $set: {} };
+
+        // TO CHANGE
+        // AND !!!!! REQ.BODY VS REQ.QUERY !!!!
+        if (req.query.hidden === 'true') {
+            settings.$set.hidden = true;
+        }
+        
+        if (req.query.hidden === 'false') {
+            settings.$set.hidden = false;
+        }
+
+        if (req.query.newName) {
+            settings.$set.name = decodeURIComponent(req.query.newName)
+        }
+
+        if (req.query.newDescription) {
+            settings.$set.description = decodeURIComponent(req.query.newDescription)
+        }
+
+        Datasets.collection.update({
+            _id: ObjectId(decodeURIComponent(req.query.id))
+        }, settings, function (err, results) {
+            if (err) {
+                if (err.name === 'MongoError' && err.code === 11001) {
+                    return res.status(400).send("A dataset with this name already exists.");
+                }
+
+                return res.status(400).send(err.message);
+            }
+
+            return res.sendStatus(200);
         });
     });
 
@@ -166,14 +204,14 @@ var router = function(app) {
     // Remove the given datasets from the database
     .delete(function (req, res) {
         var dataset = decodeURIComponent(req.params.mId);
-        
+
         Measurement.collection.remove({
             'measId': dataset
         }, function (err) {
             if (err) {
                 return res.status(500).send(err.message);
             }
-        
+
             Datasets.collection.remove({
                 'name': dataset
             }, function (err) {

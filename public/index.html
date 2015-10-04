@@ -45,11 +45,11 @@
 
                             <form id="dataUploadForm"
                                 name="dataUploadForm"
-                                
+
                                 ng-submit="sendData()">
-                                
+
                                 <div class="row">
-                                    <div class="col-lg-4">
+                                    <div class="col-lg-5">
                                         <input id="dataFile"
                                             type=file
                                             ng-file-model="dataFile.content"
@@ -58,14 +58,14 @@
                                         <p class="help-block">Allowed formats :
                                             <strong>xlsx, tsv, txt</strong>
                                         </p>
-                                        
+
                                         <div class="btn-group">
                                             <input class="btn btn-default" type="submit" value="Send" ng-disabled="dataIsUploading">
                                             <button class="btn btn-default" type="button" ng-click="parseFile()">Display</button>
                                             <button class="btn btn-default" type="reset">Reset</button>
                                         </div>
                                     </div>
-                                    
+
                                     <div class="col-lg-7">
                                         <div class="form-group">
                                             <label for="dataName">Dataset name</label>
@@ -153,7 +153,6 @@
                                                        ng-model="limits.datasets"
                                                        min=0>
                                             </div>
-
                                             <div class="btn-group" role="group">
                                                 <button class="btn" type="button" title="Show only active datasets" ng-click="showHiddenDatasets = false" ng-class="{ 'btn-info': !showHiddenDatasets }">OFF</button>
                                                 <button class="btn" type="button" title="Show hidden datasets" ng-click="showHiddenDatasets = true" ng-class="{ 'btn-success': showHiddenDatasets }">ON</button>
@@ -165,6 +164,7 @@
                                 <tbody>
                                 <tr ng-repeat="set in filtered('datasets', showHiddenDatasets)">
                                     <td class="buttonCell"
+                                        role="button"
                                         ng-class="{ info: selected.datasets.indexOf(set.name) > -1 }"
                                         ng-click="select('datasets', set.name)"
                                         title="{{ set.description }}">
@@ -172,14 +172,19 @@
                                     </td>
                                     <td class="buttonCellHide">
                                         <div class="btn-group" ng-show="showHiddenDatasets">
-                                            <button class="btn btn-xs" type="button" title="Hide this dataset" ng-click="hide(set.name)" ng-class="{ 'btn-danger': set.hidden }">OFF</button>
-                                            <button class="btn btn-xs" type="button" title="Show this dataset" ng-click="show(set.name)" ng-class="{ 'btn-primary': !set.hidden }">ON</button>
+                                            <button class="btn btn-xs" type="button" title="Hide this dataset" ng-click="hide(set._id)" ng-class="{ 'btn-danger': set.hidden }">OFF</button>
+                                            <button class="btn btn-xs" type="button" title="Show this dataset" ng-click="show(set._id)" ng-class="{ 'btn-primary': !set.hidden }">ON</button>
                                         </div>
                                     </td>
-                                    <td class="buttonCellEdit" title="Edit the description" ng-click="">
+                                    <td class="buttonCellEdit"
+                                        title="Make changes to the dataset"
+                                        role="button"
+                                        ng-click="datasetChanges.newName = set.name; datasetChanges.newDescription = set.description; datasetChanges.id = set._id;"
+                                        data-toggle="modal"
+                                        data-target="#datasetEdition">
                                         <span class="glyphicon glyphicon-pencil"></span>
                                     </td>
-                                    <td class="buttonCellRemove" title="Delete this dataset" ng-click="remove(set.name)">
+                                    <td class="buttonCellRemove" title="Delete this dataset" role="button" ng-click="remove(set.name)">
                                         <span class="glyphicon glyphicon-remove"></span>
                                     </td>
                                 </tr>
@@ -189,6 +194,43 @@
                                     type="button"
                                     ng-click="searchData()"
                                     ng-show="lists.datasets.length !== 0">Search</button>
+                        </div>
+                    </div>
+
+                    <div class="modal" id="datasetEdition">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                                    <h4 class="modal-title">Dataset informations</h4>
+                                </div>
+                                <div class="modal-body">
+                                    <div class="form-group">
+                                        <label for="dataName">Dataset name</label>
+                                        <input id="dataName"
+                                            class="form-control"
+                                            type="text"
+                                            title="You can rename the dataset"
+                                            ng-model="datasetChanges.newName"
+                                            required>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label for="dataDescription">Description</label>
+                                        <textarea id="dataDescription"
+                                            class="form-control"
+                                            ng-model="datasetChanges.newDescription"
+                                            title="Write a description here"
+                                            cols=40
+                                            rows=3
+                                            required></textarea>
+                                    </div>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                    <button type="button" class="btn btn-primary" ng-click="update()">Save changes</button>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -228,7 +270,7 @@
                                 </thead>
                                 <tbody>
                                 <tr ng-repeat="exp in filtered('exp')">
-                                    <td class="buttonCell" ng-class="{ info: selected.exp.indexOf(exp) > -1 }" ng-click="select('exp', exp)">
+                                    <td class="buttonCell" role="button" ng-class="{ info: selected.exp.indexOf(exp) > -1 }" ng-click="select('exp', exp)">
                                         {{ exp }}
                                     </td>
                                 </tr>
@@ -270,7 +312,7 @@
                                 </thead>
                                 <tbody>
                                 <tr ng-repeat="gene in filtered('genes')">
-                                    <td class="buttonCell" ng-class="{ info: selected.genes.indexOf(gene) > -1 }" ng-click="select('genes', gene)">
+                                    <td class="buttonCell" role="button" ng-class="{ info: selected.genes.indexOf(gene) > -1 }" ng-click="select('genes', gene)">
                                         {{ gene }}
                                     </td>
                                 </tr>
