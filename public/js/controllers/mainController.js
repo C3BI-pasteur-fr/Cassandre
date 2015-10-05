@@ -26,17 +26,17 @@ angular.module("Cassandre").controller("mainController", [
         newName: "",        // The name modified by the user
         description: ""     // A description of the dataset
     };
+    
+    // Metadata File
+    $scope.metaFile = {
+        content: ""
+    };
 
     // When making changes to a dataset
     $scope.datasetChanges = {
         id: "",
         name: "",
         description : ""
-    };
-
-    // Metadata File
-    $scope.metaFile = {
-        content: ""
     };
 
     // Used for ordering the results
@@ -226,10 +226,10 @@ angular.module("Cassandre").controller("mainController", [
     };
 
     // Remove a dataset
-    $scope.remove = function (dataset) {
+    $scope.remove = function (name) {
         if (confirm("Do you really want to remove this dataset permanently?")) {
-            data.remove({
-                mId: encodeURIComponent(dataset)
+            datasets.remove({
+                name: encodeURIComponent(name)
             }, function () {
                 // TO CHANGE
                 $scope.lists.datasets = datasets.list();

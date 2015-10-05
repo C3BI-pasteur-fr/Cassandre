@@ -88,6 +88,29 @@ var router = function(app) {
 
             return res.sendStatus(200);
         });
+    })
+    
+    // Remove the given datasets from the database
+    .delete(function (req, res) {
+        var dataset = decodeURIComponent(req.query.name);
+
+        Datasets.collection.remove({
+            name: dataset
+        }, function (err) {
+            if (err) {
+                return res.status(500).send(err.message);
+            }
+
+            Measurement.collection.remove({
+                measId: dataset
+            }, function (err) {
+                if (err) {
+                    return res.status(500).send(err.message);
+                }
+            });
+
+            return res.sendStatus(200);
+        });
     });
 
 // =========================================================================
@@ -180,28 +203,6 @@ var router = function(app) {
                 return res.status(500).send('Error with the database : ' + err.message);
             }
             return res.status(200).send(list);
-        });
-    })
-
-    // Remove the given datasets from the database
-    .delete(function (req, res) {
-        var dataset = decodeURIComponent(req.params.mId);
-
-        Measurement.collection.remove({
-            'measId': dataset
-        }, function (err) {
-            if (err) {
-                return res.status(500).send(err.message);
-            }
-
-            Datasets.collection.remove({
-                'name': dataset
-            }, function (err) {
-                if (err) {
-                    return res.status(500).send(err.message);
-                }
-                return res.sendStatus(200);
-            });
         });
     })
 };

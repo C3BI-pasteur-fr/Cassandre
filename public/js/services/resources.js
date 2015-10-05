@@ -36,6 +36,12 @@ angular.module("Cassandre")
             params: {
                 id: "@id"
             }
+        },
+        remove: {
+            method: "DELETE",
+            params: {
+                name: "@name"
+            }
         }
     });
 }])
@@ -93,12 +99,6 @@ angular.module("Cassandre")
                 "mId[]": "@mId",
                 "expId[]": "@expId",
                 "geneId[]": "@geneId"
-            }
-        },
-        remove: {
-            method: "DELETE",
-            params: {
-                "mId[]": "@mId"
             }
         }
     });
