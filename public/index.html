@@ -39,13 +39,12 @@
                     <div class="row">
                         <div class="col-lg-6">
                             <h3 class="page-header">
-                                Add Data
+                                Add Datasets
                                 <small ng-show="dataIsUploading">Uploading..</small>
                             </h3>
 
                             <form id="dataUploadForm"
                                 name="dataUploadForm"
-
                                 ng-submit="sendData()">
 
                                 <div class="row">
@@ -70,22 +69,22 @@
                                         <div class="form-group">
                                             <label for="dataName">Dataset name</label>
                                             <input id="dataName"
-                                               class="form-control"
-                                               type="text"
-                                               title="You can rename the dataset"
-                                               ng-model="dataFile.newName"
-                                               required>
+                                                class="form-control"
+                                                type="text"
+                                                title="You can rename the dataset"
+                                                ng-model="dataFile.newName"
+                                                required>
                                         </div>
 
                                         <div class="form-group">
                                             <label for="dataDescription">Description</label>
                                             <textarea id="dataDescription"
-                                                  class="form-control"
-                                                  ng-model="dataFile.description"
-                                                  title="Write a description here"
-                                                  cols=40
-                                                  rows=3
-                                                  required></textarea>
+                                                    class="form-control"
+                                                    ng-model="dataFile.description"
+                                                    title="Write a description here"
+                                                    cols=40
+                                                    rows=3
+                                                    required></textarea>
                                         </div>
                                     </div>
                                 </div>
@@ -94,7 +93,7 @@
 
                         <div class="col-lg-6">
                             <h3 class="page-header">
-                                Add Metadata
+                                Add Annotations
                                 <small ng-show="metaIsUploading">Uploading..</small>
                             </h3>
 
@@ -144,7 +143,7 @@
                                                        id="datasetsFilter"
                                                        type="text"
                                                        ng-model="filters.datasets"
-                                                       placeholder="Search...">
+                                                       placeholder="Filter...">
                                             </div>
                                             <div class="input-group" id="datasetsLimit">
                                                 <span class="input-group-addon">Limit</span>
@@ -179,7 +178,7 @@
                                     <td class="buttonCellEdit"
                                         title="Make changes to the dataset"
                                         role="button"
-                                        ng-click="datasetChanges.newName = set.name; datasetChanges.newDescription = set.description; datasetChanges.id = set._id;"
+                                        ng-click="datasetChanges.name = set.name; datasetChanges.description = set.description; datasetChanges.id = set._id;"
                                         data-toggle="modal"
                                         data-target="#datasetEdition">
                                         <span class="glyphicon glyphicon-pencil"></span>
@@ -190,10 +189,10 @@
                                 </tr>
                                 </tbody>
                             </table>
-                            <button class="btn btn-default"
+                            <button class="btn btn-primary"
                                     type="button"
                                     ng-click="searchData()"
-                                    ng-show="lists.datasets.length !== 0">Search</button>
+                                    ng-show="lists.datasets.length !== 0">Display genes and experiments</button>
                         </div>
                     </div>
 
@@ -211,7 +210,7 @@
                                             class="form-control"
                                             type="text"
                                             title="You can rename the dataset"
-                                            ng-model="datasetChanges.newName"
+                                            ng-model="datasetChanges.name"
                                             required>
                                     </div>
 
@@ -219,16 +218,16 @@
                                         <label for="dataDescription">Description</label>
                                         <textarea id="dataDescription"
                                             class="form-control"
-                                            ng-model="datasetChanges.newDescription"
+                                            ng-model="datasetChanges.description"
                                             title="Write a description here"
-                                            cols=40
-                                            rows=3
+                                            cols=50
+                                            rows=8
                                             required></textarea>
                                     </div>
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                    <button type="button" class="btn btn-primary" ng-click="update()">Save changes</button>
+                                    <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="update()">Save changes</button>
                                 </div>
                             </div>
                         </div>
@@ -255,7 +254,7 @@
                                                        id="expFilter"
                                                        type="text"
                                                        ng-model="filters.exp"
-                                                       placeholder="Search...">
+                                                       placeholder="Filter...">
                                             </div>
                                             <div class="input-group" id="expLimit">
                                                 <span class="input-group-addon">Limit</span>
@@ -297,7 +296,7 @@
                                                        id="genesFilter"
                                                        type="text"
                                                        ng-model="filters.genes"
-                                                       placeholder="Search...">
+                                                       placeholder="Filter...">
                                             </div>
                                             <div class="input-group" id="genesLimit">
                                                 <span class="input-group-addon">Limit</span>
@@ -320,7 +319,7 @@
                             </table>
                         </div>
                     </div>
-                    <button class="btn btn-default" type="button" ng-click=getData()>Display</button>
+                    <button class="btn btn-primary" type="button" ng-click=getData()>Display data</button>
 
                     <h2 class="page-header">Results
                         <small ng-show="isLoading">Loading data..</small>

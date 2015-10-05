@@ -26,12 +26,12 @@ angular.module("Cassandre").controller("mainController", [
         newName: "",        // The name modified by the user
         description: ""     // A description of the dataset
     };
-    
+
     // When making changes to a dataset
     $scope.datasetChanges = {
         id: "",
-        newName: "",
-        newDescription : ""
+        name: "",
+        description : ""
     };
 
     // Metadata File
@@ -187,6 +187,8 @@ angular.module("Cassandre").controller("mainController", [
     $scope.hide = function (id) {
         datasets.hide({
             id: encodeURIComponent(id)
+        }, {
+            hidden: true
         }, function () {
             // TO CHANGE
             $scope.lists.datasets = datasets.list();
@@ -199,6 +201,8 @@ angular.module("Cassandre").controller("mainController", [
     $scope.show = function (id) {
         datasets.show({
             id: encodeURIComponent(id)
+        }, {
+            hidden: false
         }, function () {
             // TO CHANGE
             $scope.lists.datasets = datasets.list();
@@ -206,12 +210,13 @@ angular.module("Cassandre").controller("mainController", [
             alert("Error : " + err.data);
         });
     };
-    
+
     $scope.update = function () {
         datasets.update({
-            id: encodeURIComponent($scope.datasetChanges.id),
-            newName: encodeURIComponent($scope.datasetChanges.newName),
-            newDescription: encodeURIComponent($scope.datasetChanges.newDescription)
+            id: encodeURIComponent($scope.datasetChanges.id)
+        }, {
+            name: $scope.datasetChanges.name,
+            description: $scope.datasetChanges.description
         }, function () {
             // TO CHANGE
             $scope.lists.datasets = datasets.list();

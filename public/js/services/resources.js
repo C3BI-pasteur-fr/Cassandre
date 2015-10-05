@@ -20,25 +20,21 @@ angular.module("Cassandre")
             }
         },
         update: {
-            method: "PUT",
+            method: "PATCH",
             params: {
-                id: "@id",
-                newName: "@newName",
-                newDescription : "@newDescription"
+                id: "@id"
             }
         },
         hide: {
-            method: "PUT",
+            method: "PATCH",
             params: {
-                id: "@id",
-                hidden: true
+                id: "@id"
             }
         },
         show: {
-            method: "PUT",
+            method: "PATCH",
             params: {
-                id: "@id",
-                hidden: false
+                id: "@id"
             }
         }
     });

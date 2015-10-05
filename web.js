@@ -54,7 +54,7 @@ var router = function(app) {
             hidden: false
         }, function (err) {
             if (err) {
-                if (err.name === 'MongoError' && err.code === 11000) {
+                if (err.name === 'MongoError') {
                     return res.status(400).send("A dataset with this name already exists.");
                 }
 
@@ -72,32 +72,14 @@ var router = function(app) {
     })
 
     // Update datasets informations
-    .put(function (req, res) {
-        var settings = { $set: {} };
-
-        // TO CHANGE
-        // AND !!!!! REQ.BODY VS REQ.QUERY !!!!
-        if (req.query.hidden === 'true') {
-            settings.$set.hidden = true;
-        }
-        
-        if (req.query.hidden === 'false') {
-            settings.$set.hidden = false;
-        }
-
-        if (req.query.newName) {
-            settings.$set.name = decodeURIComponent(req.query.newName)
-        }
-
-        if (req.query.newDescription) {
-            settings.$set.description = decodeURIComponent(req.query.newDescription)
-        }
-
+    .patch(function (req, res) {
         Datasets.collection.update({
             _id: ObjectId(decodeURIComponent(req.query.id))
-        }, settings, function (err, results) {
+        }, {
+            $set: req.body
+        }, function (err, results) {
             if (err) {
-                if (err.name === 'MongoError' && err.code === 11001) {
+                if (err.name === 'MongoError') {
                     return res.status(400).send("A dataset with this name already exists.");
                 }
 
@@ -222,30 +204,6 @@ var router = function(app) {
             });
         });
     })
-
-    // Add or remove a field "hidden" for a given dataset
-    .patch(function (req, res) {
-        // DATASETS
-        var setting = {};
-
-        if (req.query.hidden === 'true') {
-            setting.$set = { 'hidden': true };
-        }
-        else {
-            setting.$unset = { 'hidden': '' };
-        }
-
-        Measurement.collection.update({
-            'measId': decodeURIComponent(req.params.mId)
-        }, setting, {
-            'multi': true
-        }, function (err, results) {
-            if (err) {
-                return res.status(500).send(err.message);
-            }
-            return res.sendStatus(200);
-        });
-    });
 };
 
 var WebServer = function(contacts) {
