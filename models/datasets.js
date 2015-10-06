@@ -14,21 +14,6 @@ var Datasets = mongoose.model('Datasets', mongoose.Schema({
     }
 }));
 
-//var updateDataset = function (dataset, description, callback) {
-//    Datasets.collection.update({
-//        name: dataset
-//    }, {
-//        $set: {
-//            description: description
-//        }
-//    }, function (err) {
-//        if (err) {
-//            return callback(err);
-//        }
-//        return callback(null);
-//    });
-//};
-
 module.exports = {
     datasets: Datasets
 };

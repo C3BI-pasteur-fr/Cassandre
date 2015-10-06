@@ -5,20 +5,24 @@
  */
 
 angular.module("Cassandre").controller("mainController", [
-    "$scope", "$filter", "$http", "xlsxToJson", "tsvToJson", "jsonToTsv", "datasets", "genes", "exp", "data", "metadata",
-    function ($scope, $filter, $http, xlsxToJson, tsvToJson, jsonToTsv, datasets, genes, exp, data, metadata) {
+    "$scope", "$filter", "$http", "xlsxToJson", "tsvToJson", "jsonToTsv", "datasets", "genes", "exp", "data", "annotations",
+    function ($scope, $filter, $http, xlsxToJson, tsvToJson, jsonToTsv, datasets, genes, exp, data, annotations) {
 
     $scope.dataCells = [];              // Data from database
     $scope.dataRows = [];               // Data formatted in rows
     $scope.dataHref = "#";              // Data URI of the display table for the download
     $scope.isLoading = false;           // Marker to know when data are loading
     $scope.dataIsUploading = false;     // Marker to know when data are uploading
-    $scope.metaIsUploading = false;     // Marker to know when metadata are uploading
+    $scope.annotIsUploading = false;     // Marker to know when annotations are uploading
     $scope.allowedTypes = {             // Allowed MIME types for the uploaded files
         xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         txt: "text/plain",
         tsv: "text/tab-separated-values"
     };
+
+    // Booleans to control the display
+    $scope.showDatasetsSection = false; 
+    $scope.showAnnotationsSection = false;
 
     // File to upload
     $scope.dataFile = {
@@ -27,8 +31,8 @@ angular.module("Cassandre").controller("mainController", [
         description: ""     // A description of the dataset
     };
     
-    // Metadata File
-    $scope.metaFile = {
+    // Annotations File
+    $scope.annotFile = {
         content: ""
     };
 
@@ -136,9 +140,9 @@ angular.module("Cassandre").controller("mainController", [
         });
     };
 
-    // Get all metadata
-    $scope.getMetadata = function () {
-        $scope.dataCells = metadata.get({}, function (data) {
+    // Get all annotations
+    $scope.getAnnotations = function () {
+        $scope.dataCells = annotations.get({}, function (data) {
             $scope.cellsToRows(data, "column", "row", "value");
         });
     };
@@ -252,8 +256,8 @@ angular.module("Cassandre").controller("mainController", [
     };
 
     // Parse the file depending on its type
-    $scope.parseFile = function (isMeta) {
-        var file = isMeta ? $scope.metaFile.content : $scope.dataFile.content
+    $scope.parseFile = function (isAnnot) {
+        var file = isAnnot ? $scope.annotFile.content : $scope.dataFile.content
 
         if (file.type === $scope.allowedTypes["xlsx"]) {
             xlsxToJson(file, function (err, json) {
@@ -296,20 +300,20 @@ angular.module("Cassandre").controller("mainController", [
         });
     }
 
-    // Send the metadata file to the server using a FormData
-    $scope.sendMeta = function () {
+    // Send the annotations file to the server using a FormData
+    $scope.sendAnnot = function () {
         var allData = new FormData();
 
-        allData.append("metaFile", $scope.metaFile.content);
+        allData.append("annotFile", $scope.annotFile.content);
 
-        $scope.metaIsUploading = true;
+        $scope.annotIsUploading = true;
 
-        metadata.add(allData, function () {
-            $scope.metaIsUploading = false;
-            alert("Metadata successfully stored.");
-            document.getElementById("metaUploadForm").reset();
+        annotations.add(allData, function () {
+            $scope.annotIsUploading = false;
+            alert("Annotations successfully stored.");
+            document.getElementById("annotUploadForm").reset();
         }, function (err) {
-            $scope.metaIsUploading = false;
+            $scope.annotIsUploading = false;
             alert("Error : " + err.data);
         });
     }

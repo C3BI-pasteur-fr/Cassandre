@@ -4,8 +4,9 @@
     <head>
         <title>Cassandre</title>
         <meta charset="utf-8">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.5/cerulean/bootstrap.min.css">
         <link rel="stylesheet" href="css/style.css">
+        <script src="https://maxcdn.bootstrapcdn.com/bootlint/0.12.0/bootlint.min.js" integrity="sha256-imvviqwdvPR88qL2v9HDQkJQDIzpTgi9YgOcBmY31dI= sha512-7Ug+d3JiGZkaTLpHiit5OgCuaWDU0zj1kEFIIZ5982nEay2k3VwTeJgCp0pE7NgtrWxPXYdhKcKlQFyQpSREvA==" crossorigin="anonymous"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.2/angular.min.js"></script>
@@ -21,31 +22,56 @@
     </head>
 
     <body>
-        <div class="container-fluid">
+        <div class="container-fluid" ng-controller="mainController">
             <nav class="navbar navbar-inverse navbar-fixed-top">
-                <div class="container-fluid">
+                <div class="container">
                     <div class="navbar-header">
+                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-menu">
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
                         <a class="navbar-brand" href="#">
                             Cassandre
                         </a>
                     </div>
+                    <div id="navbar-menu" class="collapse navbar-collapse">
+                        <ul class="nav navbar-nav">
+                            <li><a role="button" ng-click="showDatasetsSection = !showDatasetsSection">
+                                <span class="glyphicon glyphicon-upload"></span>
+                                Add Datasets</a>
+                            </li>
+                            <li><a role="button" ng-click="showAnnotationsSection = !showAnnotationsSection">
+                                <span class="glyphicon glyphicon-upload"></span>
+                                Add Annotations</a>
+                            </li>
+                        </ul>
+                        <ul class="nav navbar-nav navbar-right">
+                            <li>
+                                <a href="mailto:simon.malesys@pasteur.fr">
+                                    <span class="glyphicon glyphicon-envelope"></span>
+                                    Contact
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
                 </div>
             </nav>
 
-            <section ng-controller="mainController">
+            <section>
 
                 <div class="container-fluid">
 
                     <div class="row">
-                        <div class="col-lg-6">
+                        <div class="col-lg-6" ng-show="showDatasetsSection">
                             <h3 class="page-header">
                                 Add Datasets
                                 <small ng-show="dataIsUploading">Uploading..</small>
                             </h3>
 
                             <form id="dataUploadForm"
-                                name="dataUploadForm"
-                                ng-submit="sendData()">
+                                  name="dataUploadForm"
+                                  ng-submit="sendData()">
 
                                 <div class="row">
                                     <div class="col-lg-5">
@@ -91,39 +117,39 @@
                             </form>
                         </div>
 
-                        <div class="col-lg-6">
+                        <div class="col-lg-6" ng-show="showAnnotationsSection">
                             <h3 class="page-header">
                                 Add Annotations
-                                <small ng-show="metaIsUploading">Uploading..</small>
+                                <small ng-show="annotIsUploading">Uploading..</small>
                             </h3>
 
-                            <form id="metaUploadForm"
-                                name="metaUploadForm"
+                            <form id="annotUploadForm"
+                                name="annotUploadForm"
                                 class="form-inline"
-                                ng-submit="sendMeta()">
+                                ng-submit="sendAnnot()">
 
-                                <input id="metaFile"
+                                <input id="annotFile"
                                     type=file
-                                    ng-file-model="metaFile.content"
-                                    ng-file-name="metaFile.newName"
+                                    ng-file-model="annotFile.content"
+                                    ng-file-name="annotFile.newName"
                                     required>
                                 <p class="help-block">Allowed formats :
                                     <strong>xlsx, tsv, txt</strong>
                                 </p>
 
                                 <div class="btn-group">
-                                    <input class="btn btn-default" type="submit" value="Send" ng-disabled="metaIsUploading">
+                                    <input class="btn btn-default" type="submit" value="Send" ng-disabled="annotIsUploading">
                                     <button class="btn btn-default" type="button" ng-click="parseFile(true)">Display</button>
                                     <button class="btn btn-default" type="reset">Reset</button>
                                 </div>
-                                <button class="btn btn-primary" type="button" ng-click="getMetadata()">Show Metadata</button>
+                                <button class="btn btn-info" type="button" ng-click="getAnnotations()">Show Annotations</button>
                             </form>
                         </div>
                     </div>
 
                     <h3 class="page-header">
                         Data Sets
-                        <small>{{ lists.datasets.slice(0, limits.datasets).length }} lines displayed on {{ lists.datasets.length }}</small>
+                        <small ng-show="lists.datasets.length > 0">{{ lists.datasets.slice(0, limits.datasets).length }} lines displayed on {{ lists.datasets.length }}</small>
                     </h3>
 
                     <div class="row">
@@ -153,8 +179,8 @@
                                                        min=0>
                                             </div>
                                             <div class="btn-group" role="group">
-                                                <button class="btn" type="button" title="Show only active datasets" ng-click="showHiddenDatasets = false" ng-class="{ 'btn-info': !showHiddenDatasets }">OFF</button>
-                                                <button class="btn" type="button" title="Show hidden datasets" ng-click="showHiddenDatasets = true" ng-class="{ 'btn-success': showHiddenDatasets }">ON</button>
+                                                <button class="btn" type="button" title="Show only active datasets" ng-click="showHiddenDatasets = false" ng-class="{ 'btn-success': !showHiddenDatasets }">OFF</button>
+                                                <button class="btn" type="button" title="Show hidden datasets" ng-click="showHiddenDatasets = true" ng-class="{ 'btn-warning': showHiddenDatasets }">ON</button>
                                             </div>
                                         </form>
                                     </th>
@@ -172,7 +198,7 @@
                                     <td class="buttonCellHide">
                                         <div class="btn-group" ng-show="showHiddenDatasets">
                                             <button class="btn btn-xs" type="button" title="Hide this dataset" ng-click="hide(set._id)" ng-class="{ 'btn-danger': set.hidden }">OFF</button>
-                                            <button class="btn btn-xs" type="button" title="Show this dataset" ng-click="show(set._id)" ng-class="{ 'btn-primary': !set.hidden }">ON</button>
+                                            <button class="btn btn-xs" type="button" title="Show this dataset" ng-click="show(set._id)" ng-class="{ 'btn-info': !set.hidden }">ON</button>
                                         </div>
                                     </td>
                                     <td class="buttonCellEdit"
@@ -189,7 +215,7 @@
                                 </tr>
                                 </tbody>
                             </table>
-                            <button class="btn btn-primary"
+                            <button class="btn btn-info"
                                     type="button"
                                     ng-click="searchData()"
                                     ng-show="lists.datasets.length !== 0">Display genes and experiments</button>
@@ -227,13 +253,13 @@
                                 </div>
                                 <div class="modal-footer">
                                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                    <button type="button" class="btn btn-primary" data-dismiss="modal" ng-click="update()">Save changes</button>
+                                    <button type="button" class="btn btn-info" data-dismiss="modal" ng-click="update()">Save changes</button>
                                 </div>
                             </div>
                         </div>
                     </div>
 
-                    <div class="row">
+                    <div class="row" ng-show="lists.exp.length > 0 || lists.genes.length > 0">
                         <div class="col-lg-6">
 
                             <h3 class="page-header">
@@ -241,7 +267,7 @@
                                 <small>{{ lists.exp.slice(0, limits.exp).length }} lines displayed on {{ lists.exp.length }}</small>
                             </h3>
 
-                            <table class="table table-striped" ng-show="lists.exp.length !== 0 && lists.genes.length !== 0">
+                            <table class="table table-striped">
                                 <thead>
                                 <tr>
                                     <th colspan=2>
@@ -276,6 +302,7 @@
                                 </tbody>
                             </table>
                         </div>
+
                         <div class="col-lg-6">
 
                             <h3 class="page-header">
@@ -283,7 +310,7 @@
                                 <small>{{ lists.genes.slice(0, limits.genes).length }} lines displayed on {{ lists.genes.length }}</small>
                             </h3>
 
-                            <table class="table table-striped" ng-show="lists.exp.length !== 0 && lists.genes.length !== 0">
+                            <table class="table table-striped">
                                 <thead>
                                 <tr>
                                     <th colspan=2>
@@ -319,7 +346,10 @@
                             </table>
                         </div>
                     </div>
-                    <button class="btn btn-primary" type="button" ng-click=getData()>Display data</button>
+                    <div ng-show="lists.exp.length > 0 || lists.genes.length > 0">
+                        <button class="btn btn-info" type="button" ng-click="getData()">Display raw data</button>
+                        <button class="btn btn-info disabled" type="button" ng-click=>Display box plot</button>
+                    </div>
 
                     <h2 class="page-header">Results
                         <small ng-show="isLoading">Loading data..</small>
@@ -340,10 +370,11 @@
                        ng-show="dataRows.length > 0"><span class="glyphicon glyphicon-download"></span> Download in TSV
                     </a>
 
-                    <table class="table table-striped">
+                    <table class="table table-hover">
                         <thead>
                             <tr>
                                 <th class="buttonCell"
+                                    role="button"
                                     ng-repeat="(header, value) in dataRows[0]"
                                     ng-class="{ orderColumn : predicate === header, reverse : reverse === true }"
                                     ng-click="order(header, !reverse)">

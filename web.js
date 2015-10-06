@@ -7,8 +7,8 @@ var ObjectId = require('mongoose').Types.ObjectId;
 var getConf = require('./config');
 var Measurement = require('./models/measurement').measurement;
 var loadFile = require('./models/measurement').loadFile;
-var Metadata = require('./models/metadata').metadata;
-var loadMetaFile = require('./models/metadata').loadMetaFile;
+var Annotations = require('./models/annotations').annotations;
+var loadAnnotFile = require('./models/annotations').loadAnnotFile;
 var Datasets = require('./models/datasets').datasets;
 
 var router = function(app) {
@@ -115,11 +115,11 @@ var router = function(app) {
 
 // =========================================================================
 
-    app.route('/api/metadata/')
+    app.route('/api/annotations/')
 
-    // Get all the metadata
+    // Get all the annotations
     .get(function(req, res) {
-        Metadata.collection.find().toArray(function(err, list) {
+        Annotations.collection.find().toArray(function(err, list) {
             if (err) {
                 return res.status(500).send('Error with the database : ' + err.message);
             }
@@ -127,9 +127,9 @@ var router = function(app) {
         });
     })
 
-    // Insert the general metadata file into the database
-    .post(upload.single('metaFile'), function (req, res) {
-        loadMetaFile(req.file.path, req.file.mimetype, function (err) {
+    // Insert the general annotations file into the database
+    .post(upload.single('annotFile'), function (req, res) {
+        loadAnnotFile(req.file.path, req.file.mimetype, function (err) {
             if (err) {
                 console.log(err);
                 return res.status(400).send(err.message);

@@ -3,7 +3,7 @@ var mongoose = require('mongoose');
 var tsvParser = require('../lib/tsvParser');
 var xlsxParser = require('../lib/xlsxParser');
 
-var Metadata = mongoose.model('Metadata', mongoose.Schema({
+var Annotations = mongoose.model('Annotations', mongoose.Schema({
     "column": String,
     "row": String,
     "value": {}
@@ -13,7 +13,7 @@ var insertCells = function(cells, callback) {
     var saveNextItem = function(cells) {
         var item = cells.pop();
         item.value = item.value ? item.value : undefined;
-        Metadata.collection.insert({
+        Annotations.collection.insert({
             "column": item.column,
             "row": item.row,
             "value": item.value
@@ -30,7 +30,7 @@ var insertCells = function(cells, callback) {
     saveNextItem(cells);
 };
 
-var loadMetaFile = function(filePath, fileType, callback) {
+var loadAnnotFile = function(filePath, fileType, callback) {
     if (fileType === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
         xlsxParser(filePath, function (err, cells) {
             if (err) {
@@ -53,6 +53,6 @@ var loadMetaFile = function(filePath, fileType, callback) {
 };
 
 module.exports = {
-    metadata: Metadata,
-    loadMetaFile: loadMetaFile
+    annotations: Annotations,
+    loadAnnotFile: loadAnnotFile
 };

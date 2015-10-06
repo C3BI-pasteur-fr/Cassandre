@@ -46,9 +46,9 @@ angular.module("Cassandre")
     });
 }])
 
-// Resource to manage the general metadata
-.factory("metadata", ["$resource", function metadataFactory ($resource) {
-    return $resource("/api/metadata", {}, {
+// Resource to manage the general annotations
+.factory("annotations", ["$resource", function annotationsFactory ($resource) {
+    return $resource("/api/annotations", {}, {
         get: {
             method: "GET",
             isArray: true
