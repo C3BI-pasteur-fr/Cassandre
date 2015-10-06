@@ -78,6 +78,15 @@ angular.module("Cassandre").controller("mainController", [
         exp: 10,
         results: 10
     };
+    
+    // Options for the limit dropdown menu
+    $scope.limitsOptions = {
+        "10": 10,
+        "20": 20,
+        "50": 50,
+        "100": 100,
+        "No Limit": undefined
+    };
 
     // Return the filtered lists that appear in the menus
     $scope.filtered = function (list, showHidden) {

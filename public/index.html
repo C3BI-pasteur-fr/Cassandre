@@ -161,22 +161,20 @@
                                 <tr>
                                     <th colspan=4>
                                         <form class="form-inline">
-                                            <div class="input-group">
-                                                <span class="input-group-btn">
-                                                    <button class="btn btn-default" type="button" ng-click="selectAll('datasets')">Select All</button>
-                                                </span>
-                                                <input class="form-control"
-                                                       id="datasetsFilter"
-                                                       type="text"
-                                                       ng-model="filters.datasets"
-                                                       placeholder="Filter...">
-                                            </div>
-                                            <div class="input-group" id="datasetsLimit">
-                                                <span class="input-group-addon">Limit</span>
-                                                <input class="form-control"
-                                                       type="number"
-                                                       ng-model="limits.datasets"
-                                                       min=0>
+                                            <button class="btn btn-default" type="button" ng-click="selectAll('datasets')" title="Select all rows">Select All</button>
+                                            <input class="form-control"
+                                                   id="datasetsFilter"
+                                                   type="text"
+                                                   ng-model="filters.datasets"
+                                                   placeholder="Filter..."
+                                                   title="Filter the list by entering some words or letters">
+                                            <div class="form-group pull-right" title="Maximum of rows displayed">
+                                                <label class="control-label" for="datasetsLimit">Limit</label>
+                                                <select id="datasetsLimit"
+                                                        class="form-control"
+                                                        ng-model="limits.datasets"
+                                                        ng-options="limit for (limit, value) in limitsOptions">
+                                                </select>
                                             </div>
                                             <div class="btn-group" role="group">
                                                 <button class="btn" type="button" title="Show only active datasets" ng-click="showHiddenDatasets = false" ng-class="{ 'btn-success': !showHiddenDatasets }">OFF</button>
@@ -272,22 +270,20 @@
                                 <tr>
                                     <th colspan=2>
                                         <form class="form-inline">
-                                            <div class="input-group">
-                                                <span class="input-group-btn">
-                                                    <button class="btn btn-default" type="button" ng-click="selectAll('exp')">Select All</button>
-                                                </span>
-                                                <input class="form-control"
-                                                       id="expFilter"
-                                                       type="text"
-                                                       ng-model="filters.exp"
-                                                       placeholder="Filter...">
-                                            </div>
-                                            <div class="input-group" id="expLimit">
-                                                <span class="input-group-addon">Limit</span>
-                                                <input class="form-control"
-                                                       type="number"
-                                                       ng-model="limits.exp"
-                                                       min=0>
+                                            <button class="btn btn-default" type="button" ng-click="selectAll('exp')">Select All</button>
+                                            <input class="form-control"
+                                                   id="expFilter"
+                                                   type="text"
+                                                   ng-model="filters.exp"
+                                                   placeholder="Filter..."
+                                                   title="Filter the list by entering some words or letters">
+                                            <div class="form-group pull-right" title="Maximum of rows displayed">
+                                                <label for="expLimit">Limit</label>
+                                                <select id="expLimit"
+                                                        class="form-control"
+                                                        ng-model="limits.exp"
+                                                        ng-options="limit for (limit, value) in limitsOptions">
+                                                </select>
                                             </div>
                                         </form>
                                     </th>
@@ -315,22 +311,20 @@
                                 <tr>
                                     <th colspan=2>
                                         <form class="form-inline">
-                                            <div class="input-group">
-                                                <span class="input-group-btn">
-                                                    <button class="btn btn-default" type="button" ng-click="selectAll('genes')">Select All</button>
-                                                </span>
-                                                <input class="form-control"
-                                                       id="genesFilter"
-                                                       type="text"
-                                                       ng-model="filters.genes"
-                                                       placeholder="Filter...">
-                                            </div>
-                                            <div class="input-group" id="genesLimit">
-                                                <span class="input-group-addon">Limit</span>
-                                                <input class="form-control"
-                                                       type="number"
-                                                       ng-model="limits.genes"
-                                                       min=0>
+                                            <button class="btn btn-default" type="button" ng-click="selectAll('genes')">Select All</button>
+                                            <input class="form-control"
+                                                   id="genesFilter"
+                                                   type="text"
+                                                   ng-model="filters.genes"
+                                                   placeholder="Filter..."
+                                                   title="Filter the list by entering some words or letters">
+                                            <div class="form-group pull-right" title="Maximum of rows displayed">
+                                                <label for="genesLimit">Limit</label>
+                                                <select id="genesLimit"
+                                                        class="form-control"
+                                                        ng-model="limits.genes"
+                                                        ng-options="limit for (limit, value) in limitsOptions">
+                                                </select>
                                             </div>
                                         </form>
                                     </th>
@@ -356,15 +350,15 @@
                         <small ng-show="dataRows.length > 0">{{ dataRows.slice(0, limits.results).length }} lines displayed on {{ dataRows.length }}</small>
                         <small class="pull-right">
                             <label for="resultsLimit">Limit</label>
-                            <input id="resultsLimit"
-                                   type="number"
-                                   ng-model="limits.results"
-                                   min=0>
+                            <select id="resultsLimit"
+                                    class="form-control"
+                                    ng-model="limits.results"
+                                    ng-options="limit for (limit, value) in limitsOptions">
+                            </select>
                         </small>
                     </h2>
 
-                    <a class="pull-right"
-                       ng-href="{{ dataHref }}"
+                    <a ng-href="{{ dataHref }}"
                        download="Data.txt"
                        ng-click="download()"
                        ng-show="dataRows.length > 0"><span class="glyphicon glyphicon-download"></span> Download in TSV
