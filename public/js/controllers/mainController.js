@@ -13,7 +13,7 @@ angular.module("Cassandre").controller("mainController", [
     $scope.dataHref = "#";              // Data URI of the display table for the download
     $scope.isLoading = false;           // Marker to know when data are loading
     $scope.dataIsUploading = false;     // Marker to know when data are uploading
-    $scope.annotIsUploading = false;     // Marker to know when annotations are uploading
+    $scope.annotIsUploading = false;    // Marker to know when annotations are uploading
     $scope.allowedTypes = {             // Allowed MIME types for the uploaded files
         xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         txt: "text/plain",
@@ -112,6 +112,7 @@ angular.module("Cassandre").controller("mainController", [
         if ( index > -1) {
             $scope.selected[list].splice(index, 1);
         }
+
         else {
             $scope.selected[list].push(element);
         }
@@ -120,8 +121,14 @@ angular.module("Cassandre").controller("mainController", [
     // Function to check/uncheck all
     $scope.selectAll = function (list) {
         if ($scope.selected[list].length !== $scope.filtered(list).length) {
-            $scope.selected[list] = $scope.filtered(list);
+
+            // Map to handle the fact that datasets are objects
+            $scope.selected[list] = $scope.filtered(list).map(function (element) {
+                console.log(typeof(element))
+                return typeof(element) === "object" ? element.name : element;
+            });
         }
+
         else {
             $scope.selected[list] = [];
         }
@@ -224,6 +231,7 @@ angular.module("Cassandre").controller("mainController", [
         });
     };
 
+    // Update datasets informations
     $scope.update = function () {
         datasets.update({
             id: encodeURIComponent($scope.datasetChanges.id)

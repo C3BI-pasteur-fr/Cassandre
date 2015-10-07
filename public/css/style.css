@@ -31,10 +31,18 @@ body {
     content: "▼";
 }
 
-#datasetsFilter, #expFilter, #genesFilter {
-    width: 50%;
+#datasetsFilter {
+    width: 100%;
 }
 
-#expLimit, #genesLimit, #resultsLimit {
+#datasetsLimit {
+    width: 80%;
+}
+
+#expFilter, #genesFilter {
+    width: 70%;
+}
+
+#resultsLimit {
     width: 130px;
 }
