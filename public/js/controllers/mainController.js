@@ -21,7 +21,7 @@ angular.module("Cassandre").controller("mainController", [
     };
 
     // Booleans to control the display
-    $scope.showDatasetsSection = false; 
+    $scope.showDatasetsSection = false;
     $scope.showAnnotationsSection = false;
 
     // File to upload
@@ -30,7 +30,7 @@ angular.module("Cassandre").controller("mainController", [
         newName: "",        // The name modified by the user
         description: ""     // A description of the dataset
     };
-    
+
     // Annotations File
     $scope.annotFile = {
         content: ""
@@ -43,28 +43,28 @@ angular.module("Cassandre").controller("mainController", [
         description : ""
     };
 
-    // Used for ordering the results
+    // Used for ordering the results and mark the columns
     $scope.predicate = "";
     $scope.reverse = false;
 
     // Marker for the datasets menu
     $scope.showHiddenDatasets = false;
 
-    // Lists from the request
+    // Lists in the selection menu
     $scope.lists = {
-        datasets: datasets.list(),
+        datasets: datasets.list(),  // The list is an object with names as keys
         genes: [],
         exp: []
     };
 
-    // Contains the selected data for the db request
+    // Contains the menu rows selected by the user
     $scope.selected = {
         datasets: [],
         genes: [],
         exp: []
     };
 
-    // Filters
+    // Filter bars in the menu
     $scope.filters = {
         datasets: "",
         genes: "",
@@ -78,8 +78,8 @@ angular.module("Cassandre").controller("mainController", [
         exp: 10,
         results: 10
     };
-    
-    // Options for the limit dropdown menu
+
+    // Options for the limit dropdowns
     $scope.limitsOptions = {
         "10": 10,
         "20": 20,
@@ -124,7 +124,6 @@ angular.module("Cassandre").controller("mainController", [
 
             // Map to handle the fact that datasets are objects
             $scope.selected[list] = $scope.filtered(list).map(function (element) {
-                console.log(typeof(element))
                 return typeof(element) === "object" ? element.name : element;
             });
         }

@@ -5,7 +5,7 @@
  *
  */
 
-angular.module("Cassandre").factory("tsvToJson", function tsvToJsonFactory() {
+angular.module("Cassandre").factory("tsvToJson", ["cast", function tsvToJsonFactory(cast) {
 
     return function (fileObject, callback) {
         var reader = new FileReader();
@@ -23,11 +23,11 @@ angular.module("Cassandre").factory("tsvToJson", function tsvToJsonFactory() {
 
             arrays.forEach(function (array) {       // Build the JSON
                 var row = {};
-                
-                for (var i = 0; i < array.length; i++) {
-                    row[headers[i]] = array[i];
-                }
-                
+
+                array.forEach(function (element, index) {
+                    row[headers[index]] = cast(element);
+                })
+
                 rows.push(row);
             });
 
@@ -36,4 +36,4 @@ angular.module("Cassandre").factory("tsvToJson", function tsvToJsonFactory() {
 
         reader.readAsText(fileObject);
     }
-});
+}]);
