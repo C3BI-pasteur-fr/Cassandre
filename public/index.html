@@ -11,6 +11,7 @@
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.2/angular.min.js"></script>
         <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.3/angular-resource.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
         <script src="js/lib/xlsx.core.min.js"></script>
         <script src="js/cassandre.js"></script>
         <script src="js/directives/ngFileModel.js"></script>
@@ -386,48 +387,57 @@
                     </div>
                     <div ng-show="lists.exp.length > 0 || lists.genes.length > 0">
                         <button class="btn btn-info" type="button" ng-click="getData()">Display raw data</button>
-                        <button class="btn btn-info disabled" type="button" ng-click=>Display box plot</button>
+                        <button class="btn btn-info" type="button" ng-click="histogram()">Display histogram</button>
                     </div>
 
-                    <h2 class="page-header">Results
-                        <small ng-show="isLoading">Loading data..</small>
-                        <small ng-show="dataRows.length > 0">{{ dataRows.slice(0, limits.results).length }} lines displayed on {{ dataRows.length }}</small>
-                        <small class="pull-right">
-                            <label for="resultsLimit">Limit</label>
-                            <select id="resultsLimit"
-                                    class="form-control"
-                                    ng-model="limits.results"
-                                    ng-options="limit for (limit, value) in limitsOptions">
-                            </select>
-                        </small>
-                    </h2>
-
-                    <a ng-href="{{ dataHref }}"
-                       download="Data.txt"
-                       ng-click="download()"
-                       ng-show="dataRows.length > 0"><span class="glyphicon glyphicon-download"></span> Download in TSV
-                    </a>
-
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th class="buttonCell"
-                                    role="button"
-                                    ng-repeat="(header, value) in dataRows[0]"
-                                    ng-class="{ orderColumn : predicate === header, reverse : reverse === true }"
-                                    ng-click="order(header, !reverse)">
-                                        {{ header }}
-                                </th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr ng-repeat="row in dataRows.slice(0, limits.results)">
-                                <td ng-repeat="(header, value) in row">
-                                    {{ value }}
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
+                    <div id="results">
+                        <h2 class="page-header">Results
+                            <small ng-show="isLoading">Loading data..</small>
+                            <small ng-show="dataRows.length > 0">{{ dataRows.slice(0, limits.results).length }} lines displayed on {{ dataRows.length }}</small>
+                            <small class="pull-right">
+                                <label for="resultsLimit">Limit</label>
+                                <select id="resultsLimit"
+                                        class="form-control"
+                                        ng-model="limits.results"
+                                        ng-options="limit for (limit, value) in limitsOptions">
+                                </select>
+                            </small>
+                        </h2>
+    
+                        <a ng-href="{{ dataHref }}"
+                           download="Data.txt"
+                           ng-click="download()"
+                           ng-show="dataRows.length > 0"><span class="glyphicon glyphicon-download"></span> Download in TSV
+                        </a>
+    
+                        <table class="table table-hover">
+                            <thead>
+                                <tr>
+                                    <th class="buttonCell"
+                                        role="button"
+                                        ng-repeat="(header, value) in dataRows[0]"
+                                        ng-class="{ orderColumn : predicate === header, reverse : reverse === true }"
+                                        ng-click="order(header, !reverse)">
+                                            {{ header }}
+                                    </th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr ng-repeat="row in dataRows.slice(0, limits.results)">
+                                    <td ng-repeat="(header, value) in row">
+                                        {{ value }}
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                    {{ dataRows }}
+                    <div id="visual">
+                        <h2 class="page-header">Visualisation</h2>
+                        
+                        <svg class="chart"></svg>
+                    </div>
                 </div>
             </section>
         </div>

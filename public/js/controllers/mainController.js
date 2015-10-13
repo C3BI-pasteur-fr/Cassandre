@@ -20,6 +20,59 @@ angular.module("Cassandre").controller("mainController", [
         tsv: "text/tab-separated-values"
     };
 
+    $scope.histogram = function () {
+        d3.select(".chart")
+            .selectAll("*")
+            .remove();
+        
+        var firstCol = $scope.dataCells[0].expId;
+        
+        // Test D3.js
+        var data = $scope.dataRows.map(function (row) {
+            return parseFloat(row[firstCol]);
+        });
+        
+        console.log(data);
+    
+        // Set the size of the whole chart
+        var width = window.innerWidth,
+            height = 500;
+    
+        var y = d3.scale.linear()
+            .domain([0, d3.max(data)])
+            .range([height, 0]);
+    
+        var chart = d3.select(".chart")
+            .attr("width", width)
+            .attr("height", height);
+    
+        var barWidth = width / data.length;
+    
+        var bar = chart.selectAll(".bar")
+            .data(data)
+            .enter()
+            .append("g")
+            .attr("class", "bar")
+            .attr("transform", function(d, i) { return "translate(" + i * barWidth + ",0)"; });
+    
+        bar.append("rect")
+            .attr("y", function(d) { return y(d); })
+            .attr("height", function(d) { return height - d; })
+            .attr("width", barWidth - 3)
+            .style("fill", "steelblue");
+    
+        bar.append("text")
+            .attr("x", barWidth / 2)
+            .attr("y", function(d) { return y(d) + 3; })
+            .attr("dy", ".75em")
+            .text(function(d) { return d; })
+            .style({
+                "fill": "white",
+                "font": "10px sans-serif",
+                "text-anchor": "middle"
+            });
+    };
+
     // Booleans to control the display
     $scope.showDatasetsSection = false;
     $scope.showAnnotationsSection = false;
