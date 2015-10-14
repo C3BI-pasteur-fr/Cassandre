@@ -403,13 +403,13 @@
                                 </select>
                             </small>
                         </h2>
-    
+
                         <a ng-href="{{ dataHref }}"
                            download="Data.txt"
                            ng-click="download()"
                            ng-show="dataRows.length > 0"><span class="glyphicon glyphicon-download"></span> Download in TSV
                         </a>
-    
+
                         <table class="table table-hover">
                             <thead>
                                 <tr>
@@ -431,11 +431,10 @@
                             </tbody>
                         </table>
                     </div>
-                    
-                    {{ dataRows }}
+
                     <div id="visual">
                         <h2 class="page-header">Visualisation</h2>
-                        
+
                         <svg class="chart"></svg>
                     </div>
                 </div>

@@ -24,53 +24,61 @@ angular.module("Cassandre").controller("mainController", [
         d3.select(".chart")
             .selectAll("*")
             .remove();
-        
+
         var firstCol = $scope.dataCells[0].expId;
-        
+
         // Test D3.js
         var data = $scope.dataRows.map(function (row) {
-            return parseFloat(row[firstCol]);
+            return {
+                name: row.ID,
+                value: parseFloat(row[firstCol])   
+            };
         });
-        
-        console.log(data);
-    
-        // Set the size of the whole chart
-        var width = window.innerWidth,
-            height = 500;
-    
+
+        // Margin convention
+        var margin = {top: 20, right: 30, bottom: 30, left: 40},
+            width = 960 - margin.left - margin.right,
+            height = 500 - margin.top - margin.bottom;
+
+        var x = d3.scale.ordinal()
+            .domain(data.map(function(d) { return d.name; }))
+            .rangeRoundBands([0, width], .1);
+
         var y = d3.scale.linear()
-            .domain([0, d3.max(data)])
+            .domain([0, d3.max(data, function(d) { return d.value; })])
             .range([height, 0]);
-    
+
+        var xAxis = d3.svg.axis()
+            .scale(x)
+            .orient("bottom");
+
+        var yAxis = d3.svg.axis()
+            .scale(y)
+            .orient("left");
+
         var chart = d3.select(".chart")
-            .attr("width", width)
-            .attr("height", height);
-    
-        var barWidth = width / data.length;
-    
-        var bar = chart.selectAll(".bar")
-            .data(data)
-            .enter()
+            .attr("width", width + margin.left + margin.right)
+            .attr("height", height + margin.top + margin.bottom)
             .append("g")
+            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+        chart.append("g")
+            .attr("class", "x axis")
+            .attr("transform", "translate(0," + height + ")")
+            .call(xAxis);
+
+        chart.append("g")
+            .attr("class", "y axis")
+            .call(yAxis);
+
+        chart.selectAll(".bar")
+            .data(data)
+            .enter().append("rect")
             .attr("class", "bar")
-            .attr("transform", function(d, i) { return "translate(" + i * barWidth + ",0)"; });
-    
-        bar.append("rect")
-            .attr("y", function(d) { return y(d); })
-            .attr("height", function(d) { return height - d; })
-            .attr("width", barWidth - 3)
-            .style("fill", "steelblue");
-    
-        bar.append("text")
-            .attr("x", barWidth / 2)
-            .attr("y", function(d) { return y(d) + 3; })
-            .attr("dy", ".75em")
-            .text(function(d) { return d; })
-            .style({
-                "fill": "white",
-                "font": "10px sans-serif",
-                "text-anchor": "middle"
-            });
+            .attr("x", function(d) { return x(d.name); })
+            .attr("y", function(d) { return y(d.value); })
+            .attr("height", function(d) { return height - y(d.value); })
+            .attr("width", x.rangeBand());
     };
 
     // Booleans to control the display
