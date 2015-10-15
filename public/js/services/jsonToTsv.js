@@ -5,7 +5,7 @@
  *
  */
 
-angular.module("Cassandre").factory("jsonToTsv", function writeDataFactory() {
+angular.module("cassandre").factory("jsonToTsv", function writeDataFactory() {
     return function (data) {
 
         // Ensure the order of the columns

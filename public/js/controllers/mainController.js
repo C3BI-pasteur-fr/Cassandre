@@ -4,7 +4,7 @@
  *
  */
 
-angular.module("Cassandre").controller("mainController", [
+angular.module("cassandre").controller("MainController", [
     "$scope", "$filter", "$http", "xlsxToJson", "tsvToJson", "jsonToTsv", "datasets", "genes", "exp", "data", "annotations",
     function ($scope, $filter, $http, xlsxToJson, tsvToJson, jsonToTsv, datasets, genes, exp, data, annotations) {
 
@@ -18,67 +18,6 @@ angular.module("Cassandre").controller("mainController", [
         xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         txt: "text/plain",
         tsv: "text/tab-separated-values"
-    };
-
-    $scope.histogram = function () {
-        d3.select(".chart")
-            .selectAll("*")
-            .remove();
-
-        var firstCol = $scope.dataCells[0].expId;
-
-        // Test D3.js
-        var data = $scope.dataRows.map(function (row) {
-            return {
-                name: row.ID,
-                value: parseFloat(row[firstCol])   
-            };
-        });
-
-        // Margin convention
-        var margin = {top: 20, right: 30, bottom: 30, left: 40},
-            width = 960 - margin.left - margin.right,
-            height = 500 - margin.top - margin.bottom;
-
-        var x = d3.scale.ordinal()
-            .domain(data.map(function(d) { return d.name; }))
-            .rangeRoundBands([0, width], .1);
-
-        var y = d3.scale.linear()
-            .domain([0, d3.max(data, function(d) { return d.value; })])
-            .range([height, 0]);
-
-        var xAxis = d3.svg.axis()
-            .scale(x)
-            .orient("bottom");
-
-        var yAxis = d3.svg.axis()
-            .scale(y)
-            .orient("left");
-
-        var chart = d3.select(".chart")
-            .attr("width", width + margin.left + margin.right)
-            .attr("height", height + margin.top + margin.bottom)
-            .append("g")
-            .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-        chart.append("g")
-            .attr("class", "x axis")
-            .attr("transform", "translate(0," + height + ")")
-            .call(xAxis);
-
-        chart.append("g")
-            .attr("class", "y axis")
-            .call(yAxis);
-
-        chart.selectAll(".bar")
-            .data(data)
-            .enter().append("rect")
-            .attr("class", "bar")
-            .attr("x", function(d) { return x(d.name); })
-            .attr("y", function(d) { return y(d.value); })
-            .attr("height", function(d) { return height - y(d.value); })
-            .attr("width", x.rangeBand());
     };
 
     // Booleans to control the display
@@ -324,7 +263,7 @@ angular.module("Cassandre").controller("mainController", [
     $scope.order = function (header, reverse) {
         $scope.predicate = header;
         $scope.reverse = reverse;
-        $scope.dataRows = $filter("orderBy")($scope.dataRows, $scope.predicate, $scope.reverse);
+        $scope.dataRows = $filter("orderBy")($scope.dataRows, "'" + header + "'", $scope.reverse);
     };
 
     // Set the data URI of the display table for the download

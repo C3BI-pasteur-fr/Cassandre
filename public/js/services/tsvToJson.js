@@ -5,7 +5,7 @@
  *
  */
 
-angular.module("Cassandre").factory("tsvToJson", ["cast", function tsvToJsonFactory(cast) {
+angular.module("cassandre").factory("tsvToJson", ["cast", function tsvToJsonFactory(cast) {
 
     return function (fileObject, callback) {
         var reader = new FileReader();

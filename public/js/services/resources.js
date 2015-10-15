@@ -3,7 +3,7 @@
  *
  */
 
-angular.module("Cassandre")
+angular.module("cassandre")
 
 // Resource to get the list of datasets and POST new datasets to the server
 .factory("datasets", ["$resource", function datasetsFactory ($resource) {

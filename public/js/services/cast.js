@@ -6,7 +6,7 @@
  *
  */
 
-angular.module("Cassandre").factory("cast", function castFactory() {
+angular.module("cassandre").factory("cast", function castFactory() {
 
     // Regular expressions for the different types
     var integer = /^[+-]?\d+$/;

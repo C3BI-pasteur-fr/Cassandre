@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 
-<html ng-app="Cassandre">
+<html ng-app="cassandre">
     <head>
         <title>Cassandre</title>
         <meta charset="utf-8">
@@ -24,7 +24,7 @@
     </head>
 
     <body>
-        <div class="container-fluid" ng-controller="mainController">
+        <div class="container-fluid" ng-controller="MainController">
             <nav class="navbar navbar-inverse navbar-fixed-top">
                 <div class="container">
                     <div class="navbar-header">
@@ -387,7 +387,6 @@
                     </div>
                     <div ng-show="lists.exp.length > 0 || lists.genes.length > 0">
                         <button class="btn btn-info" type="button" ng-click="getData()">Display raw data</button>
-                        <button class="btn btn-info" type="button" ng-click="histogram()">Display histogram</button>
                     </div>
 
                     <div id="results">
@@ -430,12 +429,6 @@
                                 </tr>
                             </tbody>
                         </table>
-                    </div>
-
-                    <div id="visual">
-                        <h2 class="page-header">Visualisation</h2>
-
-                        <svg class="chart"></svg>
                     </div>
                 </div>
             </section>

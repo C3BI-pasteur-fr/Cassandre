@@ -4,7 +4,7 @@
  *
  */
 
-angular.module("Cassandre", ["ngResource"])
+angular.module("cassandre", ["ngResource"])
 
 // ----- Configuration -------------------------------------------------- //
 

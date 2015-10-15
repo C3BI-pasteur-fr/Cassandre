@@ -5,7 +5,7 @@
  *
  */
 
-angular.module("Cassandre").factory("xlsxToJson", function xlsxToJsonFactory() {
+angular.module("cassandre").factory("xlsxToJson", function xlsxToJsonFactory() {
 
     return function (fileObject, callback) {
         var reader = new FileReader();

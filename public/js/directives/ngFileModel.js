@@ -11,7 +11,7 @@
  *
  */
 
-angular.module("Cassandre").directive('ngFileModel', ['$parse', function ($parse) {
+angular.module("cassandre").directive('ngFileModel', ['$parse', function ($parse) {
     return {
         restrict: 'A',
         link: function (scope, element, attrs) {
