@@ -5,7 +5,7 @@ var _ = require('underscore');
 var ObjectId = require('mongoose').Types.ObjectId;
 
 var getConf = require('./config');
-var Measurement = require('./models/measurement').measurement;
+var Measurements = require('./models/measurement').measurement;
 var loadFile = require('./models/measurement').loadFile;
 var Annotations = require('./models/annotations').annotations;
 var loadAnnotFile = require('./models/annotations').loadAnnotFile;
@@ -73,11 +73,16 @@ var router = function(app) {
 
     // Update datasets informations
     .patch(function (req, res) {
+        
+        // First update the datasets collection
         Datasets.collection.update({
-            _id: ObjectId(decodeURIComponent(req.query.id))
+            name: decodeURIComponent(req.query.name)
         }, {
-            $set: req.body
-        }, function (err, results) {
+            $set: {
+                name: req.body.newName,
+                description: req.body.description
+            }
+        }, function (err) {
             if (err) {
                 if (err.name === 'MongoError') {
                     return res.status(400).send("A dataset with this name already exists.");
@@ -86,10 +91,25 @@ var router = function(app) {
                 return res.status(400).send(err.message);
             }
 
-            return res.sendStatus(200);
+            // Then update the whole data
+            Measurements.collection.update({
+                measId: decodeURIComponent(req.query.name)
+            }, {
+                $set: {
+                    measId: req.body.newName
+                }
+            }, {
+               multi: true
+            }, function (err) {
+                if (err) {
+                    return res.status(400).send(err.message);
+                }
+
+                return res.sendStatus(200);
+            });
         });
     })
-    
+
     // Remove the given datasets from the database
     .delete(function (req, res) {
         var dataset = decodeURIComponent(req.query.name);
@@ -101,7 +121,7 @@ var router = function(app) {
                 return res.status(500).send(err.message);
             }
 
-            Measurement.collection.remove({
+            Measurements.collection.remove({
                 measId: dataset
             }, function (err) {
                 if (err) {
@@ -144,7 +164,7 @@ var router = function(app) {
 
     // List all the columns for given datasets
     .get(function (req, res, next) {
-        Measurement.collection.distinct('expId', {
+        Measurements.collection.distinct('expId', {
             'measId': {
                 '$in' : decodeURIComponent(req.params.mId).split(',')
             }
@@ -163,7 +183,7 @@ var router = function(app) {
 
     // List all the lines for given datasets
     .get(function (req, res, next) {
-        Measurement.collection.distinct('geneId', {
+        Measurements.collection.distinct('geneId', {
             'measId': {
                 '$in' : decodeURIComponent(req.params.mId).split(',')
             }
@@ -198,7 +218,7 @@ var router = function(app) {
             filter['expId'] = { '$in': expIds };
         }
 
-        Measurement.collection.find(filter).toArray(function (err, list) {
+        Measurements.collection.find(filter).toArray(function (err, list) {
             if (err) {
                 return res.status(500).send('Error with the database : ' + err.message);
             }

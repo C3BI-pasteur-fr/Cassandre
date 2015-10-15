@@ -38,8 +38,8 @@ angular.module("cassandre").controller("MainController", [
 
     // When making changes to a dataset
     $scope.datasetChanges = {
-        id: "",
         name: "",
+        newName: "",
         description : ""
     };
 
@@ -233,9 +233,9 @@ angular.module("cassandre").controller("MainController", [
     // Update datasets informations
     $scope.update = function () {
         datasets.update({
-            id: encodeURIComponent($scope.datasetChanges.id)
+            name: encodeURIComponent($scope.datasetChanges.name)
         }, {
-            name: $scope.datasetChanges.name,
+            newName: $scope.datasetChanges.newName,
             description: $scope.datasetChanges.description
         }, function () {
             // TO CHANGE

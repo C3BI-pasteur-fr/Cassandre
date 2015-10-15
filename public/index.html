@@ -225,7 +225,7 @@
                                     <td class="buttonCellEdit"
                                         title="Make changes to the dataset"
                                         role="button"
-                                        ng-click="datasetChanges.name = set.name; datasetChanges.description = set.description; datasetChanges.id = set._id;"
+                                        ng-click="datasetChanges.name = set.name; datasetChanges.newName = set.name; datasetChanges.description = set.description;"
                                         data-toggle="modal"
                                         data-target="#datasetEdition">
                                         <span class="glyphicon glyphicon-pencil"></span>
@@ -257,7 +257,7 @@
                                             class="form-control"
                                             type="text"
                                             title="You can rename the dataset"
-                                            ng-model="datasetChanges.name"
+                                            ng-model="datasetChanges.newName"
                                             required>
                                     </div>
 
