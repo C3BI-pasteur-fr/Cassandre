@@ -6,7 +6,6 @@
         <meta charset="utf-8">
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.5/cerulean/bootstrap.min.css">
         <link rel="stylesheet" href="css/style.css">
-        <script src="https://maxcdn.bootstrapcdn.com/bootlint/0.12.0/bootlint.min.js" integrity="sha256-imvviqwdvPR88qL2v9HDQkJQDIzpTgi9YgOcBmY31dI= sha512-7Ug+d3JiGZkaTLpHiit5OgCuaWDU0zj1kEFIIZ5982nEay2k3VwTeJgCp0pE7NgtrWxPXYdhKcKlQFyQpSREvA==" crossorigin="anonymous"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.2/angular.min.js"></script>
@@ -39,11 +38,23 @@
                     </div>
                     <div id="navbar-menu" class="collapse navbar-collapse">
                         <ul class="nav navbar-nav">
+                            <li class="disabled"><a role="button" ng-click="">
+                                <span class="glyphicon glyphicon-search"></span>
+                                Search Experiments</a>
+                            </li>
+                            <li class="disabled"><a role="button" ng-click="">
+                                <span class="glyphicon glyphicon-search"></span>
+                                Search Genes</a>
+                            </li>
                             <li><a role="button" ng-click="showDatasetsSection = !showDatasetsSection">
+                                <span class="glyphicon glyphicon-th-list"></span>
+                                Datasets</a>
+                            </li>
+                            <li><a role="button" ng-click="showAddDatasetsSection = !showAddDatasetsSection">
                                 <span class="glyphicon glyphicon-upload"></span>
                                 Add Datasets</a>
                             </li>
-                            <li><a role="button" ng-click="showAnnotationsSection = !showAnnotationsSection">
+                            <li><a role="button" ng-click="showAddAnnotationsSection = !showAddAnnotationsSection">
                                 <span class="glyphicon glyphicon-upload"></span>
                                 Add Annotations</a>
                             </li>
@@ -60,95 +71,88 @@
                 </div>
             </nav>
 
-            <section>
+            <div class="container-fluid">
 
-                <div class="container-fluid">
+                <div class="row">
+                    <section id="addDatasetsSection" class="col-lg-6" ng-show="showAddDatasetsSection">
+                        <h3 class="page-header">
+                            Add Datasets
+                            <small ng-show="dataIsUploading">Uploading..</small>
+                        </h3>
 
-                    <div class="row">
-                        <div class="col-lg-6" ng-show="showDatasetsSection">
-                            <h3 class="page-header">
-                                Add Datasets
-                                <small ng-show="dataIsUploading">Uploading..</small>
-                            </h3>
+                        <form id="dataUploadForm" name="dataUploadForm" ng-submit="sendData()">
+                            <div class="row">
+                                <div class="col-lg-5">
+                                    <input id="dataFile"
+                                        type=file
+                                        ng-file-model="dataFile.content"
+                                        ng-file-name="dataFile.newName"
+                                        required>
+                                    <p class="help-block">Allowed formats :
+                                        <strong>xlsx, tsv, txt</strong>
+                                    </p>
 
-                            <form id="dataUploadForm"
-                                  name="dataUploadForm"
-                                  ng-submit="sendData()">
+                                    <div class="btn-group">
+                                        <input class="btn btn-default" type="submit" value="Send" ng-disabled="dataIsUploading">
+                                        <button class="btn btn-default" type="button" ng-click="parseFile()">Display</button>
+                                        <button class="btn btn-default" type="reset">Reset</button>
+                                    </div>
+                                </div>
 
-                                <div class="row">
-                                    <div class="col-lg-5">
-                                        <input id="dataFile"
-                                            type=file
-                                            ng-file-model="dataFile.content"
-                                            ng-file-name="dataFile.newName"
+                                <div class="col-lg-7">
+                                    <div class="form-group">
+                                        <label for="datasetName">Dataset name</label>
+                                        <input id="datasetName"
+                                            class="form-control"
+                                            type="text"
+                                            title="You can rename the dataset"
+                                            ng-model="dataFile.newName"
                                             required>
-                                        <p class="help-block">Allowed formats :
-                                            <strong>xlsx, tsv, txt</strong>
-                                        </p>
-
-                                        <div class="btn-group">
-                                            <input class="btn btn-default" type="submit" value="Send" ng-disabled="dataIsUploading">
-                                            <button class="btn btn-default" type="button" ng-click="parseFile()">Display</button>
-                                            <button class="btn btn-default" type="reset">Reset</button>
-                                        </div>
                                     </div>
 
-                                    <div class="col-lg-7">
-                                        <div class="form-group">
-                                            <label for="dataName">Dataset name</label>
-                                            <input id="dataName"
+                                    <div class="form-group">
+                                        <label for="datasetDescription">Description</label>
+                                        <textarea id="datasetDescription"
                                                 class="form-control"
-                                                type="text"
-                                                title="You can rename the dataset"
-                                                ng-model="dataFile.newName"
+                                                ng-model="dataFile.description"
+                                                title="Write a description here"
+                                                cols=40
+                                                rows=3
                                                 required>
-                                        </div>
-
-                                        <div class="form-group">
-                                            <label for="dataDescription">Description</label>
-                                            <textarea id="dataDescription"
-                                                    class="form-control"
-                                                    ng-model="dataFile.description"
-                                                    title="Write a description here"
-                                                    cols=40
-                                                    rows=3
-                                                    required></textarea>
-                                        </div>
+                                        </textarea>
                                     </div>
                                 </div>
-                            </form>
-                        </div>
+                            </div>
+                        </form>
+                    </section>
 
-                        <div class="col-lg-6" ng-show="showAnnotationsSection">
-                            <h3 class="page-header">
-                                Add Annotations
-                                <small ng-show="annotIsUploading">Uploading..</small>
-                            </h3>
+                    <section id="addAnnotationsSection" class="col-lg-6" ng-show="showAddAnnotationsSection">
+                        <h3 class="page-header">
+                            Add Annotations
+                            <small ng-show="annotIsUploading">Uploading..</small>
+                        </h3>
 
-                            <form id="annotUploadForm"
-                                name="annotUploadForm"
-                                class="form-inline"
-                                ng-submit="sendAnnot()">
+                        <form id="annotUploadForm" name="annotUploadForm" class="form-inline" ng-submit="sendAnnot()">
+                            <input id="annotFile"
+                                type=file
+                                ng-file-model="annotFile.content"
+                                ng-file-name="annotFile.newName"
+                                required>
+                            <p class="help-block">Allowed formats :
+                                <strong>xlsx, tsv, txt</strong>
+                            </p>
 
-                                <input id="annotFile"
-                                    type=file
-                                    ng-file-model="annotFile.content"
-                                    ng-file-name="annotFile.newName"
-                                    required>
-                                <p class="help-block">Allowed formats :
-                                    <strong>xlsx, tsv, txt</strong>
-                                </p>
+                            <div class="btn-group">
+                                <input class="btn btn-default" type="submit" value="Send" ng-disabled="annotIsUploading">
+                                <button class="btn btn-default" type="button" ng-click="parseFile(true)">Display</button>
+                                <button class="btn btn-default" type="reset">Reset</button>
+                            </div>
+                            <button class="btn btn-info" type="button" ng-click="getAnnotations()">Show Annotations</button>
+                        </form>
+                    </section>
+                </div>
 
-                                <div class="btn-group">
-                                    <input class="btn btn-default" type="submit" value="Send" ng-disabled="annotIsUploading">
-                                    <button class="btn btn-default" type="button" ng-click="parseFile(true)">Display</button>
-                                    <button class="btn btn-default" type="reset">Reset</button>
-                                </div>
-                                <button class="btn btn-info" type="button" ng-click="getAnnotations()">Show Annotations</button>
-                            </form>
-                        </div>
-                    </div>
-
+                <section id="datasetsSection" ng-show="showDatasetsSection">
                     <h3 class="page-header">
                         Data Sets
                         <small ng-show="lists.datasets.length > 0">{{ lists.datasets.slice(0, limits.datasets).length }} lines displayed on {{ lists.datasets.length }}</small>
@@ -156,155 +160,138 @@
 
                     <div class="row">
                         <h2 class="col-lg-offset-5 text-muted" ng-show="lists.datasets.length === 0">No Data</h2>
-
+    
                         <div class="col-lg-offset-2 col-lg-7">
-                            <table class="table table-striped table-hover" ng-show="lists.datasets.length !== 0">
+                            <table id="datasetsList" class="table table-striped table-hover" ng-show="lists.datasets.length !== 0">
                                 <thead>
-                                <tr>
-                                    <th role="button"
-                                        ng-click="selectAll('datasets')"
-                                        title="Select all rows">
-                                        <input type="checkbox"
-                                               ng-checked="selected.datasets.length === filtered('datasets').length">
-                                    </th>
-                                    <th>
-                                        <input class="form-control"
-                                               id="datasetsFilter"
-                                               type="text"
-                                               ng-model="filters.datasets"
-                                               placeholder="Filter..."
-                                               title="Filter the list by entering some words or letters">
-                                    </th>
-                                    <th>
-                                        <div class="btn-group" role="group">
-                                            <button class="btn"
-                                                    type="button"
-                                                    title="Show only active datasets"
-                                                    ng-click="showHiddenDatasets = false"
-                                                    ng-class="{ 'btn-success': !showHiddenDatasets }">OFF</button>
-                                            <button class="btn"
-                                                    type="button"
-                                                    title="Show hidden datasets"
-                                                    ng-click="showHiddenDatasets = true"
-                                                    ng-class="{ 'btn-warning': showHiddenDatasets }">ON</button>
-                                        </div>
-                                    </th>
-                                    <th colspan=2>
-                                        <div class="form-inline">
-                                            <label for="datasetsLimit">Limit</label>
-                                            <select id="datasetsLimit"
-                                                    class="form-control"
-                                                    ng-model="limits.datasets"
-                                                    ng-options="limit for (limit, value) in limitsOptions">
-                                            </select>
-                                        </div>
-                                    </th>
-                                </tr>
+                                    <tr>
+                                        <th role="button" ng-click="selectAll('datasets')" title="Select all rows">
+                                            <input type="checkbox" ng-checked="selected.datasets.length === filtered('datasets').length">
+                                        </th>
+                                        <th>
+                                            <input class="form-control"
+                                                id="datasetsFilter"
+                                                type="text"
+                                                ng-model="filters.datasets"
+                                                placeholder="Filter..."
+                                                title="Filter the list by entering some words or letters">
+                                        </th>
+                                        <th>
+                                            <div class="btn-group" role="group">
+                                                <button class="btn" type="button" title="Show only active datasets" ng-click="showHiddenDatasets = false" ng-class="{ 'btn-success': !showHiddenDatasets }">
+                                                    OFF
+                                                </button>
+                                                <button class="btn" type="button" title="Show hidden datasets" ng-click="showHiddenDatasets = true" ng-class="{ 'btn-warning': showHiddenDatasets }">
+                                                    ON
+                                                </button>
+                                            </div>
+                                        </th>
+                                        <th colspan=2>
+                                            <div class="form-inline">
+                                                <label for="datasetsLimit">Limit</label>
+                                                <select id="datasetsLimit" class="form-control" ng-model="limits.datasets" ng-options="limit for (limit, value) in limitsOptions"></select>
+                                            </div>
+                                        </th>
+                                    </tr>
                                 </thead>
                                 <tbody>
-                                <tr ng-repeat="set in filtered('datasets', showHiddenDatasets)"
-                                    ng-class="{ info: selected.datasets.indexOf(set.name) > -1 }">
-                                    <td class="buttonCell"
-                                        role="button"
-                                        ng-click="select('datasets', set.name)">
-                                        <input type="checkbox"
-                                              ng-checked="selected.datasets.indexOf(set.name) > -1">
-                                    </td>
-                                    <td class="buttonCell"
-                                        role="button"
-                                        ng-click="select('datasets', set.name)"
-                                        title="{{ set.description }}">
-                                        {{ set.name }}
-                                    </td>
-                                    <td class="buttonCellHide">
-                                        <div class="btn-group" ng-show="showHiddenDatasets">
-                                            <button class="btn btn-xs" type="button" title="Hide this dataset" ng-click="hide(set._id)" ng-class="{ 'btn-danger': set.hidden }">OFF</button>
-                                            <button class="btn btn-xs" type="button" title="Show this dataset" ng-click="show(set._id)" ng-class="{ 'btn-info': !set.hidden }">ON</button>
-                                        </div>
-                                    </td>
-                                    <td class="buttonCellEdit"
-                                        title="Make changes to the dataset"
-                                        role="button"
-                                        ng-click="datasetChanges.name = set.name; datasetChanges.newName = set.name; datasetChanges.description = set.description;"
-                                        data-toggle="modal"
-                                        data-target="#datasetEdition">
-                                        <span class="glyphicon glyphicon-pencil"></span>
-                                    </td>
-                                    <td class="buttonCellRemove" title="Delete this dataset" role="button" ng-click="remove(set.name)">
-                                        <span class="glyphicon glyphicon-remove"></span>
-                                    </td>
-                                </tr>
+                                    <tr ng-repeat="set in filtered('datasets', showHiddenDatasets)" ng-class="{ info: selected.datasets.indexOf(set.name) > -1 }">
+                                        <td class="buttonCell" role="button" ng-click="select('datasets', set.name)">
+                                            <input type="checkbox" ng-checked="selected.datasets.indexOf(set.name) > -1">
+                                        </td>
+                                        <td class="buttonCell" title="{{ set.description }}" role="button" ng-click="select('datasets', set.name)">
+                                            {{ set.name }}
+                                        </td>
+                                        <td class="buttonCellHide">
+                                            <div class="btn-group" ng-show="showHiddenDatasets">
+                                                <button class="btn btn-xs" type="button" title="Hide this dataset" ng-click="hide(set._id)" ng-class="{ 'btn-danger': set.hidden }">OFF</button>
+                                                <button class="btn btn-xs" type="button" title="Show this dataset" ng-click="show(set._id)" ng-class="{ 'btn-info': !set.hidden }">ON</button>
+                                            </div>
+                                        </td>
+                                        <td
+                                            class="buttonCellEdit"
+                                            title="Make changes to the dataset"
+                                            role="button"
+                                            ng-click="datasetChanges.name = set.name; datasetChanges.newName = set.name; datasetChanges.description = set.description;"
+                                            data-toggle="modal"
+                                            data-target="#datasetEdition">
+                                            <span class="glyphicon glyphicon-pencil"></span>
+                                        </td>
+                                        <td class="buttonCellRemove" title="Delete this dataset" role="button" ng-click="remove(set.name)">
+                                            <span class="glyphicon glyphicon-remove"></span>
+                                        </td>
+                                    </tr>
                                 </tbody>
                             </table>
-                            <button class="btn btn-info"
-                                    type="button"
-                                    ng-click="searchData()"
-                                    ng-show="lists.datasets.length !== 0">Display genes and experiments</button>
+                            <button class="btn btn-info" type="button" ng-click="searchData()" ng-show="lists.datasets.length !== 0">
+                                Display genes and experiments
+                            </button>
                         </div>
                     </div>
+                </section>
 
-                    <div class="modal" id="datasetEdition">
-                        <div class="modal-dialog" role="document">
-                            <div class="modal-content">
-                                <div class="modal-header">
-                                    <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
-                                    <h4 class="modal-title">Dataset informations</h4>
+                <div class="modal" id="datasetEdition">
+                    <div class="modal-dialog" role="document">
+                        <div class="modal-content">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                                <h4 class="modal-title">Dataset informations</h4>
+                            </div>
+                            <div class="modal-body">
+                                <div class="form-group">
+                                    <label for="currentDatasetName">Dataset name</label>
+                                    <input id="currentDatasetName"
+                                        class="form-control"
+                                        type="text"
+                                        title="You can rename the dataset"
+                                        ng-model="datasetChanges.newName"
+                                        required>
                                 </div>
-                                <div class="modal-body">
-                                    <div class="form-group">
-                                        <label for="dataName">Dataset name</label>
-                                        <input id="dataName"
-                                            class="form-control"
-                                            type="text"
-                                            title="You can rename the dataset"
-                                            ng-model="datasetChanges.newName"
-                                            required>
-                                    </div>
 
-                                    <div class="form-group">
-                                        <label for="dataDescription">Description</label>
-                                        <textarea id="dataDescription"
-                                            class="form-control"
-                                            ng-model="datasetChanges.description"
-                                            title="Write a description here"
-                                            cols=50
-                                            rows=8
-                                            required></textarea>
-                                    </div>
+                                <div class="form-group">
+                                    <label for="currentDescription">Description</label>
+                                    <textarea id="currentDescription"
+                                        class="form-control"
+                                        ng-model="datasetChanges.description"
+                                        title="Write a description here"
+                                        cols=50
+                                        rows=8
+                                        required></textarea>
                                 </div>
-                                <div class="modal-footer">
-                                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                    <button type="button" class="btn btn-info" data-dismiss="modal" ng-click="update()">Save changes</button>
-                                </div>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                                <button type="button" class="btn btn-info" data-dismiss="modal" ng-click="update()">Save changes</button>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    <div class="row" ng-show="lists.exp.length > 0 || lists.genes.length > 0">
-                        <div class="col-lg-6">
+                <div class="row" ng-show="lists.exp.length > 0 || lists.genes.length > 0">
+                    <div class="col-lg-6">
 
-                            <h3 class="page-header">
-                                Experiments
-                                <small>{{ lists.exp.slice(0, limits.exp).length }} lines displayed on {{ lists.exp.length }}</small>
-                            </h3>
+                        <h3 class="page-header">
+                            Experiments
+                            <small>{{ lists.exp.slice(0, limits.exp).length }} lines displayed on {{ lists.exp.length }}</small>
+                        </h3>
 
-                            <table class="table table-striped">
-                                <thead>
+                        <table class="table table-striped">
+                            <thead>
                                 <tr>
                                     <th role="button"
                                         ng-click="selectAll('exp')"
                                         title="Select all rows">
                                         <input type="checkbox"
-                                               ng-checked="selected.exp.length === filtered('exp').length">
+                                            ng-checked="selected.exp.length === filtered('exp').length">
                                     </th>
                                     <th>
                                         <div class="form-inline">
                                             <input class="form-control"
-                                                   id="expFilter"
-                                                   type="text"
-                                                   ng-model="filters.exp"
-                                                   placeholder="Filter..."
-                                                   title="Filter the list by entering some words or letters">
+                                                id="expFilter"
+                                                type="text"
+                                                ng-model="filters.exp"
+                                                placeholder="Filter..."
+                                                title="Filter the list by entering some words or letters">
                                             <div class="form-group pull-right" id="expLimit" title="Maximum of rows displayed">
                                                 <label for="expSelectLimit">Limit</label>
                                                 <select id="expSelectLimit"
@@ -316,122 +303,123 @@
                                         </div>
                                     </th>
                                 </tr>
-                                </thead>
-                                <tbody>
+                            </thead>
+                            <tbody>
                                 <tr ng-repeat="exp in filtered('exp')"
                                     ng-class="{ info: selected.exp.indexOf(exp) > -1 }">
                                     <td class="buttonCell"
                                         role="button"
                                         ng-click="select('exp', exp)">
                                         <input type="checkbox"
-                                               ng-checked="selected.exp.indexOf(exp) > -1">
+                                            ng-checked="selected.exp.indexOf(exp) > -1">
                                     <td class="buttonCell" role="button" ng-click="select('exp', exp)">
                                         {{ exp }}
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <div class="col-lg-6">
-
-                            <h3 class="page-header">
-                                Genes
-                                <small>{{ lists.genes.slice(0, limits.genes).length }} lines displayed on {{ lists.genes.length }}</small>
-                            </h3>
-
-                            <table class="table table-striped">
-                                <thead>
-                                <tr>
-                                    <th role="button"
-                                        ng-click="selectAll('genes')"
-                                        title="Select all rows">
-                                        <input type="checkbox"
-                                               ng-checked="selected.genes.length === filtered('genes').length">
-                                    </th>
-                                    <th>
-                                        <form class="form-inline">
-                                            <input class="form-control"
-                                                   id="genesFilter"
-                                                   type="text"
-                                                   ng-model="filters.genes"
-                                                   placeholder="Filter..."
-                                                   title="Filter the list by entering some words or letters">
-                                            <div class="form-group pull-right" title="Maximum of rows displayed">
-                                                <label for="genesLimit">Limit</label>
-                                                <select id="genesLimit"
-                                                        class="form-control"
-                                                        ng-model="limits.genes"
-                                                        ng-options="limit for (limit, value) in limitsOptions">
-                                                </select>
-                                            </div>
-                                        </form>
-                                    </th>
-                                </tr>
-                                </thead>
-                                <tbody>
-                                <tr ng-repeat="gene in filtered('genes')"
-                                    ng-class="{ info: selected.genes.indexOf(gene) > -1 }">
-                                    <td class="buttonCell"
-                                        role="button"
-                                        ng-click="select('genes', gene)">
-                                        <input type="checkbox"
-                                               ng-checked="selected.genes.indexOf(gene) > -1">
-                                    <td class="buttonCell" role="button" ng-click="select('genes', gene)">
-                                        {{ gene }}
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
-                        </div>
-                    </div>
-                    <div ng-show="lists.exp.length > 0 || lists.genes.length > 0">
-                        <button class="btn btn-info" type="button" ng-click="getData()">Display raw data</button>
-                    </div>
-
-                    <div id="results">
-                        <h2 class="page-header">Results
-                            <small ng-show="isLoading">Loading data..</small>
-                            <small ng-show="dataRows.length > 0">{{ dataRows.slice(0, limits.results).length }} lines displayed on {{ dataRows.length }}</small>
-                            <small class="pull-right">
-                                <label for="resultsLimit">Limit</label>
-                                <select id="resultsLimit"
-                                        class="form-control"
-                                        ng-model="limits.results"
-                                        ng-options="limit for (limit, value) in limitsOptions">
-                                </select>
-                            </small>
-                        </h2>
-
-                        <a ng-href="{{ dataHref }}"
-                           download="Data.txt"
-                           ng-click="download()"
-                           ng-show="dataRows.length > 0"><span class="glyphicon glyphicon-download"></span> Download in TSV
-                        </a>
-
-                        <table class="table table-hover">
-                            <thead>
-                                <tr>
-                                    <th class="buttonCell"
-                                        role="button"
-                                        ng-repeat="(header, value) in dataRows[0]"
-                                        ng-class="{ orderColumn : predicate === header, reverse : reverse === true }"
-                                        ng-click="order(header, !reverse)">
-                                            {{ header }}
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr ng-repeat="row in dataRows.slice(0, limits.results)">
-                                    <td ng-repeat="(header, value) in row">
-                                        {{ value }}
                                     </td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
+
+                    <div class="col-lg-6">
+
+                        <h3 class="page-header">
+                            Genes
+                            <small>{{ lists.genes.slice(0, limits.genes).length }} lines displayed on {{ lists.genes.length }}</small>
+                        </h3>
+
+                        <table class="table table-striped">
+                            <thead>
+                            <tr>
+                                <th role="button"
+                                    ng-click="selectAll('genes')"
+                                    title="Select all rows">
+                                    <input type="checkbox"
+                                           ng-checked="selected.genes.length === filtered('genes').length">
+                                </th>
+                                <th>
+                                    <form class="form-inline">
+                                        <input class="form-control"
+                                               id="genesFilter"
+                                               type="text"
+                                               ng-model="filters.genes"
+                                               placeholder="Filter..."
+                                               title="Filter the list by entering some words or letters">
+                                        <div class="form-group pull-right" title="Maximum of rows displayed">
+                                            <label for="genesLimit">Limit</label>
+                                            <select id="genesLimit"
+                                                    class="form-control"
+                                                    ng-model="limits.genes"
+                                                    ng-options="limit for (limit, value) in limitsOptions">
+                                            </select>
+                                        </div>
+                                    </form>
+                                </th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr ng-repeat="gene in filtered('genes')"
+                                ng-class="{ info: selected.genes.indexOf(gene) > -1 }">
+                                <td class="buttonCell"
+                                    role="button"
+                                    ng-click="select('genes', gene)">
+                                    <input type="checkbox"
+                                           ng-checked="selected.genes.indexOf(gene) > -1">
+                                <td class="buttonCell" role="button" ng-click="select('genes', gene)">
+                                    {{ gene }}
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
-            </section>
+                <div ng-show="lists.exp.length > 0 || lists.genes.length > 0">
+                    <button class="btn btn-info" type="button" ng-click="getData()">Display raw data</button>
+                </div>
+
+                <div id="results">
+                    <h2 class="page-header"
+                        ng-show="dataRows.length > 0">
+                        Results
+                        <small ng-show="isLoading">Loading data..</small>
+                        <small ng-show="dataRows.length > 0">{{ dataRows.slice(0, limits.results).length }} lines displayed on {{ dataRows.length }}</small>
+                        <small class="pull-right">
+                            <label for="resultsLimit">Limit</label>
+                            <select id="resultsLimit"
+                                    class="form-control"
+                                    ng-model="limits.results"
+                                    ng-options="limit for (limit, value) in limitsOptions">
+                            </select>
+                        </small>
+                    </h2>
+
+                    <a ng-href="{{ dataHref }}"
+                       download="Data.txt"
+                       ng-click="download()"
+                       ng-show="dataRows.length > 0"><span class="glyphicon glyphicon-download"></span> Download in TSV
+                    </a>
+
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th class="buttonCell"
+                                    role="button"
+                                    ng-repeat="(header, value) in dataRows[0]"
+                                    ng-class="{ orderColumn : predicate === header, reverse : reverse === true }"
+                                    ng-click="order(header, !reverse)">
+                                        {{ header }}
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="row in dataRows.slice(0, limits.results)">
+                                <td ng-repeat="(header, value) in row">
+                                    {{ value }}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
         </div>
     </body>
 </html>

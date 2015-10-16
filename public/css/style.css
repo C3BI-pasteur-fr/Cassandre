@@ -24,11 +24,11 @@ body {
 }
 
 .orderColumn::after {
-    content: "▲";
+    content: "\25B2";
 }
 
 .orderColumn.reverse::after {
-    content: "▼";
+    content: "\25BC";
 }
 
 #datasetsFilter {

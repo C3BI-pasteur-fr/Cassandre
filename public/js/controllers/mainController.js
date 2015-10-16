@@ -21,8 +21,9 @@ angular.module("cassandre").controller("MainController", [
     };
 
     // Booleans to control the display
-    $scope.showDatasetsSection = false;
-    $scope.showAnnotationsSection = false;
+    $scope.showAddDatasetsSection = false;
+    $scope.showAddAnnotationsSection = false;
+    $scope.showDatasetsSection = true;
 
     // File to upload
     $scope.dataFile = {
