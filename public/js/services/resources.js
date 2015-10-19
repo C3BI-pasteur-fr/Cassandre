@@ -6,11 +6,19 @@
 angular.module("cassandre")
 
 // Resource to get the list of datasets and POST new datasets to the server
-.factory("datasets", ["$resource", function datasetsFactory ($resource) {
+.factory("datasets", ["$resource", "$filter", function datasetsFactory ($resource, $filter) {
     return $resource("/api/measurements", {}, {
         list: {
             method: "GET",
-            isArray: true
+            isArray: true,
+            transformResponse: [
+                function (data) { // See if you can put this as default without override
+                    return angular.fromJson(data);
+                },
+                function (data) {
+                    return $filter("orderBy")(data, "postedDate", true);
+                }
+            ]
         },
         create: {
             method: "POST",
@@ -100,6 +108,14 @@ angular.module("cassandre")
                 "expId[]": "@expId",
                 "geneId[]": "@geneId"
             }
+        }
+    });
+}])
+
+.factory("dbStat", ["$resource", function dbStatFactory ($resource) {
+    return $resource("/api/dbStat", {}, {
+        get: {
+            method: "GET"
         }
     });
 }]);

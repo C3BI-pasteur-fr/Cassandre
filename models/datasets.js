@@ -11,6 +11,9 @@ var Datasets = mongoose.model('Datasets', mongoose.Schema({
     },
     hidden: {
         type: Boolean
+    },
+    postedDate: {
+        type: Date
     }
 }));
 

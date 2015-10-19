@@ -161,7 +161,7 @@
                     <div class="row">
                         <h2 class="col-lg-offset-5 text-muted" ng-show="lists.datasets.length === 0">No Data</h2>
     
-                        <div class="col-lg-offset-2 col-lg-7">
+                        <div class="col-lg-offset-1 col-lg-6">
                             <table id="datasetsList" class="table table-striped table-hover" ng-show="lists.datasets.length !== 0">
                                 <thead>
                                     <tr>
@@ -176,7 +176,14 @@
                                                 placeholder="Filter..."
                                                 title="Filter the list by entering some words or letters">
                                         </th>
+                                        <th colspan=2>
+                                            <div class="form-inline">
+                                                <label for="datasetsLimit">Limit</label>
+                                                <select id="datasetsLimit" class="form-control" ng-model="limits.datasets" ng-options="limit for (limit, value) in limitsOptions"></select>
+                                            </div>
+                                        </th>
                                         <th>
+                                            <label>Show hidden sets </label>
                                             <div class="btn-group" role="group">
                                                 <button class="btn" type="button" title="Show only active datasets" ng-click="showHiddenDatasets = false" ng-class="{ 'btn-success': !showHiddenDatasets }">
                                                     OFF
@@ -184,12 +191,6 @@
                                                 <button class="btn" type="button" title="Show hidden datasets" ng-click="showHiddenDatasets = true" ng-class="{ 'btn-warning': showHiddenDatasets }">
                                                     ON
                                                 </button>
-                                            </div>
-                                        </th>
-                                        <th colspan=2>
-                                            <div class="form-inline">
-                                                <label for="datasetsLimit">Limit</label>
-                                                <select id="datasetsLimit" class="form-control" ng-model="limits.datasets" ng-options="limit for (limit, value) in limitsOptions"></select>
                                             </div>
                                         </th>
                                     </tr>
@@ -201,12 +202,6 @@
                                         </td>
                                         <td class="buttonCell" title="{{ set.description }}" role="button" ng-click="select('datasets', set.name)">
                                             {{ set.name }}
-                                        </td>
-                                        <td class="buttonCellHide">
-                                            <div class="btn-group" ng-show="showHiddenDatasets">
-                                                <button class="btn btn-xs" type="button" title="Hide this dataset" ng-click="hide(set._id)" ng-class="{ 'btn-danger': set.hidden }">OFF</button>
-                                                <button class="btn btn-xs" type="button" title="Show this dataset" ng-click="show(set._id)" ng-class="{ 'btn-info': !set.hidden }">ON</button>
-                                            </div>
                                         </td>
                                         <td
                                             class="buttonCellEdit"
@@ -220,12 +215,33 @@
                                         <td class="buttonCellRemove" title="Delete this dataset" role="button" ng-click="remove(set.name)">
                                             <span class="glyphicon glyphicon-remove"></span>
                                         </td>
+                                        <td class="buttonCellHide">
+                                            <div class="btn-group" ng-show="showHiddenDatasets">
+                                                <button class="btn btn-xs" type="button" title="Hide this dataset" ng-click="hide(set._id)" ng-class="{ 'btn-danger': set.hidden }">OFF</button>
+                                                <button class="btn btn-xs" type="button" title="Show this dataset" ng-click="show(set._id)" ng-class="{ 'btn-info': !set.hidden }">ON</button>
+                                            </div>
+                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
                             <button class="btn btn-info" type="button" ng-click="searchData()" ng-show="lists.datasets.length !== 0">
                                 Display genes and experiments
                             </button>
+                        </div>
+                        
+                        <div class="col-lg-offset-1 col-lg-2">
+                            <div class="panel panel-info">
+                                <div class="panel-heading">Informations</div>
+                                <div class="panel-body">
+                                    <p>There is currently in the database : </p>
+                                    {{ dbStats }}
+                                    <ul>
+                                        <li>4 Datasets</li>
+                                        <li>254 Experiments</li>
+                                        <li>5218 Genes</li>
+                                    </ul>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </section>

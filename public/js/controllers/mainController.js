@@ -5,8 +5,8 @@
  */
 
 angular.module("cassandre").controller("MainController", [
-    "$scope", "$filter", "$http", "xlsxToJson", "tsvToJson", "jsonToTsv", "datasets", "genes", "exp", "data", "annotations",
-    function ($scope, $filter, $http, xlsxToJson, tsvToJson, jsonToTsv, datasets, genes, exp, data, annotations) {
+    "$scope", "$filter", "$http", "xlsxToJson", "tsvToJson", "jsonToTsv", "dbStat", "datasets", "genes", "exp", "data", "annotations",
+    function ($scope, $filter, $http, xlsxToJson, tsvToJson, jsonToTsv, dbStat, datasets, genes, exp, data, annotations) {
 
     $scope.dataCells = [];              // Data from database
     $scope.dataRows = [];               // Data formatted in rows
@@ -50,6 +50,8 @@ angular.module("cassandre").controller("MainController", [
 
     // Marker for the datasets menu
     $scope.showHiddenDatasets = false;
+    
+    $scope.dbStats = dbStat.get();
 
     // Lists in the selection menu
     $scope.lists = {

@@ -34,6 +34,13 @@ var router = function(app) {
 // ROUTES
 // =========================================================================
 
+    app.route('/api/dbStat')
+    .get(function (req, res) {
+        Measurements.collection.distinct("measId").count(function (err, result) {
+            console.log(result);
+        });
+    })
+
     app.route('/api/measurements/')
 
     // Get the list of datasets
@@ -51,7 +58,8 @@ var router = function(app) {
         Datasets.collection.insert({
             name: req.file.filename,
             description: req.body.description,
-            hidden: false
+            hidden: false,
+            postedDate: new Date()
         }, function (err) {
             if (err) {
                 if (err.name === 'MongoError') {
