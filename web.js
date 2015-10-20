@@ -34,10 +34,43 @@ var router = function(app) {
 // ROUTES
 // =========================================================================
 
-    app.route('/api/dbStat')
+    app.route('/api/database')
+
+    // Get the numbers of datasets, experiments and genes in teh database
     .get(function (req, res) {
-        Measurements.collection.distinct("measId").count(function (err, result) {
-            console.log(result);
+
+        // Aggregation pipeline
+        var pipeline = [{
+            $group: {
+                _id: null,
+                datasets: { $addToSet: '$measId'},
+                exp: { $addToSet: '$expId'},
+                genes: { $addToSet: '$geneId'}
+            }
+        }, {
+            $project: {
+                _id: false,
+                datasets: { $size: '$datasets'},
+                exp: { $size: '$exp'},
+                genes : { $size: "$genes"}
+            }
+        }];
+
+        // Add another stage before the others to filter unrequested datasets
+        if (req.query.datasets) {
+            pipeline.unshift({
+                $match: {
+                    measId: { $in: [].concat(req.query.datasets) }
+                }
+            });
+        }
+
+        Measurements.collection.aggregate(pipeline, function (err, results) {
+            if (err) {
+                return res.status(500).send('Error with the database : ' + err.message);
+            }
+
+            return res.status(200).send(results[0]);
         });
     })
 
@@ -81,7 +114,7 @@ var router = function(app) {
 
     // Update datasets informations
     .patch(function (req, res) {
-        
+
         // First update the datasets collection
         Datasets.collection.update({
             name: decodeURIComponent(req.query.name)

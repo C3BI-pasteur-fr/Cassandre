@@ -5,8 +5,8 @@
  */
 
 angular.module("cassandre").controller("MainController", [
-    "$scope", "$filter", "$http", "xlsxToJson", "tsvToJson", "jsonToTsv", "dbStat", "datasets", "genes", "exp", "data", "annotations",
-    function ($scope, $filter, $http, xlsxToJson, tsvToJson, jsonToTsv, dbStat, datasets, genes, exp, data, annotations) {
+    "$scope", "$filter", "$http", "xlsxToJson", "tsvToJson", "jsonToTsv", "database", "datasets", "annotations", "genes", "exp", "data",
+    function ($scope, $filter, $http, xlsxToJson, tsvToJson, jsonToTsv, database, datasets, annotations, genes, exp, data) {
 
     $scope.dataCells = [];              // Data from database
     $scope.dataRows = [];               // Data formatted in rows
@@ -18,6 +18,51 @@ angular.module("cassandre").controller("MainController", [
         xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         txt: "text/plain",
         tsv: "text/tab-separated-values"
+    };
+    
+    // ----- Initialization --------------------------------------------- //
+    
+    // Get the stats of the database
+    database.stats(function (stats) {
+        $scope.dbStats.total = stats;
+        $scope.dbStats.selected = stats;
+    });
+    
+    // Get the datasets
+    datasets.list(function (datasets) {
+        $scope.lists.datasets = datasets;
+        $scope.selectAll("datasets");
+    });
+    
+    // ----- Watchers --------------------------------------------------- //
+    
+    // Refresh the stats panel when datasets selection changes
+    $scope.$watch("selected.datasets", function (newSet, oldSet) {
+        
+        // Spare a pointless request
+        if (newSet.length === 0) {
+            $scope.dbStats.selected = {
+                datasets: 0,
+                exp: 0,
+                genes: 0
+            };
+        }
+        
+        // Get the new stats to the database
+        else if (!angular.equals(newSet, oldSet)) {
+            database.stats({ datasets: newSet }, function (newStats) {
+                $scope.dbStats.selected = newStats;
+            });
+        }
+
+    }, true);
+
+    // ------------------------------------------------------------------ //
+
+    // Total numbers of datasets, experiments and genes
+    $scope.dbStats = {
+        total: {},
+        selected: {}
     };
 
     // Booleans to control the display
@@ -50,12 +95,10 @@ angular.module("cassandre").controller("MainController", [
 
     // Marker for the datasets menu
     $scope.showHiddenDatasets = false;
-    
-    $scope.dbStats = dbStat.get();
 
     // Lists in the selection menu
     $scope.lists = {
-        datasets: datasets.list(),  // The list is an object with names as keys
+        datasets: [],
         genes: [],
         exp: []
     };
@@ -256,6 +299,7 @@ angular.module("cassandre").controller("MainController", [
             }, function () {
                 // TO CHANGE
                 $scope.lists.datasets = datasets.list();
+                $scope.dbStats.total = database.stats();
             }, function (err) {
                 alert("Error : " + err.data);
             });
@@ -308,9 +352,10 @@ angular.module("cassandre").controller("MainController", [
 
         $scope.dataIsUploading = true;
 
-        datasets.create(allData, function () {
+        datasets.add(allData, function () {
             $scope.dataIsUploading = false;
             $scope.lists.datasets = datasets.list();
+            $scope.dbStats.total = database.stats();
             alert("Data successfully stored.");
             document.getElementById("dataUploadForm").reset(); // No better solution found with Angular
         }, function (err) {

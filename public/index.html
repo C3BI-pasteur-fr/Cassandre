@@ -38,11 +38,11 @@
                     </div>
                     <div id="navbar-menu" class="collapse navbar-collapse">
                         <ul class="nav navbar-nav">
-                            <li class="disabled"><a role="button" ng-click="">
+                            <li class="disabled" title="Coming soon.."><a role="button" ng-click="">
                                 <span class="glyphicon glyphicon-search"></span>
                                 Search Experiments</a>
                             </li>
-                            <li class="disabled"><a role="button" ng-click="">
+                            <li class="disabled" title="Coming soon.."><a role="button" ng-click="">
                                 <span class="glyphicon glyphicon-search"></span>
                                 Search Genes</a>
                             </li>
@@ -183,7 +183,7 @@
                                             </div>
                                         </th>
                                         <th>
-                                            <label>Show hidden sets </label>
+                                            <label>Show all</label>
                                             <div class="btn-group" role="group">
                                                 <button class="btn" type="button" title="Show only active datasets" ng-click="showHiddenDatasets = false" ng-class="{ 'btn-success': !showHiddenDatasets }">
                                                     OFF
@@ -228,17 +228,30 @@
                                 Display genes and experiments
                             </button>
                         </div>
-                        
-                        <div class="col-lg-offset-1 col-lg-2">
-                            <div class="panel panel-info">
-                                <div class="panel-heading">Informations</div>
+
+                        <div class="col-lg-2" >
+                            <div class="panel panel-primary" ng-show="lists.datasets.length !== 0">
+                                <div class="panel-heading">Selected Datasets</div>
+                                <div class="panel-body">
+                                    <p>Currently selected :</p>
+                                    <ul>
+                                        <li>{{ dbStats.selected.datasets }} Datasets</li>
+                                        <li>{{ dbStats.selected.exp }} Experiments</li>
+                                        <li>{{ dbStats.selected.genes }} Genes</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-2">
+                            <div class="panel panel-info" ng-show="lists.datasets.length !== 0">
+                                <div class="panel-heading">Database informations</div>
                                 <div class="panel-body">
                                     <p>There is currently in the database : </p>
-                                    {{ dbStats }}
                                     <ul>
-                                        <li>4 Datasets</li>
-                                        <li>254 Experiments</li>
-                                        <li>5218 Genes</li>
+                                        <li>{{ dbStats.total.datasets }} Datasets</li>
+                                        <li>{{ dbStats.total.exp }} Experiments</li>
+                                        <li>{{ dbStats.total.genes }} Genes</li>
                                     </ul>
                                 </div>
                             </div>

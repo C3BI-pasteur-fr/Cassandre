@@ -12,7 +12,7 @@ angular.module("cassandre")
             method: "GET",
             isArray: true,
             transformResponse: [
-                function (data) { // See if you can put this as default without override
+                function (data) {
                     return angular.fromJson(data);
                 },
                 function (data) {
@@ -20,7 +20,7 @@ angular.module("cassandre")
                 }
             ]
         },
-        create: {
+        add: {
             method: "POST",
             transformRequest: angular.identity,     // Override Angular's default serialization
             headers: {                              // Let the browser set the Content-Type
@@ -112,10 +112,14 @@ angular.module("cassandre")
     });
 }])
 
-.factory("dbStat", ["$resource", function dbStatFactory ($resource) {
-    return $resource("/api/dbStat", {}, {
-        get: {
-            method: "GET"
+// Resource to get statistics from the database
+.factory("database", ["$resource", function databaseFactory ($resource) {
+    return $resource("/api/database", {}, {
+        stats: {
+            method: "GET",
+            params: {
+                "datasets[]": "@datasets"
+            }
         }
     });
 }]);

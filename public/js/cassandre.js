@@ -6,7 +6,7 @@
 
 angular.module("cassandre", ["ngResource"])
 
-// ----- Configuration -------------------------------------------------- //
+// ----- Config phase --------------------------------------------------- //
 
 /*
  * Adding "data" to the url regex of the angular white list.
@@ -19,4 +19,4 @@ angular.module("cassandre", ["ngResource"])
     $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|tel|file|data):/);
 });
 
-//----------------------------------------------------------------------- //
+// ---------------------------------------------------------------------- //
