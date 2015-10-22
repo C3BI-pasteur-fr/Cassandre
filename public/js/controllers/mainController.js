@@ -19,26 +19,26 @@ angular.module("cassandre").controller("MainController", [
         txt: "text/plain",
         tsv: "text/tab-separated-values"
     };
-    
+
     // ----- Initialization --------------------------------------------- //
-    
+
     // Get the stats of the database
     database.stats(function (stats) {
         $scope.dbStats.total = stats;
         $scope.dbStats.selected = stats;
     });
-    
+
     // Get the datasets
     datasets.list(function (datasets) {
         $scope.lists.datasets = datasets;
         $scope.selectAll("datasets");
     });
-    
+
     // ----- Watchers --------------------------------------------------- //
-    
+
     // Refresh the stats panel when datasets selection changes
     $scope.$watch("selected.datasets", function (newSet, oldSet) {
-        
+
         // Spare a pointless request
         if (newSet.length === 0) {
             $scope.dbStats.selected = {
@@ -47,7 +47,7 @@ angular.module("cassandre").controller("MainController", [
                 genes: 0
             };
         }
-        
+
         // Get the new stats to the database
         else if (!angular.equals(newSet, oldSet)) {
             database.stats({ datasets: newSet }, function (newStats) {
@@ -119,7 +119,6 @@ angular.module("cassandre").controller("MainController", [
 
     // Limits for display
     $scope.limits = {
-        datasets: 10,
         genes: 10,
         exp: 10,
         results: 10
@@ -311,6 +310,12 @@ angular.module("cassandre").controller("MainController", [
         $scope.predicate = header;
         $scope.reverse = reverse;
         $scope.dataRows = $filter("orderBy")($scope.dataRows, "'" + header + "'", $scope.reverse);
+    };
+
+    // Turn an ISO string date into a human readable string
+    $scope.formatDate = function (date) {
+        return date.replace(/T/, ' ')      // Replace T with a space
+                   .replace(/\..+/, '');   // Delete the dot and everything after
     };
 
     // Set the data URI of the display table for the download

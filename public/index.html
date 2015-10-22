@@ -153,58 +153,68 @@
                 </div>
 
                 <section id="datasetsSection" ng-show="showDatasetsSection">
-                    <h3 class="page-header">
-                        Data Sets
-                        <small ng-show="lists.datasets.length > 0">{{ lists.datasets.slice(0, limits.datasets).length }} lines displayed on {{ lists.datasets.length }}</small>
-                    </h3>
+                    <h3 class="page-header">Data Sets</h3>
 
                     <div class="row">
                         <h2 class="col-lg-offset-5 text-muted" ng-show="lists.datasets.length === 0">No Data</h2>
-    
-                        <div class="col-lg-offset-1 col-lg-6">
-                            <table id="datasetsList" class="table table-striped table-hover" ng-show="lists.datasets.length !== 0">
+
+                        <div class="col-lg-1">
+                            <label>Show All</label>
+                            <div class="btn-group" role="group">
+                                <button class="btn" type="button" title="Show only active datasets" ng-click="showHiddenDatasets = false" ng-class="{ 'btn-success': !showHiddenDatasets }">
+                                    OFF
+                                </button>
+                                <button class="btn" type="button" title="Show hidden datasets" ng-click="showHiddenDatasets = true" ng-class="{ 'btn-warning': showHiddenDatasets }">
+                                    ON
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="col-lg-7">
+                            <table id="datasetsList" class="table" ng-show="lists.datasets.length !== 0">
                                 <thead>
                                     <tr>
+                                        <th class="invisibleCell"></th>
+                                        <th></th>
+                                        <th title="Name of the dataset">Name</th>
+                                        <th title="Date of insertion in the database">Posted Date</th>
+                                        <th title="Make changes to the dataset">Edit</th>
+                                        <th title="Delete this dataset">Remove</th>
+                                    </tr>
+                                    <tr>
+                                        <th class="invisibleCell">
+                                        </th>
                                         <th role="button" ng-click="selectAll('datasets')" title="Select all rows">
                                             <input type="checkbox" ng-checked="selected.datasets.length === filtered('datasets').length">
                                         </th>
-                                        <th>
+                                        <th colspan=4>
                                             <input class="form-control"
                                                 id="datasetsFilter"
                                                 type="text"
                                                 ng-model="filters.datasets"
                                                 placeholder="Filter..."
-                                                title="Filter the list by entering some words or letters">
-                                        </th>
-                                        <th colspan=2>
-                                            <div class="form-inline">
-                                                <label for="datasetsLimit">Limit</label>
-                                                <select id="datasetsLimit" class="form-control" ng-model="limits.datasets" ng-options="limit for (limit, value) in limitsOptions"></select>
-                                            </div>
-                                        </th>
-                                        <th>
-                                            <label>Show all</label>
-                                            <div class="btn-group" role="group">
-                                                <button class="btn" type="button" title="Show only active datasets" ng-click="showHiddenDatasets = false" ng-class="{ 'btn-success': !showHiddenDatasets }">
-                                                    OFF
-                                                </button>
-                                                <button class="btn" type="button" title="Show hidden datasets" ng-click="showHiddenDatasets = true" ng-class="{ 'btn-warning': showHiddenDatasets }">
-                                                    ON
-                                                </button>
-                                            </div>
+                                                title="Filter the list by entering names, dates, letters..">
                                         </th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <tr ng-repeat="set in filtered('datasets', showHiddenDatasets)" ng-class="{ info: selected.datasets.indexOf(set.name) > -1 }">
+                                        <td class="buttonCellHide invisibleCell">
+                                            <div class="btn-group pull-right" ng-class="{ invisible: !showHiddenDatasets}">
+                                                <button class="btn btn-xs" type="button" title="Hide this dataset" ng-click="hide(set._id)" ng-class="{ 'btn-danger': set.hidden }">OFF</button>
+                                                <button class="btn btn-xs" type="button" title="Show this dataset" ng-click="show(set._id)" ng-class="{ 'btn-info': !set.hidden }">ON</button>
+                                            </div>
+                                        </td>
                                         <td class="buttonCell" role="button" ng-click="select('datasets', set.name)">
                                             <input type="checkbox" ng-checked="selected.datasets.indexOf(set.name) > -1">
                                         </td>
                                         <td class="buttonCell" title="{{ set.description }}" role="button" ng-click="select('datasets', set.name)">
                                             {{ set.name }}
                                         </td>
-                                        <td
-                                            class="buttonCellEdit"
+                                        <td class="buttonCell" title="{{ set.description }}" role="button" ng-click="select('datasets', set.name)">
+                                            {{ formatDate(set.postedDate) }}
+                                        </td>
+                                        <td class="buttonCellEdit"
                                             title="Make changes to the dataset"
                                             role="button"
                                             ng-click="datasetChanges.name = set.name; datasetChanges.newName = set.name; datasetChanges.description = set.description;"
@@ -215,43 +225,20 @@
                                         <td class="buttonCellRemove" title="Delete this dataset" role="button" ng-click="remove(set.name)">
                                             <span class="glyphicon glyphicon-remove"></span>
                                         </td>
-                                        <td class="buttonCellHide">
-                                            <div class="btn-group" ng-show="showHiddenDatasets">
-                                                <button class="btn btn-xs" type="button" title="Hide this dataset" ng-click="hide(set._id)" ng-class="{ 'btn-danger': set.hidden }">OFF</button>
-                                                <button class="btn btn-xs" type="button" title="Show this dataset" ng-click="show(set._id)" ng-class="{ 'btn-info': !set.hidden }">ON</button>
-                                            </div>
-                                        </td>
                                     </tr>
                                 </tbody>
                             </table>
-                            <button class="btn btn-info" type="button" ng-click="searchData()" ng-show="lists.datasets.length !== 0">
-                                Display genes and experiments
-                            </button>
                         </div>
 
-                        <div class="col-lg-2" >
-                            <div class="panel panel-primary" ng-show="lists.datasets.length !== 0">
-                                <div class="panel-heading">Selected Datasets</div>
-                                <div class="panel-body">
-                                    <p>Currently selected :</p>
-                                    <ul>
-                                        <li>{{ dbStats.selected.datasets }} Datasets</li>
-                                        <li>{{ dbStats.selected.exp }} Experiments</li>
-                                        <li>{{ dbStats.selected.genes }} Genes</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-2">
+                        <div class="col-lg-offset-1 col-lg-2">
                             <div class="panel panel-info" ng-show="lists.datasets.length !== 0">
                                 <div class="panel-heading">Database informations</div>
                                 <div class="panel-body">
-                                    <p>There is currently in the database : </p>
+                                    <p>Currently selected :</p>
                                     <ul>
-                                        <li>{{ dbStats.total.datasets }} Datasets</li>
-                                        <li>{{ dbStats.total.exp }} Experiments</li>
-                                        <li>{{ dbStats.total.genes }} Genes</li>
+                                        <li>{{ dbStats.selected.datasets }} on {{ dbStats.total.datasets }} Datasets</li>
+                                        <li>{{ dbStats.selected.exp }} on {{ dbStats.total.exp }} Experiments</li>
+                                        <li>{{ dbStats.selected.genes }} on {{ dbStats.total.genes }} Genes</li>
                                     </ul>
                                 </div>
                             </div>
