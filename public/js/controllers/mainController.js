@@ -65,10 +65,8 @@ angular.module("cassandre").controller("MainController", [
         selected: {}
     };
 
-    // Booleans to control the display
-    $scope.showAddDatasetsSection = false;
-    $scope.showAddAnnotationsSection = false;
-    $scope.showDatasetsSection = true;
+    // Control switch for the displayed section
+    $scope.activeSection = "datasetsSection";
 
     // File to upload
     $scope.dataFile = {

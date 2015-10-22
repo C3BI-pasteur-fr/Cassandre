@@ -46,17 +46,23 @@
                                 <span class="glyphicon glyphicon-search"></span>
                                 Search Genes</a>
                             </li>
-                            <li><a role="button" ng-click="showDatasetsSection = !showDatasetsSection">
-                                <span class="glyphicon glyphicon-th-list"></span>
-                                Datasets</a>
+                            <li ng-class="{ active: activeSection === 'datasetsSection' }">
+                                <a role="button" ng-click="activeSection = 'datasetsSection'">
+                                    <span class="glyphicon glyphicon-th-list"></span>
+                                    Datasets
+                                </a>
                             </li>
-                            <li><a role="button" ng-click="showAddDatasetsSection = !showAddDatasetsSection">
-                                <span class="glyphicon glyphicon-upload"></span>
-                                Add Datasets</a>
+                            <li ng-class="{ active: activeSection === 'addDatasetsSection' }">
+                                <a role="button" ng-click="activeSection = 'addDatasetsSection'">
+                                    <span class="glyphicon glyphicon-upload"></span>
+                                    Add Datasets
+                                </a>
                             </li>
-                            <li><a role="button" ng-click="showAddAnnotationsSection = !showAddAnnotationsSection">
-                                <span class="glyphicon glyphicon-upload"></span>
-                                Add Annotations</a>
+                            <li ng-class="{ active: activeSection === 'addAnnotationsSection' }">
+                                <a role="button" ng-click="activeSection = 'addAnnotationsSection'">
+                                    <span class="glyphicon glyphicon-upload"></span>
+                                    Add Annotations
+                                </a>
                             </li>
                         </ul>
                         <ul class="nav navbar-nav navbar-right">
@@ -71,25 +77,18 @@
                 </div>
             </nav>
 
-            <div class="container-fluid">
+            <div class="container-fluid" ng-switch="activeSection">
 
-                <div class="row">
-                    <section id="addDatasetsSection"
-                             class="col-lg-6"
-                             ng-include="'views/addDatasetsSection.html'"
-                             ng-show="showAddDatasetsSection">
-                    </section>
-
-                    <section id="addAnnotationsSection"
-                             class="col-lg-6"
-                             ng-include="'views/addAnnotationsSection.html'"
-                             ng-show="showAddAnnotationsSection">
-                    </section>
-                </div>
-
-                <section id="datasetsSection"
-                         ng-include="'views/datasetsSection.html'"
-                         ng-show="showDatasetsSection">
+                <section id="addDatasetsSection" ng-switch-when="addDatasetsSection">
+                    <ng-include src="'views/addDatasetsSection.html'"></ng-include>
+                </section>
+                
+                <section id="addAnnotationsSection" ng-switch-when="addAnnotationsSection">
+                    <ng-include src="'views/addAnnotationsSection.html'"></ng-include>
+                </section>
+                
+                <section id="datasetsSection" ng-switch-when="datasetsSection">
+                    <ng-include src="'views/datasetsSection.html'"></ng-include>
                 </section>
 
                 <div class="row" ng-show="lists.exp.length > 0 || lists.genes.length > 0">
