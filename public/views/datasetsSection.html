@@ -1,0 +1,128 @@
+<h3 class="page-header">Data Sets</h3>
+
+<div class="row">
+    <h2 class="col-lg-offset-5 text-muted" ng-show="lists.datasets.length === 0">No Data</h2>
+
+    <div class="col-lg-1">
+        <label>Show All</label>
+        <div class="btn-group" role="group">
+            <button class="btn" type="button" title="Show only active datasets" ng-click="showHiddenDatasets = false" ng-class="{ 'btn-success': !showHiddenDatasets }">
+                OFF
+            </button>
+            <button class="btn" type="button" title="Show hidden datasets" ng-click="showHiddenDatasets = true" ng-class="{ 'btn-warning': showHiddenDatasets }">
+                ON
+            </button>
+        </div>
+    </div>
+
+    <div class="col-lg-7">
+        <table id="datasetsList" class="table" ng-show="lists.datasets.length !== 0">
+            <thead>
+                <tr>
+                    <th class="invisibleCell"></th>
+                    <th></th>
+                    <th title="Name of the dataset">Name</th>
+                    <th title="Date of insertion in the database">Posted Date</th>
+                    <th title="Make changes to the dataset">Edit</th>
+                    <th title="Delete this dataset">Remove</th>
+                </tr>
+                <tr>
+                    <th class="invisibleCell">
+                    </th>
+                    <th role="button" ng-click="selectAll('datasets')" title="Select all rows">
+                        <input type="checkbox" ng-checked="selected.datasets.length === filtered('datasets').length">
+                    </th>
+                    <th colspan=4>
+                        <input class="form-control"
+                            id="datasetsFilter"
+                            type="text"
+                            ng-model="filters.datasets"
+                            placeholder="Filter..."
+                            title="Filter the list by entering names, dates, letters..">
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="set in filtered('datasets', showHiddenDatasets)" ng-class="{ info: selected.datasets.indexOf(set.name) > -1 }">
+                    <td class="buttonCellHide invisibleCell">
+                        <div class="btn-group pull-right" ng-class="{ invisible: !showHiddenDatasets}">
+                            <button class="btn btn-xs" type="button" title="Hide this dataset" ng-click="hide(set._id)" ng-class="{ 'btn-danger': set.hidden }">OFF</button>
+                            <button class="btn btn-xs" type="button" title="Show this dataset" ng-click="show(set._id)" ng-class="{ 'btn-info': !set.hidden }">ON</button>
+                        </div>
+                    </td>
+                    <td class="buttonCell" role="button" ng-click="select('datasets', set.name)">
+                        <input type="checkbox" ng-checked="selected.datasets.indexOf(set.name) > -1">
+                    </td>
+                    <td class="buttonCell" title="{{ set.description }}" role="button" ng-click="select('datasets', set.name)">
+                        {{ set.name }}
+                    </td>
+                    <td class="buttonCell" title="{{ set.description }}" role="button" ng-click="select('datasets', set.name)">
+                        {{ formatDate(set.postedDate) }}
+                    </td>
+                    <td class="buttonCellEdit"
+                        title="Make changes to the dataset"
+                        role="button"
+                        ng-click="datasetChanges.name = set.name; datasetChanges.newName = set.name; datasetChanges.description = set.description;"
+                        data-toggle="modal"
+                        data-target="#datasetEdition">
+                        <span class="glyphicon glyphicon-pencil"></span>
+                    </td>
+                    <td class="buttonCellRemove" title="Delete this dataset" role="button" ng-click="remove(set.name)">
+                        <span class="glyphicon glyphicon-remove"></span>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="col-lg-offset-1 col-lg-2">
+        <div class="panel panel-info" ng-show="lists.datasets.length !== 0">
+            <div class="panel-heading">Database informations</div>
+            <div class="panel-body">
+                <p>Currently selected :</p>
+                <ul>
+                    <li>{{ dbStats.selected.datasets }} on {{ dbStats.total.datasets }} Datasets</li>
+                    <li>{{ dbStats.selected.exp }} on {{ dbStats.total.exp }} Experiments</li>
+                    <li>{{ dbStats.selected.genes }} on {{ dbStats.total.genes }} Genes</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal" id="datasetEdition">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                <h4 class="modal-title">Dataset informations</h4>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="currentDatasetName">Dataset name</label>
+                    <input id="currentDatasetName"
+                        class="form-control"
+                        type="text"
+                        title="You can rename the dataset"
+                        ng-model="datasetChanges.newName"
+                        required>
+                </div>
+
+                <div class="form-group">
+                    <label for="currentDescription">Description</label>
+                    <textarea id="currentDescription"
+                        class="form-control"
+                        ng-model="datasetChanges.description"
+                        title="Write a description here"
+                        cols=50
+                        rows=8
+                        required></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-info" data-dismiss="modal" ng-click="update()">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>

@@ -4,13 +4,13 @@
     <head>
         <title>Cassandre</title>
         <meta charset="utf-8">
-        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootswatch/3.3.5/cerulean/bootstrap.min.css">
+        <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+        <link rel="stylesheet" href="css/cerulean.min.css">
         <link rel="stylesheet" href="css/style.css">
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.4/jquery.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/js/bootstrap.min.js"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.4.2/angular.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.4.3/angular-resource.min.js"></script>
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.6/d3.min.js"></script>
+        <script src="js/lib/jquery-2.1.4.min.js"></script>
+        <script src="bootstrap/js/bootstrap.min.js"></script>
+        <script src="js/lib/angular.min.js"></script>
+        <script src="js/lib/angular-resource.min.js"></script>
         <script src="js/lib/xlsx.core.min.js"></script>
         <script src="js/cassandre.js"></script>
         <script src="js/directives/ngFileModel.js"></script>
@@ -74,214 +74,23 @@
             <div class="container-fluid">
 
                 <div class="row">
-                    <section id="addDatasetsSection" class="col-lg-6" ng-show="showAddDatasetsSection">
-                        <h3 class="page-header">
-                            Add Datasets
-                            <small ng-show="dataIsUploading">Uploading..</small>
-                        </h3>
-
-                        <form id="dataUploadForm" name="dataUploadForm" ng-submit="sendData()">
-                            <div class="row">
-                                <div class="col-lg-5">
-                                    <input id="dataFile"
-                                        type=file
-                                        ng-file-model="dataFile.content"
-                                        ng-file-name="dataFile.newName"
-                                        required>
-                                    <p class="help-block">Allowed formats :
-                                        <strong>xlsx, tsv, txt</strong>
-                                    </p>
-
-                                    <div class="btn-group">
-                                        <input class="btn btn-default" type="submit" value="Send" ng-disabled="dataIsUploading">
-                                        <button class="btn btn-default" type="button" ng-click="parseFile()">Display</button>
-                                        <button class="btn btn-default" type="reset">Reset</button>
-                                    </div>
-                                </div>
-
-                                <div class="col-lg-7">
-                                    <div class="form-group">
-                                        <label for="datasetName">Dataset name</label>
-                                        <input id="datasetName"
-                                            class="form-control"
-                                            type="text"
-                                            title="You can rename the dataset"
-                                            ng-model="dataFile.newName"
-                                            required>
-                                    </div>
-
-                                    <div class="form-group">
-                                        <label for="datasetDescription">Description</label>
-                                        <textarea id="datasetDescription"
-                                                class="form-control"
-                                                ng-model="dataFile.description"
-                                                title="Write a description here"
-                                                cols=40
-                                                rows=3
-                                                required>
-                                        </textarea>
-                                    </div>
-                                </div>
-                            </div>
-                        </form>
+                    <section id="addDatasetsSection"
+                             class="col-lg-6"
+                             ng-include="'views/addDatasetsSection.html'"
+                             ng-show="showAddDatasetsSection">
                     </section>
 
-                    <section id="addAnnotationsSection" class="col-lg-6" ng-show="showAddAnnotationsSection">
-                        <h3 class="page-header">
-                            Add Annotations
-                            <small ng-show="annotIsUploading">Uploading..</small>
-                        </h3>
-
-                        <form id="annotUploadForm" name="annotUploadForm" class="form-inline" ng-submit="sendAnnot()">
-                            <input id="annotFile"
-                                type=file
-                                ng-file-model="annotFile.content"
-                                ng-file-name="annotFile.newName"
-                                required>
-                            <p class="help-block">Allowed formats :
-                                <strong>xlsx, tsv, txt</strong>
-                            </p>
-
-                            <div class="btn-group">
-                                <input class="btn btn-default" type="submit" value="Send" ng-disabled="annotIsUploading">
-                                <button class="btn btn-default" type="button" ng-click="parseFile(true)">Display</button>
-                                <button class="btn btn-default" type="reset">Reset</button>
-                            </div>
-                            <button class="btn btn-info" type="button" ng-click="getAnnotations()">Show Annotations</button>
-                        </form>
+                    <section id="addAnnotationsSection"
+                             class="col-lg-6"
+                             ng-include="'views/addAnnotationsSection.html'"
+                             ng-show="showAddAnnotationsSection">
                     </section>
                 </div>
 
-                <section id="datasetsSection" ng-show="showDatasetsSection">
-                    <h3 class="page-header">Data Sets</h3>
-
-                    <div class="row">
-                        <h2 class="col-lg-offset-5 text-muted" ng-show="lists.datasets.length === 0">No Data</h2>
-
-                        <div class="col-lg-1">
-                            <label>Show All</label>
-                            <div class="btn-group" role="group">
-                                <button class="btn" type="button" title="Show only active datasets" ng-click="showHiddenDatasets = false" ng-class="{ 'btn-success': !showHiddenDatasets }">
-                                    OFF
-                                </button>
-                                <button class="btn" type="button" title="Show hidden datasets" ng-click="showHiddenDatasets = true" ng-class="{ 'btn-warning': showHiddenDatasets }">
-                                    ON
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="col-lg-7">
-                            <table id="datasetsList" class="table" ng-show="lists.datasets.length !== 0">
-                                <thead>
-                                    <tr>
-                                        <th class="invisibleCell"></th>
-                                        <th></th>
-                                        <th title="Name of the dataset">Name</th>
-                                        <th title="Date of insertion in the database">Posted Date</th>
-                                        <th title="Make changes to the dataset">Edit</th>
-                                        <th title="Delete this dataset">Remove</th>
-                                    </tr>
-                                    <tr>
-                                        <th class="invisibleCell">
-                                        </th>
-                                        <th role="button" ng-click="selectAll('datasets')" title="Select all rows">
-                                            <input type="checkbox" ng-checked="selected.datasets.length === filtered('datasets').length">
-                                        </th>
-                                        <th colspan=4>
-                                            <input class="form-control"
-                                                id="datasetsFilter"
-                                                type="text"
-                                                ng-model="filters.datasets"
-                                                placeholder="Filter..."
-                                                title="Filter the list by entering names, dates, letters..">
-                                        </th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr ng-repeat="set in filtered('datasets', showHiddenDatasets)" ng-class="{ info: selected.datasets.indexOf(set.name) > -1 }">
-                                        <td class="buttonCellHide invisibleCell">
-                                            <div class="btn-group pull-right" ng-class="{ invisible: !showHiddenDatasets}">
-                                                <button class="btn btn-xs" type="button" title="Hide this dataset" ng-click="hide(set._id)" ng-class="{ 'btn-danger': set.hidden }">OFF</button>
-                                                <button class="btn btn-xs" type="button" title="Show this dataset" ng-click="show(set._id)" ng-class="{ 'btn-info': !set.hidden }">ON</button>
-                                            </div>
-                                        </td>
-                                        <td class="buttonCell" role="button" ng-click="select('datasets', set.name)">
-                                            <input type="checkbox" ng-checked="selected.datasets.indexOf(set.name) > -1">
-                                        </td>
-                                        <td class="buttonCell" title="{{ set.description }}" role="button" ng-click="select('datasets', set.name)">
-                                            {{ set.name }}
-                                        </td>
-                                        <td class="buttonCell" title="{{ set.description }}" role="button" ng-click="select('datasets', set.name)">
-                                            {{ formatDate(set.postedDate) }}
-                                        </td>
-                                        <td class="buttonCellEdit"
-                                            title="Make changes to the dataset"
-                                            role="button"
-                                            ng-click="datasetChanges.name = set.name; datasetChanges.newName = set.name; datasetChanges.description = set.description;"
-                                            data-toggle="modal"
-                                            data-target="#datasetEdition">
-                                            <span class="glyphicon glyphicon-pencil"></span>
-                                        </td>
-                                        <td class="buttonCellRemove" title="Delete this dataset" role="button" ng-click="remove(set.name)">
-                                            <span class="glyphicon glyphicon-remove"></span>
-                                        </td>
-                                    </tr>
-                                </tbody>
-                            </table>
-                        </div>
-
-                        <div class="col-lg-offset-1 col-lg-2">
-                            <div class="panel panel-info" ng-show="lists.datasets.length !== 0">
-                                <div class="panel-heading">Database informations</div>
-                                <div class="panel-body">
-                                    <p>Currently selected :</p>
-                                    <ul>
-                                        <li>{{ dbStats.selected.datasets }} on {{ dbStats.total.datasets }} Datasets</li>
-                                        <li>{{ dbStats.selected.exp }} on {{ dbStats.total.exp }} Experiments</li>
-                                        <li>{{ dbStats.selected.genes }} on {{ dbStats.total.genes }} Genes</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                <section id="datasetsSection"
+                         ng-include="'views/datasetsSection.html'"
+                         ng-show="showDatasetsSection">
                 </section>
-
-                <div class="modal" id="datasetEdition">
-                    <div class="modal-dialog" role="document">
-                        <div class="modal-content">
-                            <div class="modal-header">
-                                <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
-                                <h4 class="modal-title">Dataset informations</h4>
-                            </div>
-                            <div class="modal-body">
-                                <div class="form-group">
-                                    <label for="currentDatasetName">Dataset name</label>
-                                    <input id="currentDatasetName"
-                                        class="form-control"
-                                        type="text"
-                                        title="You can rename the dataset"
-                                        ng-model="datasetChanges.newName"
-                                        required>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="currentDescription">Description</label>
-                                    <textarea id="currentDescription"
-                                        class="form-control"
-                                        ng-model="datasetChanges.description"
-                                        title="Write a description here"
-                                        cols=50
-                                        rows=8
-                                        required></textarea>
-                                </div>
-                            </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                                <button type="button" class="btn btn-info" data-dismiss="modal" ng-click="update()">Save changes</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
 
                 <div class="row" ng-show="lists.exp.length > 0 || lists.genes.length > 0">
                     <div class="col-lg-6">

@@ -1,0 +1,49 @@
+<h3 class="page-header">
+    Add Datasets
+    <small ng-show="dataIsUploading">Uploading..</small>
+</h3>
+
+<form id="dataUploadForm" name="dataUploadForm" ng-submit="sendData()">
+    <div class="row">
+        <div class="col-lg-5">
+            <input id="dataFile"
+                type=file
+                ng-file-model="dataFile.content"
+                ng-file-name="dataFile.newName"
+                required>
+            <p class="help-block">Allowed formats :
+                <strong>xlsx, tsv, txt</strong>
+            </p>
+
+            <div class="btn-group">
+                <input class="btn btn-default" type="submit" value="Send" ng-disabled="dataIsUploading">
+                <button class="btn btn-default" type="button" ng-click="parseFile()">Display</button>
+                <button class="btn btn-default" type="reset">Reset</button>
+            </div>
+        </div>
+
+        <div class="col-lg-7">
+            <div class="form-group">
+                <label for="datasetName">Dataset name</label>
+                <input id="datasetName"
+                    class="form-control"
+                    type="text"
+                    title="You can rename the dataset"
+                    ng-model="dataFile.newName"
+                    required>
+            </div>
+
+            <div class="form-group">
+                <label for="datasetDescription">Description</label>
+                <textarea id="datasetDescription"
+                        class="form-control"
+                        ng-model="dataFile.description"
+                        title="Write a description here"
+                        cols=40
+                        rows=3
+                        required>
+                </textarea>
+            </div>
+        </div>
+    </div>
+</form>
