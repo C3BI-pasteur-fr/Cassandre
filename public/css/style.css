@@ -3,8 +3,43 @@
  *
  */
 
-body {
-    padding-top: 50px;
+aside {
+    background-color: #044D95;
+    position: fixed;
+    top: 51px;
+    height: 100%;
+    width: 260px;
+}
+
+main {
+    margin-top: 50px;
+    margin-left: 260px;
+}
+
+.asideBlockTitle {
+    background-color: transparent;
+    color: #FFF;
+    height: 50px;
+    padding: 16px 15px 15px 15px;
+    margin: 0;
+}
+
+.asideBlockTitle:hover {
+    background-color: #022F5A;
+}
+
+.asideList {
+    color: #FFF;
+    list-style-type: none;
+    padding: 0;
+}
+
+.asideListItem {
+    padding: 10px 10px 10px 25px;
+}
+
+.asideListItem:hover {
+    background-color: #6595BC;
 }
 
 .invisibleCell {

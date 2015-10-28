@@ -73,7 +73,7 @@ var router = function(app) {
             return res.status(200).send(results[0]);
         });
     })
-    
+
 // =========================================================================
 
     app.route('/api/measurements/')
@@ -172,7 +172,7 @@ var router = function(app) {
                 }
             });
 
-            return res.sendStatus(200);
+            return res.sendStatus(204);
         });
     });
 

@@ -1,0 +1,56 @@
+<div class="row" ng-show="lists.exp.length > 0 || lists.genes.length > 0">
+    <div class="col-lg-6">
+
+        <h3 class="page-header">
+            Genes
+            <small>{{ lists.genes.slice(0, limits.genes).length }} lines displayed on {{ lists.genes.length }}</small>
+        </h3>
+
+        <table class="table table-striped">
+            <thead>
+                <tr>
+                    <th role="button"
+                        ng-click="selectAll('genes')"
+                        title="Select all rows">
+                        <input type="checkbox"
+                            ng-checked="selected.genes.length === filtered('genes').length">
+                    </th>
+                    <th>
+                        <form class="form-inline">
+                            <input class="form-control"
+                                id="genesFilter"
+                                type="text"
+                                ng-model="filters.genes"
+                                placeholder="Filter..."
+                                title="Filter the list by entering some words or letters">
+                            <div class="form-group pull-right" title="Maximum of rows displayed">
+                                <label for="genesLimit">Limit</label>
+                                <select id="genesLimit"
+                                        class="form-control"
+                                        ng-model="limits.genes"
+                                        ng-options="limit for (limit, value) in limitsOptions">
+                                </select>
+                            </div>
+                        </form>
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat="gene in filtered('genes')"
+                    ng-class="{ info: selected.genes.indexOf(gene) > -1 }">
+                    <td class="buttonCell"
+                        role="button"
+                        ng-click="select('genes', gene)">
+                        <input type="checkbox"
+                            ng-checked="selected.genes.indexOf(gene) > -1">
+                    <td class="buttonCell" role="button" ng-click="select('genes', gene)">
+                        {{ gene }}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+<div ng-show="lists.exp.length > 0 || lists.genes.length > 0">
+    <button class="btn btn-info" type="button" ng-click="getData()">Display raw data</button>
+</div>

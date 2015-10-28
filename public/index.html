@@ -22,183 +22,112 @@
         <script src="js/controllers/mainController.js"></script>
     </head>
 
-    <body>
-        <div class="container-fluid" ng-controller="MainController">
-            <nav class="navbar navbar-inverse navbar-fixed-top">
-                <div class="container">
-                    <div class="navbar-header">
-                        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-menu">
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                            <span class="icon-bar"></span>
-                        </button>
-                        <a class="navbar-brand" href="#">
-                            Cassandre
-                        </a>
-                    </div>
-                    <div id="navbar-menu" class="collapse navbar-collapse">
-                        <ul class="nav navbar-nav">
-                            <li class="disabled" title="Coming soon.."><a role="button" ng-click="">
-                                <span class="glyphicon glyphicon-search"></span>
-                                Search Experiments</a>
-                            </li>
-                            <li class="disabled" title="Coming soon.."><a role="button" ng-click="">
-                                <span class="glyphicon glyphicon-search"></span>
-                                Search Genes</a>
-                            </li>
-                            <li ng-class="{ active: activeSection === 'datasetsSection' }">
-                                <a role="button" ng-click="activeSection = 'datasetsSection'">
-                                    <span class="glyphicon glyphicon-th-list"></span>
-                                    Datasets
-                                </a>
-                            </li>
-                            <li ng-class="{ active: activeSection === 'addDatasetsSection' }">
-                                <a role="button" ng-click="activeSection = 'addDatasetsSection'">
-                                    <span class="glyphicon glyphicon-upload"></span>
-                                    Add Datasets
-                                </a>
-                            </li>
-                            <li ng-class="{ active: activeSection === 'addAnnotationsSection' }">
-                                <a role="button" ng-click="activeSection = 'addAnnotationsSection'">
-                                    <span class="glyphicon glyphicon-upload"></span>
-                                    Add Annotations
-                                </a>
-                            </li>
-                        </ul>
-                        <ul class="nav navbar-nav navbar-right">
-                            <li>
-                                <a href="mailto:simon.malesys@pasteur.fr">
-                                    <span class="glyphicon glyphicon-envelope"></span>
-                                    Contact
-                                </a>
-                            </li>
-                        </ul>
-                    </div>
+    <body ng-controller="MainController">
+        <nav class="navbar navbar-inverse navbar-fixed-top">
+            <div class="container">
+                <div class="navbar-header">
+                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-menu">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </button>
+                    <a class="navbar-brand" href="#">
+                        Cassandre
+                    </a>
                 </div>
-            </nav>
+                <div id="navbar-menu" class="collapse navbar-collapse">
+                    <ul class="nav navbar-nav">
+                        <li ng-class="{ active: activeSection === 'experimentsSection' }">
+                            <a role="button" ng-click="activeSection = 'experimentsSection'">
+                                <span class="glyphicon glyphicon-search"></span>
+                                Search Experiments
+                            </a>
+                        </li>
+                        <li class="disabled" title="Coming soon..." ng-class="{ active: activeSection === 'genesSection' }">
+                            <a role="button" ng-click="">
+                                <span class="glyphicon glyphicon-search"></span>
+                                Search Genes
+                            </a>
+                        </li>
+                        <li ng-class="{ active: activeSection === 'datasetsSection' }">
+                            <a role="button" ng-click="activeSection = 'datasetsSection'">
+                                <span class="glyphicon glyphicon-th-list"></span>
+                                Datasets
+                            </a>
+                        </li>
+                        <li ng-class="{ active: activeSection === 'addDatasetsSection' }">
+                            <a role="button" ng-click="activeSection = 'addDatasetsSection'">
+                                <span class="glyphicon glyphicon-upload"></span>
+                                Add Datasets
+                            </a>
+                        </li>
+                        <li ng-class="{ active: activeSection === 'addAnnotationsSection' }">
+                            <a role="button" ng-click="activeSection = 'addAnnotationsSection'">
+                                <span class="glyphicon glyphicon-upload"></span>
+                                Add Annotations
+                            </a>
+                        </li>
+                    </ul>
+                    <ul class="nav navbar-nav navbar-right">
+                        <li>
+                            <a href="mailto:simon.malesys@pasteur.fr">
+                                <span class="glyphicon glyphicon-envelope"></span>
+                                Contact
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </nav>
 
+        <aside id="sideMenu">
+            <div class="asideBlock">
+                <h5 class="asideBlockTitle" role="button">
+                    Search title
+                    <span class="pull-right badge">17</span>
+                </h5>
+                <ul class="asideList">
+                    <li class="asideListItem" role="button">Exp1</li>
+                    <li class="asideListItem" role="button">Experiment 2</li>
+                    <li class="asideListItem" role="button">Truc&amp;bidule</li>
+                    <li class="asideListItem" role="button">Linuxcestbonmangezen</li>
+                </ul>
+            </div>
+            <div class="asideBlock">
+                <h5 class="asideBlockTitle" role="button">
+                    Search title
+                    <span class="pull-right badge">5</span>
+                </h5>
+                <ul class="asideList">
+                    <li class="asideListItem" role="button">Exp1</li>
+                    <li class="asideListItem" role="button">Experiment 2</li>
+                    <li class="asideListItem" role="button">Truc&amp;bidule</li>
+                    <li class="asideListItem" role="button">Linuxcestbonmangezen</li>
+                </ul>
+            </div>
+        </aside>
+
+        <main>
             <div class="container-fluid" ng-switch="activeSection">
-
                 <section id="addDatasetsSection" ng-switch-when="addDatasetsSection">
                     <ng-include src="'views/addDatasetsSection.html'"></ng-include>
                 </section>
-                
+
                 <section id="addAnnotationsSection" ng-switch-when="addAnnotationsSection">
                     <ng-include src="'views/addAnnotationsSection.html'"></ng-include>
                 </section>
-                
+
                 <section id="datasetsSection" ng-switch-when="datasetsSection">
                     <ng-include src="'views/datasetsSection.html'"></ng-include>
                 </section>
 
-                <div class="row" ng-show="lists.exp.length > 0 || lists.genes.length > 0">
-                    <div class="col-lg-6">
+                <section id="experimentsSection" ng-switch-when="experimentsSection">
+                    <ng-include src="'views/experimentsSection.html'"></ng-include>
+                </section>
 
-                        <h3 class="page-header">
-                            Experiments
-                            <small>{{ lists.exp.slice(0, limits.exp).length }} lines displayed on {{ lists.exp.length }}</small>
-                        </h3>
-
-                        <table class="table table-striped">
-                            <thead>
-                                <tr>
-                                    <th role="button"
-                                        ng-click="selectAll('exp')"
-                                        title="Select all rows">
-                                        <input type="checkbox"
-                                            ng-checked="selected.exp.length === filtered('exp').length">
-                                    </th>
-                                    <th>
-                                        <div class="form-inline">
-                                            <input class="form-control"
-                                                id="expFilter"
-                                                type="text"
-                                                ng-model="filters.exp"
-                                                placeholder="Filter..."
-                                                title="Filter the list by entering some words or letters">
-                                            <div class="form-group pull-right" id="expLimit" title="Maximum of rows displayed">
-                                                <label for="expSelectLimit">Limit</label>
-                                                <select id="expSelectLimit"
-                                                        class="form-control"
-                                                        ng-model="limits.exp"
-                                                        ng-options="limit for (limit, value) in limitsOptions">
-                                                </select>
-                                            </div>
-                                        </div>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr ng-repeat="exp in filtered('exp')"
-                                    ng-class="{ info: selected.exp.indexOf(exp) > -1 }">
-                                    <td class="buttonCell"
-                                        role="button"
-                                        ng-click="select('exp', exp)">
-                                        <input type="checkbox"
-                                            ng-checked="selected.exp.indexOf(exp) > -1">
-                                    <td class="buttonCell" role="button" ng-click="select('exp', exp)">
-                                        {{ exp }}
-                                    </td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-
-                    <div class="col-lg-6">
-
-                        <h3 class="page-header">
-                            Genes
-                            <small>{{ lists.genes.slice(0, limits.genes).length }} lines displayed on {{ lists.genes.length }}</small>
-                        </h3>
-
-                        <table class="table table-striped">
-                            <thead>
-                            <tr>
-                                <th role="button"
-                                    ng-click="selectAll('genes')"
-                                    title="Select all rows">
-                                    <input type="checkbox"
-                                           ng-checked="selected.genes.length === filtered('genes').length">
-                                </th>
-                                <th>
-                                    <form class="form-inline">
-                                        <input class="form-control"
-                                               id="genesFilter"
-                                               type="text"
-                                               ng-model="filters.genes"
-                                               placeholder="Filter..."
-                                               title="Filter the list by entering some words or letters">
-                                        <div class="form-group pull-right" title="Maximum of rows displayed">
-                                            <label for="genesLimit">Limit</label>
-                                            <select id="genesLimit"
-                                                    class="form-control"
-                                                    ng-model="limits.genes"
-                                                    ng-options="limit for (limit, value) in limitsOptions">
-                                            </select>
-                                        </div>
-                                    </form>
-                                </th>
-                            </tr>
-                            </thead>
-                            <tbody>
-                            <tr ng-repeat="gene in filtered('genes')"
-                                ng-class="{ info: selected.genes.indexOf(gene) > -1 }">
-                                <td class="buttonCell"
-                                    role="button"
-                                    ng-click="select('genes', gene)">
-                                    <input type="checkbox"
-                                           ng-checked="selected.genes.indexOf(gene) > -1">
-                                <td class="buttonCell" role="button" ng-click="select('genes', gene)">
-                                    {{ gene }}
-                                </td>
-                            </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-                <div ng-show="lists.exp.length > 0 || lists.genes.length > 0">
-                    <button class="btn btn-info" type="button" ng-click="getData()">Display raw data</button>
-                </div>
+                <section id="genesSection" ng-switch-when="genesSection">
+                    <ng-include src="'views/genesSection.html'"></ng-include>
+                </section>
 
                 <div id="results">
                     <h2 class="page-header"
@@ -244,6 +173,6 @@
                     </table>
                 </div>
             </div>
-        </div>
+        </main>
     </body>
 </html>

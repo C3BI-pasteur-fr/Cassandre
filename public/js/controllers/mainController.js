@@ -66,7 +66,7 @@ angular.module("cassandre").controller("MainController", [
     };
 
     // Control switch for the displayed section
-    $scope.activeSection = "datasetsSection";
+    $scope.activeSection = "experimentsSection";
 
     // File to upload
     $scope.dataFile = {
