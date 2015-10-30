@@ -113,9 +113,9 @@ angular.module("cassandre")
 }])
 
 // Resource to get statistics from the database
-.factory("database", ["$resource", function databaseFactory ($resource) {
-    return $resource("/api/database", {}, {
-        stats: {
+.factory("statistics", ["$resource", function statisticsFactory ($resource) {
+    return $resource("/api/statistics", {}, {
+        get: {
             method: "GET",
             params: {
                 "datasets[]": "@datasets"

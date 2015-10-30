@@ -34,7 +34,7 @@ var router = function(app) {
 // ROUTES
 // =========================================================================
 
-    app.route('/api/database')
+    app.route('/api/statistics')
 
     // Get the numbers of datasets, experiments and genes in teh database
     .get(function (req, res) {
@@ -270,7 +270,7 @@ var router = function(app) {
     })
 };
 
-var WebServer = function(contacts) {
+var WebServer = function (contacts) {
     var app = express();
 
     app.use(express.static('public'));
@@ -287,8 +287,8 @@ var WebServer = function(contacts) {
     console.log('Server listening to ' + webHost + ':' + webPort);
 };
 
-var launch = function() {
-    WebServer();
+var launch = function () {
+    WebServer ();
 };
 
 module.exports = launch;

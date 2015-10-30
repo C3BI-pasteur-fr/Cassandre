@@ -8,8 +8,9 @@
             <i class="glyphicon glyphicon-search"></i>
         </span>
         <input class="form-control"
-            type="text"
-            list="list"
+            type="search"
+            ng-model="filters.exp"
+            list="expList"
             placeholder="Type an experiment name here..."
             required>
         <span class="input-group-btn">
@@ -21,10 +22,18 @@
     </div>
 </div>
 
-<datalist id="list">
-    <option value="test1">
-    <option value="test2">
-    <option value="test3">
-    <option value="test4">
-    <option value="test5">
-</datalist>
+<div class="row">
+    <div class="col-lg-offset-2 col-lg-8">
+        <ul class="list-group">
+            <li class="list-group-item" ng-repeat="exp in filtered('exp')">{{ exp }}</li>
+        </ul>
+    </div>
+</div>
+
+<!--<datalist id="expList">
+    <select>
+        <option ng-repeat="exp in filtered('exp')" value="{{ exp }}"></option>
+    </select>
+</datalist>-->
+
+<!--{{ filtered('exp') }}-->
