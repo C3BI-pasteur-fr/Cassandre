@@ -56,7 +56,10 @@ angular.module("cassandre").controller("MainController", [
 
     // Marker for the datasets menu
     $scope.showHiddenDatasets = false;
-
+    
+    // Lists of selected experiments on the side menu
+    $scope.sideLists = {};
+    
     // Lists in the selection menu
     $scope.lists = {
         datasets: [],
@@ -73,9 +76,9 @@ angular.module("cassandre").controller("MainController", [
 
     // Filter bars in the menu
     $scope.filters = {
-        datasets: "",
-        genes: "",
-        exp: ""
+        //datasets: "",
+        //genes: "",
+        //exp: ""
     };
 
     // Limits for display
@@ -135,6 +138,23 @@ angular.module("cassandre").controller("MainController", [
     }, true);
 
     // ------------------------------------------------------------------ //
+    
+    // Select a list of experiments from the searchBar
+    $scope.selectList = function () {
+        $scope.sideLists[$scope.filters.exp] = $scope.filtered('exp');
+    };
+    
+    // Boolean to manage the display in the sideMenu
+    $scope.displayedList = "";
+    
+    // Handle the sideMenu as an accordion
+    $scope.displayList = function (list) {
+        $scope.displayedList = $scope.displayedList !== list ? list : "";
+    };
+    
+    $scope.removeList = function (list) {
+        delete $scope.sideLists[list];
+    }
 
     // Return the filtered lists that appear in the menus
     $scope.filtered = function (list, showHidden) {

@@ -75,6 +75,10 @@ main {
     content: "\25BC";
 }
 
+.removeList {
+    padding-right: 10px;
+}
+
 #datasetsFilter {
     width: 100%;
 }

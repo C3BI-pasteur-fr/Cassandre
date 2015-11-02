@@ -3,37 +3,38 @@
 </h3>
 
 <div class="row">
-    <div class="col-lg-offset-2 col-lg-8 input-group">
-        <span class="input-group-addon">
-            <i class="glyphicon glyphicon-search"></i>
-        </span>
-        <input class="form-control"
-            type="search"
-            ng-model="filters.exp"
-            list="expList"
-            placeholder="Type an experiment name here..."
-            required>
-        <span class="input-group-btn">
-            <input id="selectButton"
-                class="btn btn-primary"
-                type="submit"
-                value="Select">
-        </span>
-    </div>
+    <form class="col-lg-offset-2 col-lg-8" ng-submit="selectList()">
+        <div class="input-group">
+            <span class="input-group-addon">
+                <i class="glyphicon glyphicon-search"></i>
+            </span>
+            <input class="form-control"
+                type="search"
+                ng-model="filters.exp"
+                list="expList"
+                placeholder="Type an experiment name here..."
+                required>
+            <span class="input-group-btn">
+                <input id="selectButton"
+                    class="btn btn-primary"
+                    type="submit"
+                    value="Select">
+                <button class="btn btn-info"
+                        type="button"
+                        ng-click="getData()">Raw results</button>
+                <input class="btn"
+                    type="reset"
+                    value="Reset">
+            </span>
+        </div>
+    </form>
 </div>
 
 <div class="row">
     <div class="col-lg-offset-2 col-lg-8">
-        <ul class="list-group">
-            <li class="list-group-item" ng-repeat="exp in filtered('exp')">{{ exp }}</li>
+        <ul class="list-group" ng-show="filters.exp">
+            <li class="list-group-item"
+                ng-repeat="exp in filtered('exp')">{{ exp }}</li>
         </ul>
     </div>
 </div>
-
-<!--<datalist id="expList">
-    <select>
-        <option ng-repeat="exp in filtered('exp')" value="{{ exp }}"></option>
-    </select>
-</datalist>-->
-
-<!--{{ filtered('exp') }}-->

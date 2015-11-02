@@ -81,28 +81,20 @@
         </nav>
 
         <aside id="sideMenu">
-            <div class="asideBlock">
-                <h5 class="asideBlockTitle" role="button">
-                    Search title
-                    <span class="pull-right badge">17</span>
+            <div class="asideBlock" ng-repeat="(title, list) in sideLists">
+                <h5 class="asideBlockTitle" ng-click="displayList(title)">
+                    <span class="caret"></span>
+                    {{ title }}
+                    <span class="pull-right badge">{{ list.length }}</span>
+                    <span class="pull-right glyphicon glyphicon-remove removeList"
+                          role="button"
+                          ng-click="removeList(title)"></span>
                 </h5>
-                <ul class="asideList">
-                    <li class="asideListItem">Exp1</li>
-                    <li class="asideListItem">Experiment 2</li>
-                    <li class="asideListItem">Truc&amp;bidule</li>
-                    <li class="asideListItem">Linuxcestbonmangezen</li>
-                </ul>
-            </div>
-            <div class="asideBlock">
-                <h5 class="asideBlockTitle" role ="button">
-                    Search title
-                    <span class="pull-right badge">5</span>
-                </h5>
-                <ul class="asideList">
-                    <li class="asideListItem">Exp1</li>
-                    <li class="asideListItem">Experiment 2</li>
-                    <li class="asideListItem">Truc&amp;bidule</li>
-                    <li class="asideListItem">Linuxcestbonmangezen</li>
+                <ul class="asideList" ng-show="displayedList === title">
+                    <li class="asideListItem"
+                        ng-class="{ 'bg-primary': selected.exp.indexOf(exp) > -1 }"
+                        ng-repeat="exp in list"
+                        ng-click="select('exp', exp)">{{ exp }}</li>
                 </ul>
             </div>
         </aside>

@@ -36,7 +36,7 @@ var router = function(app) {
 
     app.route('/api/statistics')
 
-    // Get the numbers of datasets, experiments and genes in teh database
+    // Get the numbers of datasets, experiments and genes in the database
     .get(function (req, res) {
 
         // Aggregation pipeline
@@ -52,7 +52,7 @@ var router = function(app) {
                 _id: false,
                 datasets: { $size: '$datasets'},
                 exp: { $size: '$exp'},
-                genes : { $size: "$genes"}
+                genes : { $size: '$genes'}
             }
         }];
 
@@ -67,6 +67,7 @@ var router = function(app) {
 
         Measurements.collection.aggregate(pipeline, function (err, results) {
             if (err) {
+                console.log(err);
                 return res.status(500).send('Error with the database : ' + err.message);
             }
 

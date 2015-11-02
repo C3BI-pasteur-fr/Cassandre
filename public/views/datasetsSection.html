@@ -4,8 +4,8 @@
     <h2 class="col-lg-offset-5 text-muted" ng-show="lists.datasets.length === 0">No Data</h2>
 
     <div class="col-lg-1">
-        <label>Show All</label>
-        <div class="btn-group" role="group">
+        <label ng-show="lists.datasets.length !== 0">Show All</label>
+        <div class="btn-group" role="group" ng-show="lists.datasets.length !== 0">
             <button class="btn" type="button" title="Show only active datasets" ng-click="showHiddenDatasets = false" ng-class="{ 'btn-success': !showHiddenDatasets }">
                 OFF
             </button>
