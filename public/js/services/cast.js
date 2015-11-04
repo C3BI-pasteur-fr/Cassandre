@@ -1,7 +1,7 @@
 /*
  * Service to cast properly a single string.
  *
- * Dates not are handled currently due to
+ * Dates are currently not handled due to
  * the number of possible formats.
  *
  */
@@ -13,8 +13,7 @@ angular.module("cassandre").factory("cast", function castFactory() {
     var decimal = /^[+-]?\d+\.\d+(?:e[+-]?\d+)?$/;
 
     /*
-     *  Explanation :
-     *  --------------------------------------------------------------------
+     *  ----- Explanation --------------------------------------------------
      *
      *  ^       assert position at start of a line
      *  [+-]?   match + or - one or zero time
@@ -32,17 +31,13 @@ angular.module("cassandre").factory("cast", function castFactory() {
      *      ?       match this group one or zero time
      *
      *  $       assert position at end of a line
-     *  --------------------------------------------------------------------
      *
+     *  --------------------------------------------------------------------
      */
 
     return function (string) {
 
-        if (integer.test(string)) {
-            return parseFloat(string);      // Only parseFloat can handle exponents
-        }
-
-        if (decimal.test(string)) {
+        if (integer.test(string) || decimal.test(string)) {
             return parseFloat(string);
         }
 

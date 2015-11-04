@@ -5,23 +5,16 @@
  */
 
 angular.module("cassandre").controller("MainController", [
-    "$scope", "$filter", "$http", "xlsxToJson", "tsvToJson", "jsonToTsv", "statistics", "datasets", "annotations", "genes", "exp", "data",
-    function ($scope, $filter, $http, xlsxToJson, tsvToJson, jsonToTsv, statistics, datasets, annotations, genes, exp, data) {
+    "$scope", "$filter", "$http", "jsonToTsv", "statistics", "datasets", "annotations", "genes", "exp", "data",
+    function ($scope, $filter, $http, jsonToTsv, statistics, datasets, annotations, genes, exp, data) {
 
     $scope.dataCells = [];              // Data from database
     $scope.dataRows = [];               // Data formatted in rows
     $scope.dataHref = "#";              // Data URI of the display table for the download
     $scope.isLoading = false;           // Marker to know when data are loading
-    $scope.dataIsUploading = false;     // Marker to know when data are uploading
-    $scope.annotIsUploading = false;    // Marker to know when annotations are uploading
-    $scope.allowedTypes = {             // Allowed MIME types for the uploaded files
-        xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        txt: "text/plain",
-        tsv: "text/tab-separated-values"
-    };
 
     // ----- Variables -------------------------------------------------- //
-    
+
     // Total numbers of datasets, experiments and genes
     $scope.dbStats = {
         total: {},
@@ -29,19 +22,7 @@ angular.module("cassandre").controller("MainController", [
     };
 
     // Control switch for the displayed section
-    $scope.activeSection = "experimentsSection";
-
-    // File to upload
-    $scope.dataFile = {
-        content: "",        // The File Object
-        newName: "",        // The name modified by the user
-        description: ""     // A description of the dataset
-    };
-
-    // Annotations File
-    $scope.annotFile = {
-        content: ""
-    };
+    $scope.activeSection = "addDatasetsSection";
 
     // When making changes to a dataset
     $scope.datasetChanges = {
@@ -56,10 +37,7 @@ angular.module("cassandre").controller("MainController", [
 
     // Marker for the datasets menu
     $scope.showHiddenDatasets = false;
-    
-    // Lists of selected experiments on the side menu
-    $scope.sideLists = {};
-    
+
     // Lists in the selection menu
     $scope.lists = {
         datasets: [],
@@ -76,15 +54,13 @@ angular.module("cassandre").controller("MainController", [
 
     // Filter bars in the menu
     $scope.filters = {
-        //datasets: "",
-        //genes: "",
-        //exp: ""
+        datasets: "",
+        genes: ""
     };
 
     // Limits for display
     $scope.limits = {
         genes: 10,
-        exp: undefined,
         results: 10
     };
 
@@ -114,7 +90,7 @@ angular.module("cassandre").controller("MainController", [
         });
     });
 
-    // ----- Watchers --------------------------------------------------- //
+    // ----- Watchers on the Wall --------------------------------------- //
 
     // Refresh the stats panel when datasets selection changes
     $scope.$watch("selected.datasets", function (newSet, oldSet) {
@@ -128,33 +104,20 @@ angular.module("cassandre").controller("MainController", [
             };
         }
 
-        // Get the new stats to the database
+        // Get the new stats to the database and the new list of experiments
         else if (!angular.equals(newSet, oldSet)) {
             statistics.get({ datasets: newSet }, function (newStats) {
                 $scope.dbStats.selected = newStats;
+            });
+
+            $scope.lists.exp = exp.list({
+                mId: encodeURIComponent($scope.selected.datasets)
             });
         }
 
     }, true);
 
     // ------------------------------------------------------------------ //
-    
-    // Select a list of experiments from the searchBar
-    $scope.selectList = function () {
-        $scope.sideLists[$scope.filters.exp] = $scope.filtered('exp');
-    };
-    
-    // Boolean to manage the display in the sideMenu
-    $scope.displayedList = "";
-    
-    // Handle the sideMenu as an accordion
-    $scope.displayList = function (list) {
-        $scope.displayedList = $scope.displayedList !== list ? list : "";
-    };
-    
-    $scope.removeList = function (list) {
-        delete $scope.sideLists[list];
-    }
 
     // Return the filtered lists that appear in the menus
     $scope.filtered = function (list, showHidden) {
@@ -220,13 +183,6 @@ angular.module("cassandre").controller("MainController", [
             geneId: $scope.selected.genes
         }, function (data) {
             $scope.cellsToRows(data, "expId", "geneId", "value");
-        });
-    };
-
-    // Get all annotations
-    $scope.getAnnotations = function () {
-        $scope.dataCells = annotations.get({}, function (data) {
-            $scope.cellsToRows(data, "column", "row", "value");
         });
     };
 
@@ -345,68 +301,4 @@ angular.module("cassandre").controller("MainController", [
     $scope.download = function () {
         $scope.dataHref = "data:text/plain;charset=utf-8," + encodeURI(jsonToTsv($scope.dataRows));
     };
-
-    // Parse the file depending on its type
-    $scope.parseFile = function (isAnnot) {
-        var file = isAnnot ? $scope.annotFile.content : $scope.dataFile.content
-
-        if (file.type === $scope.allowedTypes["xlsx"]) {
-            xlsxToJson(file, function (err, json) {
-                $scope.dataRows = json;
-                $scope.$digest();
-            });
-        }
-
-        else if (file.type === $scope.allowedTypes["tsv"] || file.type === $scope.allowedTypes["txt"]) {
-            tsvToJson(file, function (err, json) {
-                $scope.dataRows = json;
-                $scope.$digest();
-            });
-        }
-
-        else {
-            alert("This file format is invalide.");
-        }
-    };
-
-    // Send the data file to the server using a FormData
-    $scope.sendData = function () {
-        var allData = new FormData();
-
-        // Put the name before the file to avoid problems with Multer on server side
-        allData.append("newName", $scope.dataFile.newName);
-        allData.append("dataFile", $scope.dataFile.content);
-        allData.append("description", $scope.dataFile.description);
-
-        $scope.dataIsUploading = true;
-
-        datasets.add(allData, function () {
-            $scope.dataIsUploading = false;
-            $scope.lists.datasets = datasets.list();
-            $scope.dbStats.total = statistics.get();
-            alert("Data successfully stored.");
-            document.getElementById("dataUploadForm").reset(); // No better solution found with Angular
-        }, function (err) {
-            $scope.dataIsUploading = false;
-            alert("Error : " + err.data);
-        });
-    }
-
-    // Send the annotations file to the server using a FormData
-    $scope.sendAnnot = function () {
-        var allData = new FormData();
-
-        allData.append("annotFile", $scope.annotFile.content);
-
-        $scope.annotIsUploading = true;
-
-        annotations.add(allData, function () {
-            $scope.annotIsUploading = false;
-            alert("Annotations successfully stored.");
-            document.getElementById("annotUploadForm").reset();
-        }, function (err) {
-            $scope.annotIsUploading = false;
-            alert("Error : " + err.data);
-        });
-    }
 }]);

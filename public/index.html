@@ -14,12 +14,16 @@
         <script src="js/lib/xlsx.core.min.js"></script>
         <script src="js/cassandre.js"></script>
         <script src="js/directives/ngFileModel.js"></script>
-        <script src="js/services/xlsxToJson.js"></script>
-        <script src="js/services/tsvToJson.js"></script>
-        <script src="js/services/jsonToTsv.js"></script>
-        <script src="js/services/resources.js"></script>
+        <script src="js/services/allowedMimeTypes.js"></script>
         <script src="js/services/cast.js"></script>
+        <script src="js/services/jsonToTsv.js"></script>
+        <script src="js/services/tsvToJson.js"></script>
+        <script src="js/services/xlsxToJson.js"></script>
+        <script src="js/services/resources.js"></script>
         <script src="js/controllers/mainController.js"></script>
+        <script src="js/controllers/experimentsController.js"></script>
+        <script src="js/controllers/addDatasetsController.js"></script>
+        <script src="js/controllers/addAnnotationsController.js"></script>
     </head>
 
     <body ng-controller="MainController">
@@ -37,7 +41,7 @@
                 </div>
                 <div id="navbar-menu" class="collapse navbar-collapse">
                     <ul class="nav navbar-nav">
-                        <li ng-class="{ active: activeSection === 'experimentsSection' }">
+                        <li ng-class="{ active: activeSection === 'experimentsSection' }" title="Search for experiments in the database">
                             <a role="button" ng-click="activeSection = 'experimentsSection'">
                                 <span class="glyphicon glyphicon-search"></span>
                                 Search Experiments
@@ -49,19 +53,19 @@
                                 Search Genes
                             </a>
                         </li>
-                        <li ng-class="{ active: activeSection === 'datasetsSection' }">
+                        <li ng-class="{ active: activeSection === 'datasetsSection' }" title="Manage the datasets">
                             <a role="button" ng-click="activeSection = 'datasetsSection'">
                                 <span class="glyphicon glyphicon-th-list"></span>
                                 Datasets
                             </a>
                         </li>
-                        <li ng-class="{ active: activeSection === 'addDatasetsSection' }">
+                        <li ng-class="{ active: activeSection === 'addDatasetsSection' }" title="Add data in the database">
                             <a role="button" ng-click="activeSection = 'addDatasetsSection'">
                                 <span class="glyphicon glyphicon-upload"></span>
                                 Add Datasets
                             </a>
                         </li>
-                        <li ng-class="{ active: activeSection === 'addAnnotationsSection' }">
+                        <li ng-class="{ active: activeSection === 'addAnnotationsSection' }" title="Add some genes annotations to the database">
                             <a role="button" ng-click="activeSection = 'addAnnotationsSection'">
                                 <span class="glyphicon glyphicon-upload"></span>
                                 Add Annotations
@@ -69,7 +73,7 @@
                         </li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
-                        <li>
+                        <li title="Send an email to the developer">
                             <a href="mailto:simon.malesys@pasteur.fr">
                                 <span class="glyphicon glyphicon-envelope"></span>
                                 Contact
@@ -80,15 +84,18 @@
             </div>
         </nav>
 
-        <aside id="sideMenu">
+        <aside id="sideMenu" ng-controller="ExperimentsController">
             <div class="asideBlock" ng-repeat="(title, list) in sideLists">
-                <h5 class="asideBlockTitle" ng-click="displayList(title)">
+                <h5 class="asideBlockTitle"
+                    ng-click="displayList(title)"
+                    title="List of experiments that match the word {{ title }}">
                     <span class="caret"></span>
                     {{ title }}
-                    <span class="pull-right badge">{{ list.length }}</span>
+                    <span class="pull-right badge" title="Number of experiments in this list">{{ list.length }}</span>
                     <span class="pull-right glyphicon glyphicon-remove removeList"
                           role="button"
-                          ng-click="removeList(title)"></span>
+                          ng-click="removeList(title)"
+                          title="Remove this list"></span>
                 </h5>
                 <ul class="asideList" ng-show="displayedList === title">
                     <li class="asideListItem"
@@ -101,11 +108,11 @@
 
         <main>
             <div class="container-fluid" ng-switch="activeSection">
-                <section id="addDatasetsSection" ng-switch-when="addDatasetsSection">
+                <section id="addDatasetsSection" ng-switch-when="addDatasetsSection" ng-controller="AddDatasetsController">
                     <ng-include src="'views/addDatasetsSection.html'"></ng-include>
                 </section>
 
-                <section id="addAnnotationsSection" ng-switch-when="addAnnotationsSection">
+                <section id="addAnnotationsSection" ng-switch-when="addAnnotationsSection" ng-controller="AddAnnotationsController">
                     <ng-include src="'views/addAnnotationsSection.html'"></ng-include>
                 </section>
 
@@ -113,7 +120,7 @@
                     <ng-include src="'views/datasetsSection.html'"></ng-include>
                 </section>
 
-                <section id="experimentsSection" ng-switch-when="experimentsSection">
+                <section id="experimentsSection" ng-switch-when="experimentsSection" ng-controller="ExperimentsController">
                     <ng-include src="'views/experimentsSection.html'"></ng-include>
                 </section>
 
@@ -157,7 +164,7 @@
                         </thead>
                         <tbody>
                             <tr ng-repeat="row in dataRows.slice(0, limits.results)">
-                                <td ng-repeat="(header, value) in row">
+                                <td ng-repeat="(header, value) in row" ng-class="{ numericCell: typeof(value) === 'number' }">
                                     {{ value }}
                                 </td>
                             </tr>

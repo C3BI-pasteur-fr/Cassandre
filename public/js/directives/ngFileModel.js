@@ -5,9 +5,9 @@
  * controller scope.
  *
  * The attributes are :
- * 
+ *
  *     ng-file-model: contains the File object
- *     ng-file-name: contains the name of the file, for edition by users
+ *     ng-file-name: contains the name of the file (optional)
  *
  */
 
@@ -19,11 +19,12 @@ angular.module("cassandre").directive('ngFileModel', ['$parse', function ($parse
             var modelName = $parse(attrs.ngFileName);
             var modelSetter = model.assign;
             var modelNameSetter = modelName.assign;
-            
+
             element.bind('change', function () {
                 scope.$apply(function () {
                     modelSetter(scope, element[0].files[0]);
                     modelNameSetter(scope, element[0].files[0].name);
+                    console.log(element[0].files[0]);
                 });
             });
         }

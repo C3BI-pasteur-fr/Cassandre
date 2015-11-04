@@ -10,21 +10,22 @@
             </span>
             <input class="form-control"
                 type="search"
-                ng-model="filters.exp"
+                ng-model="filter"
+                ng-model-options="{ allowInvalid: true }"
                 list="expList"
                 placeholder="Type an experiment name here..."
+                title="Search for experiments in the database"
                 required>
             <span class="input-group-btn">
-                <input id="selectButton"
-                    class="btn btn-primary"
-                    type="submit"
-                    value="Select">
-                <button class="btn btn-info"
+                <button class="btn btn-default"
                         type="button"
-                        ng-click="getData()">Raw results</button>
-                <input class="btn"
-                    type="reset"
-                    value="Reset">
+                        ng-click="resetExp()"
+                        title="Erase the current words">Reset</button>
+                <input id="selectButton"
+                    class="btn btn-info"
+                    type="submit"
+                    value="Select"
+                    title="Add the displayed list to the side menu">
             </span>
         </div>
     </form>
@@ -32,7 +33,7 @@
 
 <div class="row">
     <div class="col-lg-offset-2 col-lg-8">
-        <ul class="list-group" ng-show="filters.exp">
+        <ul class="list-group" ng-show="filters.exp" title="List of experiments that match your criteria">
             <li class="list-group-item"
                 ng-repeat="exp in filtered('exp')">{{ exp }}</li>
         </ul>

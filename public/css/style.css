@@ -4,21 +4,22 @@
  */
 
 aside {
-    background-color: #044D95;
+    background-color: #2C3E50;
+    height: 100%;
     position: fixed;
     top: 51px;
-    height: 100%;
-    width: 260px;
+    width: 270px;
 }
 
 main {
     margin-top: 50px;
-    margin-left: 260px;
+    margin-left: 270px;
 }
 
 .asideBlockTitle {
     background-color: transparent;
     color: #FFF;
+    cursor: pointer;
     height: 50px;
     padding: 16px 15px 15px 15px;
     margin: 0;
@@ -35,6 +36,7 @@ main {
 }
 
 .asideListItem {
+    cursor: pointer;
     padding: 10px 10px 10px 25px;
 }
 
@@ -73,6 +75,10 @@ main {
 
 .orderColumn.reverse::after {
     content: "\25BC";
+}
+
+.numericCell {
+    text-align: right;
 }
 
 .removeList {

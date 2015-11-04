@@ -20,7 +20,7 @@ var router = function(app) {
     var storage = multer.diskStorage({
         destination: './uploads/',
         filename: function (req, file, callback) {
-            var newName = req.body.newName || file.originalname;
+            var newName = req.body.name || file.originalname;
             return callback(null, newName);
         }
     });
@@ -90,7 +90,7 @@ var router = function(app) {
     })
 
     // Insert the measurements file into the database
-    .post(upload.single('dataFile'), function (req, res) {
+    .post(upload.single('dataset'), function (req, res) {
         Datasets.collection.insert({
             name: req.file.filename,
             description: req.body.description,
@@ -123,7 +123,7 @@ var router = function(app) {
             name: decodeURIComponent(req.query.name)
         }, {
             $set: {
-                name: req.body.newName,
+                name: req.body.name,
                 description: req.body.description
             }
         }, function (err) {
@@ -140,7 +140,7 @@ var router = function(app) {
                 measId: decodeURIComponent(req.query.name)
             }, {
                 $set: {
-                    measId: req.body.newName
+                    measId: req.body.name
                 }
             }, {
                multi: true

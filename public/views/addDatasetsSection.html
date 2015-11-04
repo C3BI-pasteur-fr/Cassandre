@@ -6,10 +6,10 @@
 <form id="dataUploadForm" name="dataUploadForm" ng-submit="sendData()">
     <div class="row">
         <div class="col-lg-3">
-            <input id="dataFile"
-                type=file
-                ng-file-model="dataFile.content"
-                ng-file-name="dataFile.newName"
+            <input id="dataset"
+                type="file"
+                ng-file-model="dataset.file"
+                ng-file-name="dataset.name"
                 required>
             <p class="help-block">Allowed formats :
                 <strong>xlsx, tsv, txt</strong>
@@ -29,7 +29,7 @@
                     class="form-control"
                     type="text"
                     title="You can rename the dataset"
-                    ng-model="dataFile.newName"
+                    ng-model="dataset.name"
                     required>
             </div>
 
@@ -37,7 +37,7 @@
                 <label for="datasetDescription">Description</label>
                 <textarea id="datasetDescription"
                         class="form-control"
-                        ng-model="dataFile.description"
+                        ng-model="dataset.description"
                         title="Write a description here"
                         cols=40
                         rows=5
@@ -47,3 +47,5 @@
         </div>
     </div>
 </form>
+
+{{ dataset }}
