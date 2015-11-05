@@ -17,6 +17,11 @@ angular.module("cassandre", ["ngResource"])
 
 .config(function ($compileProvider) {
     $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|tel|file|data):/);
-});
+})
 
-// ---------------------------------------------------------------------- //
+// ----- Run Phase ------------------------------------------------------ //
+
+.run(function (datasets) {
+    console.log("I run.");
+    datasets.get();
+});

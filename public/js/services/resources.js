@@ -6,9 +6,9 @@
 angular.module("cassandre")
 
 // Resource to get the list of datasets and POST new datasets to the server
-.factory("datasets", ["$resource", "$filter", function datasetsFactory ($resource, $filter) {
+.factory("datasetsResource", ["$resource", "$filter", function datasetsResourceFactory ($resource, $filter) {
     return $resource("/api/measurements", {}, {
-        list: {
+        get: {
             method: "GET",
             isArray: true,
             transformResponse: [

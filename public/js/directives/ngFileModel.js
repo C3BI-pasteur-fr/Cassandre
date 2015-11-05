@@ -24,7 +24,6 @@ angular.module("cassandre").directive('ngFileModel', ['$parse', function ($parse
                 scope.$apply(function () {
                     modelSetter(scope, element[0].files[0]);
                     modelNameSetter(scope, element[0].files[0].name);
-                    console.log(element[0].files[0]);
                 });
             });
         }

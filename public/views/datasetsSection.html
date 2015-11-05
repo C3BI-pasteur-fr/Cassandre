@@ -50,13 +50,13 @@
                             <button class="btn btn-xs" type="button" title="Show this dataset" ng-click="show(set._id)" ng-class="{ 'btn-info': !set.hidden }">ON</button>
                         </div>
                     </td>
-                    <td class="buttonCell" role="button" ng-click="select('datasets', set.name)">
+                    <td class="buttonCell" role="button" ng-click="select($index)">
                         <input type="checkbox" ng-checked="selected.datasets.indexOf(set.name) > -1">
                     </td>
-                    <td class="buttonCell" title="{{ set.description }}" role="button" ng-click="select('datasets', set.name)">
+                    <td class="buttonCell" title="{{ set.description }}" role="button" ng-click="select($index)">
                         {{ set.name }}
                     </td>
-                    <td class="buttonCell" title="{{ set.description }}" role="button" ng-click="select('datasets', set.name)">
+                    <td class="buttonCell" title="{{ set.description }}" role="button" ng-click="select($index)">
                         {{ formatDate(set.postedDate) }}
                     </td>
                     <td class="buttonCellEdit"

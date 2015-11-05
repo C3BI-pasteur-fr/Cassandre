@@ -5,8 +5,8 @@
  */
 
 angular.module("cassandre").controller("MainController", [
-    "$scope", "$filter", "$http", "jsonToTsv", "statistics", "datasets", "annotations", "genes", "exp", "data",
-    function ($scope, $filter, $http, jsonToTsv, statistics, datasets, annotations, genes, exp, data) {
+    "$scope", "$filter", "$http", "jsonToTsv", "statistics", "datasetsResource", "annotations", "genes", "exp", "data",
+    function ($scope, $filter, $http, jsonToTsv, statistics, datasetsResource, annotations, genes, exp, data) {
 
     $scope.dataCells = [];              // Data from database
     $scope.dataRows = [];               // Data formatted in rows
@@ -15,28 +15,12 @@ angular.module("cassandre").controller("MainController", [
 
     // ----- Variables -------------------------------------------------- //
 
-    // Total numbers of datasets, experiments and genes
-    $scope.dbStats = {
-        total: {},
-        selected: {}
-    };
-
     // Control switch for the displayed section
-    $scope.activeSection = "addDatasetsSection";
-
-    // When making changes to a dataset
-    $scope.datasetChanges = {
-        name: "",
-        newName: "",
-        description : ""
-    };
+    $scope.activeSection = "datasetsSection";
 
     // Used for ordering the results and mark the columns
     $scope.predicate = "";
     $scope.reverse = false;
-
-    // Marker for the datasets menu
-    $scope.showHiddenDatasets = false;
 
     // Lists in the selection menu
     $scope.lists = {
@@ -47,14 +31,12 @@ angular.module("cassandre").controller("MainController", [
 
     // Contains the menu rows selected by the user
     $scope.selected = {
-        datasets: [],
         genes: [],
         exp: []
     };
 
     // Filter bars in the menu
     $scope.filters = {
-        datasets: "",
         genes: ""
     };
 
@@ -72,97 +54,6 @@ angular.module("cassandre").controller("MainController", [
         "100": 100,
         "No Limit": undefined
     };
-
-    // ----- Initialization --------------------------------------------- //
-
-    // Get the stats of the database
-    statistics.get(function (stats) {
-        $scope.dbStats.total = stats;
-        $scope.dbStats.selected = stats;
-    });
-
-    // Get the datasets and then the experiments
-    datasets.list(function (datasets) {
-        $scope.lists.datasets = datasets;
-        $scope.selectAll("datasets");
-        $scope.lists.exp = exp.list({
-            mId: encodeURIComponent($scope.selected.datasets)
-        });
-    });
-
-    // ----- Watchers on the Wall --------------------------------------- //
-
-    // Refresh the stats panel when datasets selection changes
-    $scope.$watch("selected.datasets", function (newSet, oldSet) {
-
-        // Spare a pointless request
-        if (newSet.length === 0) {
-            $scope.dbStats.selected = {
-                datasets: 0,
-                exp: 0,
-                genes: 0
-            };
-        }
-
-        // Get the new stats to the database and the new list of experiments
-        else if (!angular.equals(newSet, oldSet)) {
-            statistics.get({ datasets: newSet }, function (newStats) {
-                $scope.dbStats.selected = newStats;
-            });
-
-            $scope.lists.exp = exp.list({
-                mId: encodeURIComponent($scope.selected.datasets)
-            });
-        }
-
-    }, true);
-
-    // ------------------------------------------------------------------ //
-
-    // Return the filtered lists that appear in the menus
-    $scope.filtered = function (list, showHidden) {
-        var filteredList = $scope.lists[list];
-
-        // Special filtering for datasets only
-        if (list === "datasets" && !showHidden) {
-            filteredList = filteredList.filter(function (element) {
-                return !element.hidden;
-            });
-        }
-
-        filteredList = $filter("filter")(filteredList, $scope.filters[list]);
-        filteredList = $filter("limitTo")(filteredList, $scope.limits[list]);
-
-        return filteredList;
-    };
-
-    // Function to select dataset, exp or gene
-    $scope.select = function (list, element) {
-        var index = $scope.selected[list].indexOf(element);
-
-        if ( index > -1) {
-            $scope.selected[list].splice(index, 1);
-        }
-
-        else {
-            $scope.selected[list].push(element);
-        }
-    };
-
-    // Function to check/uncheck all
-    $scope.selectAll = function (list) {
-        if ($scope.selected[list].length !== $scope.filtered(list).length) {
-
-            // Map to handle the fact that datasets are objects
-            $scope.selected[list] = $scope.filtered(list).map(function (element) {
-                return typeof(element) === "object" ? element.name : element;
-            });
-        }
-
-        else {
-            $scope.selected[list] = [];
-        }
-    }
 
     // Get the lists for the given datasets
     $scope.searchData = function () {
@@ -223,64 +114,6 @@ angular.module("cassandre").controller("MainController", [
             };
 
             $scope.dataRows.push(newRow);
-        }
-    };
-
-    // Hide a dataset in the menu
-    $scope.hide = function (id) {
-        datasets.hide({
-            id: encodeURIComponent(id)
-        }, {
-            hidden: true
-        }, function () {
-            // TO CHANGE
-            $scope.lists.datasets = datasets.list();
-        }, function (err) {
-            alert("Error : " + err.data);
-        });
-    };
-
-    // Make a dataset visible in the menu
-    $scope.show = function (id) {
-        datasets.show({
-            id: encodeURIComponent(id)
-        }, {
-            hidden: false
-        }, function () {
-            // TO CHANGE
-            $scope.lists.datasets = datasets.list();
-        }, function (err) {
-            alert("Error : " + err.data);
-        });
-    };
-
-    // Update datasets informations
-    $scope.update = function () {
-        datasets.update({
-            name: encodeURIComponent($scope.datasetChanges.name)
-        }, {
-            newName: $scope.datasetChanges.newName,
-            description: $scope.datasetChanges.description
-        }, function () {
-            // TO CHANGE
-            $scope.lists.datasets = datasets.list();
-        }, function (err) {
-            alert("Error : " + err.data);
-        });
-    };
-
-    // Remove a dataset
-    $scope.remove = function (name) {
-        if (confirm("Do you really want to remove this dataset permanently?")) {
-            datasets.remove({
-                name: encodeURIComponent(name)
-            }, function () {
-                // TO CHANGE
-                $scope.lists.datasets = datasets.list();
-                $scope.dbStats.total = statistics.get();
-            }, function (err) {
-                alert("Error : " + err.data);
-            });
         }
     };
 

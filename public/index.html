@@ -20,8 +20,10 @@
         <script src="js/services/tsvToJson.js"></script>
         <script src="js/services/xlsxToJson.js"></script>
         <script src="js/services/resources.js"></script>
+        <script src="js/services/datasets.js"></script>
         <script src="js/controllers/mainController.js"></script>
         <script src="js/controllers/experimentsController.js"></script>
+        <script src="js/controllers/datasetsController.js"></script>
         <script src="js/controllers/addDatasetsController.js"></script>
         <script src="js/controllers/addAnnotationsController.js"></script>
     </head>
@@ -116,7 +118,7 @@
                     <ng-include src="'views/addAnnotationsSection.html'"></ng-include>
                 </section>
 
-                <section id="datasetsSection" ng-switch-when="datasetsSection">
+                <section id="datasetsSection" ng-switch-when="datasetsSection" ng-controller="DatasetsController">
                     <ng-include src="'views/datasetsSection.html'"></ng-include>
                 </section>
 
