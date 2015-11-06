@@ -3,10 +3,11 @@
  *
  */
 
-angular.module("cassandre").factory("datasets", [ "datasetsResource", function datasetsFactory (datasetsResource) {
+angular.module("cassandre").factory("datasets", [ "$rootScope", "datasetsResource", function datasetsFactory ($rootScope, datasetsResource) {
     var shared = {
         datasets: {}
     };
+    console.log("I loaded the service.");
 
     return {
         list: function () {
@@ -17,6 +18,7 @@ angular.module("cassandre").factory("datasets", [ "datasetsResource", function d
                 shared.datasets = sets;
                 console.log("I loaded the sets.");
                 console.log(shared.datasets);
+                $rootScope.$broadcast("datasets.update");
             });
         },
         add: function (formData) {
@@ -69,6 +71,7 @@ angular.module("cassandre").factory("datasets", [ "datasetsResource", function d
             }, function () {
                 // TO CHANGE
                 shared.datasets = datasetsResource.get();
+                $rootScope.$broadcast("datasets.update");
             }, function (err) {
                 alert("Error : " + err.data);
             });

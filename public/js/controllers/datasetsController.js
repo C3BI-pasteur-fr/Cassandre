@@ -4,6 +4,8 @@
  */
 
 angular.module("cassandre").controller("DatasetsController", [ "$scope", "$filter", "datasets", function ($scope, $filter, datasets) {
+    console.log("I loaded the controller.");
+    console.log($scope.datasets);
 
     // Total numbers of datasets, experiments and genes
     $scope.dbStats = {
@@ -15,9 +17,9 @@ angular.module("cassandre").controller("DatasetsController", [ "$scope", "$filte
     $scope.showHiddenDatasets = false;
 
     // The list of all datasets
-    $scope.datasets = datasets.list();
-console.log("I loaded the controller.");
-console.log($scope.datasets);
+    $scope.datasets = [];
+    
+    
     // the selected datasets in the menu
     $scope.selectedDatasets = [];
 
@@ -38,33 +40,39 @@ console.log($scope.datasets);
     //    $scope.dbStats.total = stats;
     //    $scope.dbStats.selected = stats;
     //});
+    
+    // ----- Listeners -------------------------------------------------- //
+    
+    $scope.$on("datasets.update", function () {
+        $scope.datasets = datasets.list();
+    })
 
     // ----- Watchers on the Wall --------------------------------------- //
 
     // Refresh the statistics panel when the datasets selection changes
-    $scope.$watch("selectedDatasets", function (newSet, oldSet) {
-
-        // Spare a pointless request
-        if (newSet.length === 0) {
-            $scope.dbStats.selected = {
-                datasets: 0,
-                exp: 0,
-                genes: 0
-            };
-        }
-
-        // Get the new stats to the database and the new list of experiments
-        else if (!angular.equals(newSet, oldSet)) {
-            statistics.get({ datasets: newSet }, function (newStats) {
-                $scope.dbStats.selected = newStats;
-            });
-
-            $scope.lists.exp = exp.list({
-                mId: encodeURIComponent($scope.selectedDatasets)
-            });
-        }
-
-    }, true);
+    //$scope.$watch("selectedDatasets", function (newSet, oldSet) {
+    //
+    //    // Spare a pointless request
+    //    if (newSet.length === 0) {
+    //        $scope.dbStats.selected = {
+    //            datasets: 0,
+    //            exp: 0,
+    //            genes: 0
+    //        };
+    //    }
+    //
+    //    // Get the new stats to the database and the new list of experiments
+    //    else if (!angular.equals(newSet, oldSet)) {
+    //        statistics.get({ datasets: newSet }, function (newStats) {
+    //            $scope.dbStats.selected = newStats;
+    //        });
+    //
+    //        $scope.lists.exp = exp.list({
+    //            mId: encodeURIComponent($scope.selectedDatasets)
+    //        });
+    //    }
+    //
+    //}, true);
 
     // ----- Functions -------------------------------------------------- //
 
@@ -87,7 +95,9 @@ console.log($scope.datasets);
 
     // Function to select dataset
     $scope.select = function (name) {
-        if ($scope.selectedDatasets.indexOf(name) > -1) {
+        var index = $scope.selectedDatasets.indexOf(name);
+        
+        if ( index > -1) {
             $scope.selectedDatasets.splice(index, 1);
         }
 
@@ -98,16 +108,16 @@ console.log($scope.datasets);
 
     // Function to check/uncheck all
     $scope.selectAll = function () {
-        if ($scope.selected[list].length !== $scope.filtered(list).length) {
+        if ($scope.selectedDatasets.length !== $scope.filtered(list).length) {
 
             // Map to handle the fact that datasets are objects
-            $scope.selected[list] = $scope.filtered(list).map(function (element) {
+            $scope.selectedDatasets = $scope.filtered(list).map(function (element) {
                 return typeof(element) === "object" ? element.name : element;
             });
         }
 
         else {
-            $scope.selected[list] = [];
+            $scope.selectedDatasets = [];
         }
     }
 
