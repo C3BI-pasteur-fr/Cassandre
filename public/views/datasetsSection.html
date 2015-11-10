@@ -1,22 +1,22 @@
 <h3 class="page-header">Data Sets</h3>
 
 <div class="row">
-    <h2 class="col-lg-offset-5 text-muted" ng-show="datasets.length === 0">No Data</h2>
+    <h2 class="col-lg-offset-5 text-muted" ng-show="sets.all.length === 0">No Data</h2>
 
     <div class="col-lg-1">
-        <label ng-show="datasets.length !== 0">Show All</label>
-        <div class="btn-group" role="group" ng-show="datasets.length !== 0">
-            <button class="btn" type="button" title="Show only active datasets" ng-click="showHiddenDatasets = false" ng-class="{ 'btn-success': !showHiddenDatasets }">
+        <label ng-show="sets.all.length !== 0">Show All</label>
+        <div class="btn-group" role="group" ng-show="sets.all.length !== 0">
+            <button class="btn" type="button" title="Show only active datasets" ng-click="sets.showHidden = false" ng-class="{ 'btn-success': !sets.showHidden }">
                 OFF
             </button>
-            <button class="btn" type="button" title="Show hidden datasets" ng-click="showHiddenDatasets = true" ng-class="{ 'btn-warning': showHiddenDatasets }">
+            <button class="btn" type="button" title="Show hidden datasets" ng-click="sets.showHidden = true" ng-class="{ 'btn-warning': sets.showHidden }">
                 ON
             </button>
         </div>
     </div>
 
     <div class="col-lg-7">
-        <table id="datasetsList" class="table" ng-show="datasets.length !== 0">
+        <table id="datasetsList" class="table" ng-show="sets.all.length !== 0">
             <thead>
                 <tr>
                     <th class="invisibleCell"></th>
@@ -29,39 +29,35 @@
                 <tr>
                     <th class="invisibleCell"></th>
                     <th role="button" ng-click="selectAll()" title="Select all rows">
-                        <input type="checkbox" ng-checked="selectedDatasets.length === datasets.length">
+                        <input type="checkbox" ng-checked="sets.selected.length === sets.all.length">
                     </th>
                     <th colspan=4>
                         <input class="form-control"
                             id="datasetsFilter"
                             type="text"
-                            ng-model="filters.datasets"
+                            ng-model="sets.filter"
                             placeholder="Filter..."
                             title="Filter the list by entering names, dates, letters..">
                     </th>
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="set in datasets" ng-class="{ info: selectedDatasets.indexOf(set.name) > -1 }">
+                <tr ng-repeat="set in sets.all | filter:sets.filter | orderBy:postedDate:true" ng-class="{ info: sets.selected.indexOf(set.name) > -1 }">
                     <td class="buttonCellHide invisibleCell">
-                        <div class="btn-group pull-right" ng-class="{ invisible: !showHiddenDatasets }">
+                        <div class="btn-group pull-right" ng-show="sets.showHidden">
                             <button class="btn btn-xs" type="button" title="Hide this dataset" ng-click="hide(set._id)" ng-class="{ 'btn-danger': set.hidden }">OFF</button>
                             <button class="btn btn-xs" type="button" title="Show this dataset" ng-click="show(set._id)" ng-class="{ 'btn-info': !set.hidden }">ON</button>
                         </div>
                     </td>
                     <td class="buttonCell" role="button" ng-click="select(set.name)">
-                        <input type="checkbox" ng-checked="selectedDatasets.indexOf(set.name) > -1">
+                        <input type="checkbox" ng-checked="sets.selected.indexOf(set.name) > -1">
                     </td>
-                    <td class="buttonCell" title="{{ set.description }}" role="button" ng-click="select(set.name)">
-                        {{ set.name }}
-                    </td>
-                    <td class="buttonCell" title="{{ set.description }}" role="button" ng-click="select(set.name)">
-                        {{ formatDate(set.postedDate) }}
-                    </td>
+                    <td class="buttonCell" ng-bind="set.name" title="{{ set.description }}" role="button" ng-click="select(set.name)"></td>
+                    <td class="buttonCell" ng-bind="formatDate(set.postedDate)" title="{{ set.description }}" role="button" ng-click="select(set.name)"></td>
                     <td class="buttonCellEdit"
                         title="Make changes to the dataset"
                         role="button"
-                        ng-click="datasetChanges.name = set.name; datasetChanges.newName = set.name; datasetChanges.description = set.description;"
+                        ng-click="sets.changes.name = set.name; sets.changes.newName = set.name; sets.changes.description = set.description;"
                         data-toggle="modal"
                         data-target="#datasetEdition">
                         <span class="glyphicon glyphicon-pencil"></span>
@@ -73,22 +69,24 @@
             </tbody>
         </table>
     </div>
-{{ datasets }}<br>
-{{ selectedDatasets }}
+
     <div class="col-lg-offset-1 col-lg-2">
-        <div class="panel panel-info" ng-show="datasets.length !== 0">
+        <div class="panel panel-info" ng-show="sets.all.length !== 0">
             <div class="panel-heading">Database informations</div>
             <div class="panel-body">
                 <p>Currently selected :</p>
                 <ul>
-                    <li>{{ dbStats.selectedDatasets }} on {{ dbStats.total.datasets }} Datasets</li>
-                    <li>{{ dbStats.selected.exp }} on {{ dbStats.total.exp }} Experiments</li>
-                    <li>{{ dbStats.selected.genes }} on {{ dbStats.total.genes }} Genes</li>
+                    <li>{{ stats.selected.datasets }} on {{ stats.all.datasets }} Datasets</li>
+                    <li>{{ stats.selected.exp }} on {{ stats.all.exp }} Experiments</li>
+                    <li>{{ stats.selected.genes }} on {{ stats.all.genes }} Genes</li>
                 </ul>
             </div>
         </div>
     </div>
 </div>
+
+<pre>{{ sets.selected | json }}</pre>
+<pre>{{ stats | json }}</pre>
 
 <div class="modal" id="datasetEdition">
     <div class="modal-dialog" role="document">
@@ -105,7 +103,7 @@
                         class="form-control"
                         type="text"
                         title="You can rename the dataset"
-                        ng-model="datasetChanges.newName"
+                        ng-model="sets.changes.newName"
                         required>
                 </div>
 
@@ -113,7 +111,7 @@
                     <label for="currentDescription">Description</label>
                     <textarea id="currentDescription"
                         class="form-control"
-                        ng-model="datasetChanges.description"
+                        ng-model="sets.changes.description"
                         title="Write a description here"
                         cols=50
                         rows=8

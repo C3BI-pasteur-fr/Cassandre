@@ -5,8 +5,8 @@
  */
 
 angular.module("cassandre").controller("MainController", [
-    "$scope", "$filter", "$http", "jsonToTsv", "statistics", "datasetsResource", "annotations", "genes", "exp", "data",
-    function ($scope, $filter, $http, jsonToTsv, statistics, datasetsResource, annotations, genes, exp, data) {
+    "$scope", "$filter", "$http", "jsonToTsv", "datasetsResource", "annotations", "genes", "exp", "data",
+    function ($scope, $filter, $http, jsonToTsv, datasetsResource, annotations, genes, exp, data) {
 
     $scope.dataCells = [];              // Data from database
     $scope.dataRows = [];               // Data formatted in rows
@@ -122,12 +122,6 @@ angular.module("cassandre").controller("MainController", [
         $scope.predicate = header;
         $scope.reverse = reverse;
         $scope.dataRows = $filter("orderBy")($scope.dataRows, "'" + header + "'", $scope.reverse);
-    };
-
-    // Turn an ISO string date into a human readable string
-    $scope.formatDate = function (date) {
-        return date.replace(/T/, ' ')      // Replace T with a space
-                   .replace(/\..+/, '');   // Delete the dot and everything after
     };
 
     // Set the data URI of the display table for the download

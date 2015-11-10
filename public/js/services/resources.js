@@ -6,19 +6,11 @@
 angular.module("cassandre")
 
 // Resource to get the list of datasets and POST new datasets to the server
-.factory("datasetsResource", ["$resource", "$filter", function datasetsResourceFactory ($resource, $filter) {
+.factory("datasetsResource", ["$resource", "$filter", function datasetsResource ($resource, $filter) {
     return $resource("/api/measurements", {}, {
         get: {
             method: "GET",
-            isArray: true,
-            transformResponse: [
-                function (data) {
-                    return angular.fromJson(data);
-                },
-                function (data) {
-                    return $filter("orderBy")(data, "postedDate", true);
-                }
-            ]
+            isArray: true
         },
         add: {
             method: "POST",
@@ -55,7 +47,7 @@ angular.module("cassandre")
 }])
 
 // Resource to manage the general annotations
-.factory("annotations", ["$resource", function annotationsFactory ($resource) {
+.factory("annotations", ["$resource", function annotationsResource ($resource) {
     return $resource("/api/annotations", {}, {
         get: {
             method: "GET",
@@ -72,7 +64,7 @@ angular.module("cassandre")
 }])
 
 // Resource to get the list of exp (columns) for the given datasets
-.factory("exp", ["$resource", function expFactory ($resource) {
+.factory("exp", ["$resource", function expResource ($resource) {
     return $resource("/api/measurements/:mId/exp", {}, {
         list: {
             method: "GET",
@@ -85,7 +77,7 @@ angular.module("cassandre")
 }])
 
 // Resource to get the list of genes (rows) for the given datasets
-.factory("genes", ["$resource", function geneFactory ($resource) {
+.factory("genes", ["$resource", function genesResource ($resource) {
     return $resource("/api/measurements/:mId/genes", {}, {
         list: {
             method: "GET",
@@ -98,7 +90,7 @@ angular.module("cassandre")
 }])
 
 // Resource to get the data stored in the database or delete some of the datasets
-.factory("data", ["$resource", function dataFactory ($resource) {
+.factory("data", ["$resource", function dataResource ($resource) {
     return $resource("/api/measurements/:mId", {}, {
         get: {
             method: "GET",
@@ -113,7 +105,7 @@ angular.module("cassandre")
 }])
 
 // Resource to get statistics from the database
-.factory("statistics", ["$resource", function statisticsFactory ($resource) {
+.factory("statistics", ["$resource", function statisticsResource ($resource) {
     return $resource("/api/statistics", {}, {
         get: {
             method: "GET",

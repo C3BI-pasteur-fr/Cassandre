@@ -109,24 +109,24 @@
         </aside>
 
         <main>
-            <div class="container-fluid" ng-switch="activeSection">
-                <section id="addDatasetsSection" ng-switch-when="addDatasetsSection" ng-controller="AddDatasetsController">
+            <div class="container-fluid">
+                <section id="addDatasetsSection" ng-show="activeSection === 'addDatasetsSection'" ng-controller="AddDatasetsController">
                     <ng-include src="'views/addDatasetsSection.html'"></ng-include>
                 </section>
 
-                <section id="addAnnotationsSection" ng-switch-when="addAnnotationsSection" ng-controller="AddAnnotationsController">
+                <section id="addAnnotationsSection" ng-show="activeSection === 'addAnnotationsSection'" ng-controller="AddAnnotationsController">
                     <ng-include src="'views/addAnnotationsSection.html'"></ng-include>
                 </section>
 
-                <section id="datasetsSection" ng-switch-when="datasetsSection" ng-controller="DatasetsController">
+                <section id="datasetsSection" ng-show="activeSection === 'datasetsSection'" ng-controller="DatasetsController">
                     <ng-include src="'views/datasetsSection.html'"></ng-include>
                 </section>
 
-                <section id="experimentsSection" ng-switch-when="experimentsSection" ng-controller="ExperimentsController">
+                <section id="experimentsSection" ng-show="activeSection === 'experimentsSection'" ng-controller="ExperimentsController">
                     <ng-include src="'views/experimentsSection.html'"></ng-include>
                 </section>
 
-                <section id="genesSection" ng-switch-when="genesSection">
+                <section id="genesSection" ng-show="activeSection === 'genesSection'">
                     <ng-include src="'views/genesSection.html'"></ng-include>
                 </section>
 

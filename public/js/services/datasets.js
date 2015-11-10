@@ -5,19 +5,23 @@
 
 angular.module("cassandre").factory("datasets", [ "$rootScope", "datasetsResource", function datasetsFactory ($rootScope, datasetsResource) {
     var shared = {
-        datasets: {}
+        datasets: []
     };
-    console.log("I loaded the service.");
 
     return {
-        list: function () {
-            return shared.datasets;
+        list: {
+            all: function () {
+                return shared.datasets;
+            },
+            names: function () {
+                return shared.datasets.map(function (set) {
+                    return set.name;
+                });
+            }
         },
         get: function () {
             datasetsResource.get(function (sets) {
                 shared.datasets = sets;
-                console.log("I loaded the sets.");
-                console.log(shared.datasets);
                 $rootScope.$broadcast("datasets.update");
             });
         },

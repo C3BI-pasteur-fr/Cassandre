@@ -4,7 +4,7 @@
  *
  */
 
-angular.module("cassandre", ["ngResource"])
+angular.module("cassandre", [ "ngResource" ])
 
 // ----- Config phase --------------------------------------------------- //
 
@@ -22,6 +22,6 @@ angular.module("cassandre", ["ngResource"])
 // ----- Run Phase ------------------------------------------------------ //
 
 .run(function (datasets) {
-    console.log("I run.");
     datasets.get();
+    console.log("Run block");
 });

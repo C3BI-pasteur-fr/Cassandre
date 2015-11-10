@@ -3,123 +3,55 @@
  *
  */
 
-angular.module("cassandre").controller("DatasetsController", [ "$scope", "$filter", "datasets", function ($scope, $filter, datasets) {
-    console.log("I loaded the controller.");
-    console.log($scope.datasets);
+angular.module("cassandre").controller("DatasetsController", [ "$scope", "$filter", "datasets", "statistics",
+    function ($scope, $filter, datasets, statistics) {
 
-    // Total numbers of datasets, experiments and genes
-    $scope.dbStats = {
-        total: {},
-        selected: {}
-    };
+    // ----- Datasets --------------------------------------------------- //
 
-    // Marker for the datasets menu
-    $scope.showHiddenDatasets = false;
-
-    // The list of all datasets
-    $scope.datasets = [];
-    
-    
-    // the selected datasets in the menu
-    $scope.selectedDatasets = [];
-
-    // The menu filter
-    $scope.filter = "";
-
-    // When making changes to a dataset
-    $scope.datasetChanges = {
-        name: "",
-        newName: "",
-        description : ""
-    };
-
-    // ----- Initialization --------------------------------------------- //
-
-    // Get the stats of the database
-    //statistics.get(function (stats) {
-    //    $scope.dbStats.total = stats;
-    //    $scope.dbStats.selected = stats;
-    //});
-    
-    // ----- Listeners -------------------------------------------------- //
-    
-    $scope.$on("datasets.update", function () {
-        $scope.datasets = datasets.list();
-    })
-
-    // ----- Watchers on the Wall --------------------------------------- //
-
-    // Refresh the statistics panel when the datasets selection changes
-    //$scope.$watch("selectedDatasets", function (newSet, oldSet) {
-    //
-    //    // Spare a pointless request
-    //    if (newSet.length === 0) {
-    //        $scope.dbStats.selected = {
-    //            datasets: 0,
-    //            exp: 0,
-    //            genes: 0
-    //        };
-    //    }
-    //
-    //    // Get the new stats to the database and the new list of experiments
-    //    else if (!angular.equals(newSet, oldSet)) {
-    //        statistics.get({ datasets: newSet }, function (newStats) {
-    //            $scope.dbStats.selected = newStats;
-    //        });
-    //
-    //        $scope.lists.exp = exp.list({
-    //            mId: encodeURIComponent($scope.selectedDatasets)
-    //        });
-    //    }
-    //
-    //}, true);
-
-    // ----- Functions -------------------------------------------------- //
-
-    // Return the filtered lists that appear in the menus
-    $scope.filtered = function (list, showHidden) {
-        var filteredList = $scope.lists[list];
-
-        // Special filtering for datasets only
-        if (list === "datasets" && !showHidden) {
-            filteredList = filteredList.filter(function (element) {
-                return !element.hidden;
-            });
+    $scope.sets = {
+        all: [],                // The list of all datasets
+        selected: [],           // The selected datasets in the menu
+        filter: "",             // The menu filter
+        showHidden: false,      // Marker for the datasets menu
+        changes: {              // When editing a dataset informations
+            name: "",
+            newName: "",
+            description : ""
         }
-
-        filteredList = $filter("filter")(filteredList, $scope.filters[list]);
-        filteredList = $filter("limitTo")(filteredList, $scope.limits[list]);
-
-        return filteredList;
     };
+   
+    ////////////// PROBLEM HERE /////////////////////////
+    // Listener for datasets changes
+    $scope.$on("datasets.update", function () {
+        $scope.sets.all = datasets.list.all();
+        $scope.sets.selected = datasets.list.names();
+    });
 
-    // Function to select dataset
+    // Initialization
+    //$scope.sets.selected = datasets.list.names();
+
+    // Function to select a dataset
     $scope.select = function (name) {
-        var index = $scope.selectedDatasets.indexOf(name);
-        
+        var index = $scope.sets.selected.indexOf(name);
+
         if ( index > -1) {
-            $scope.selectedDatasets.splice(index, 1);
+            $scope.sets.selected.splice(index, 1);
         }
 
         else {
-            $scope.selectedDatasets.push(name);
+            $scope.sets.selected.push(name);
         }
     };
 
     // Function to check/uncheck all
     $scope.selectAll = function () {
-        if ($scope.selectedDatasets.length !== $scope.filtered(list).length) {
-
-            // Map to handle the fact that datasets are objects
-            $scope.selectedDatasets = $scope.filtered(list).map(function (element) {
-                return typeof(element) === "object" ? element.name : element;
-            });
+        if ($scope.sets.selected.length !== $scope.sets.all.length) {
+            $scope.sets.selected = datasets.list.names();
         }
-
         else {
-            $scope.selectedDatasets = [];
+            $scope.sets.selected = [];
         }
-    }
+    };
 
     // Hide a dataset in the menu
     $scope.hide = function (id) {
@@ -142,4 +74,45 @@ angular.module("cassandre").controller("DatasetsController", [ "$scope", "$filte
             datasets.remove(name);
         }
     };
+
+    // Turn an ISO string date into a human readable string
+    $scope.formatDate = function (date) {
+        return date.replace(/T/, ' ')      // Replace T with a space
+                   .replace(/\..+/, '');   // Delete the dot and everything after
+    };
+
+    // ----- Database statistics ---------------------------------------- //
+
+    // Initialization
+    statistics.get(function (stats) {
+        $scope.stats.all = stats;
+        $scope.stats.selected = stats;
+    });
+    
+    // Total numbers of datasets, experiments and genes
+    $scope.stats = {
+        all: statistics.get(),
+        selected: {}
+    };
+
+    // Refresh the statistics panel when the datasets selection changes
+    $scope.$watch("sets.selected", function (newList, oldList) {
+
+        // Spare a pointless request
+        if (newList.length === 0) {
+            $scope.stats.selected = {
+                datasets: 0,
+                exp: 0,
+                genes: 0
+            };
+        }
+
+        // Get the new stats to the database and the new list of experiments
+        else if (!angular.equals(newList, oldList)) {
+            statistics.get({ datasets: $scope.sets.selected }, function (newStats) {
+                $scope.stats.selected = newStats;
+            });
+        }
+
+    }, true);
 }]);
