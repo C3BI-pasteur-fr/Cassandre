@@ -26,11 +26,11 @@ angular.module("cassandre", [ "ngResource" ])
  * The resource is used directly because the initialization of the selected
  * datasets has to occur only at the start.
  *
- * Then get all the experiments.
+ * Then get all the experiments and genes.
  * 
  */
 
-.run(function (datasets, datasetsHttp, experiments) {
+.run(function (datasets, datasetsHttp, experiments, genes) {
     var init = datasets.list.all();
 
     datasetsHttp.get(function (sets) {
@@ -40,5 +40,8 @@ angular.module("cassandre", [ "ngResource" ])
         });
         
         experiments.get();
+        genes.get();
     });
 });
+
+// ---------------------------------------------------------------------- //

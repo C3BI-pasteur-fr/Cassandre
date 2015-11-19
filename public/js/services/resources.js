@@ -35,7 +35,7 @@ angular.module("cassandre")
 }])
 
 // Resource to manage the general annotations
-.factory("annotations", ["$resource", function annotationsResource ($resource) {
+.factory("annotationsHttp", ["$resource", function annotationsResource ($resource) {
     return $resource("/api/annotations", {}, {
         get: {
             method: "GET",
@@ -65,9 +65,9 @@ angular.module("cassandre")
 }])
 
 // Resource to get the list of genes (rows) for the given datasets
-.factory("genes", ["$resource", function genesResource ($resource) {
-    return $resource("/api/measurements/:mId/genes", {}, {
-        list: {
+.factory("genesHttp", ["$resource", function genesResource ($resource) {
+    return $resource("/api/measurements/genes", {}, {
+        get: {
             method: "GET",
             isArray: true,
             params: {

@@ -6,12 +6,13 @@
 
 
 angular.module("cassandre").factory("experiments", ["expHttp", "datasets", function (expHttp, datasets) {
-    
+
     var experiments = {
-        all: [],                 // List of all the experiments found in datasets
-        sideMenu: {}             // List of the selected lists of experimenst in the aside section
+        all: [],                 // All the experiments found in datasets
+        selected: [],            // All the experiments selected in the side menu lists
+        sideMenu: {}             // The selected lists of experiments in the aside section
     };
-    
+
     return {
         list: function () {
             return experiments;

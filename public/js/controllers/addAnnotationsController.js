@@ -4,8 +4,8 @@
  */
 
 angular.module("cassandre").controller("AddAnnotationsController", [
-    "$scope", "allowedMimeTypes", "xlsxToJson", "tsvToJson",
-    function ($scope, allowedMimeTypes, xlsxToJson, tsvToJson) {
+    "$scope", "annotationsHttp", "allowedMimeTypes", "xlsxToJson", "tsvToJson",
+    function ($scope, annotationsHttp, allowedMimeTypes, xlsxToJson, tsvToJson) {
 
     // The annotations File object to upload
     $scope.annotations = {
@@ -56,7 +56,7 @@ angular.module("cassandre").controller("AddAnnotationsController", [
 
         $scope.annotIsUploading = true;
 
-        annotations.add(allData, function () {
+        annotationsHttp.add(allData, function () {
             $scope.annotIsUploading = false;
             alert("Data successfully stored.");
             document.getElementById("dataUploadForm").reset(); // No better solution found with Angular

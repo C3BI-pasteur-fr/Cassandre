@@ -205,7 +205,7 @@ var router = function(app) {
 
     app.route('/api/measurements/exp/')
 
-    // List all the columns for given datasets
+    // List all the experiments (columns) for given datasets
     .get(function (req, res, next) {
         Measurements.collection.distinct('expId', {
             'measId': {
@@ -222,13 +222,13 @@ var router = function(app) {
 
 // =========================================================================
 
-    app.route('/api/measurements/:mId/genes/')
+    app.route('/api/measurements/genes/')
 
-    // List all the lines for given datasets
+    // List all the genes (lines) for given datasets
     .get(function (req, res, next) {
         Measurements.collection.distinct('geneId', {
             'measId': {
-                '$in' : decodeURIComponent(req.params.mId).split(',')
+                '$in' : decodeURIComponent(req.query.mId).split(',')
             }
         },
         function (err, list) {

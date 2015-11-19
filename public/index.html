@@ -22,6 +22,7 @@
         <script src="js/services/resources.js"></script>
         <script src="js/services/datasets.js"></script>
         <script src="js/services/experiments.js"></script>
+        <script src="js/services/genes.js"></script>
         <script src="js/controllers/mainController.js"></script>
         <script src="js/controllers/menuController.js"></script>
         <script src="js/controllers/experimentsController.js"></script>
@@ -89,13 +90,16 @@
         </nav>
 
         <aside id="sideMenu" ng-controller="MenuController">
-            <div class="asideBlock" ng-repeat="(title, list) in exp.sideMenu">
+            <div class="asideBlock" ng-repeat="(title, list) in exps.sideMenu">
                 <h5 class="asideBlockTitle"
                     ng-click="display(title)"
                     title="List of experiments that match the word {{ title }}">
                     <span class="caret"></span>
                     <span ng-bind="title"></span>
-                    <span class="pull-right badge" ng-bind="list.length" title="Number of experiments in this list"></span>
+                    <div class="badges pull-right">
+                        <span class="badge greenBadge" ng-bind="exps.sideMenu[title].selected.length" ng-show="exps.sideMenu[title].selected.length > 0" title="Number of selected experiments"></span>
+                        <span class="badge" ng-bind="exps.sideMenu[title].all.length" title="Number of experiments"></span>
+                    </div>
                     <span class="pull-right glyphicon glyphicon-remove removeList"
                           role="button"
                           ng-click="removeList(title)"
@@ -103,10 +107,30 @@
                 </h5>
                 <ul class="asideList" ng-show="displayedList === title">
                     <li class="asideListItem"
-                        ng-class="{ 'bg-primary': selected.exp.indexOf(exp) > -1 }"
-                        ng-repeat="exp in list"
-                        ng-click="select('exp', exp)"
+                        ng-repeat="exp in list.all"
+                        ng-class="{ 'bg-primary': exps.selected.indexOf(exp) > -1 }"
+                        ng-click="select.exp(title, exp)"
                         ng-bind="exp"></li>
+                </ul>
+            </div>
+
+            <div class="asideBlock">
+                <h5 class="asideBlockTitle"
+                    ng-click="display('genes')"
+                    title="List of genes">
+                    <span class="caret"></span>
+                    <span>Genes</span>
+                    <div class="badges pull-right">
+                        <span class="badge greenBadge" ng-bind="genes.selected.length" ng-show="genes.selected.length > 0" title="Number of selected genes"></span>
+                        <span class="badge" ng-bind="genes.all.length" title="Number of genes"></span>
+                    </div>
+                </h5>
+                <ul class="asideList" ng-show="displayedList === 'genes'">
+                    <li class="asideListItem"
+                        ng-repeat="gene in genes.all"
+                        ng-class="{ 'bg-primary': genes.selected.indexOf(gene) > -1 }"
+                        ng-click="select.gene(gene)"
+                        ng-bind="gene"></li>
                 </ul>
             </div>
         </aside>
@@ -137,13 +161,13 @@
                     <h2 class="page-header" ng-show="data.rows.length > 0">
                         Results
                         <small ng-show="isLoading">Loading data..</small>
-                        <small ng-show="data.rows.length > 0">{{ data.rows.slice(0, limits.results).length }} lines displayed on {{ data.rows.length }}</small>
+                        <small ng-show="data.rows.length > 0">{{ data.rows.slice(0, limit).length }} lines displayed on {{ data.rows.length }}</small>
                         <small class="pull-right">
                             <label for="resultsLimit">Limit</label>
                             <select id="resultsLimit"
                                     class="form-control"
-                                    ng-model="limits.results"
-                                    ng-options="limit for (limit, value) in limitsOptions">
+                                    ng-model="limit"
+                                    ng-options="limit for (limit, value) in limitOptions">
                             </select>
                         </small>
                     </h2>
@@ -167,7 +191,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="row in data.rows.slice(0, limits.results)">
+                            <tr ng-repeat="row in data.rows.slice(0, limit)">
                                 <td ng-repeat="(header, value) in row" ng-class="{ numericCell: typeof(value) === 'number' }">
                                     {{ value }}
                                 </td>

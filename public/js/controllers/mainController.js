@@ -4,9 +4,7 @@
  *
  */
 
-angular.module("cassandre").controller("MainController", [
-    "$scope", "$filter", "$http", "jsonToTsv", "datasetsHttp", "annotations", "genes", "expHttp", "data",
-    function ($scope, $filter, $http, jsonToTsv, datasetsHttp, annotations, genes, expHttp, data) {
+angular.module("cassandre").controller("MainController", [ "$scope", "$filter", "jsonToTsv", "data", function ($scope, $filter, jsonToTsv, data) {
 
     $scope.data = {
         cells: [],                      // Data from database
@@ -19,55 +17,11 @@ angular.module("cassandre").controller("MainController", [
     // ----- Variables -------------------------------------------------- //
 
     // Control switch for the displayed section
-    $scope.activeSection = "experimentsSection";
+    $scope.activeSection = "addAnnotationsSection";
 
     // Used for ordering the results and mark the columns
     $scope.predicate = "";
     $scope.reverse = false;
-
-    // Lists in the selection menu
-    $scope.lists = {
-        datasets: [],
-        genes: [],
-        exp: []
-    };
-
-    // Contains the menu rows selected by the user
-    $scope.selected = {
-        genes: [],
-        exp: []
-    };
-
-    // Filter bars in the menu
-    $scope.filters = {
-        genes: ""
-    };
-
-    // Limits for display
-    $scope.limits = {
-        genes: 10,
-        results: 10
-    };
-
-    // Options for the limit dropdowns
-    $scope.limitsOptions = {
-        "10": 10,
-        "20": 20,
-        "50": 50,
-        "100": 100,
-        "No Limit": undefined
-    };
-
-    // Get the lists for the given datasets
-    $scope.searchData = function () {
-        $scope.lists.exp = exp.list({
-            mId: encodeURIComponent($scope.selected.datasets)
-        });
-
-        $scope.lists.genes = genes.list({
-            mId: encodeURIComponent($scope.selected.datasets)
-        });
-    };
 
     // Get the data for the selected genes and/or exp
     $scope.getData = function () {
@@ -78,6 +32,15 @@ angular.module("cassandre").controller("MainController", [
         }, function (data) {
             $scope.cellsToRows(data, "expId", "geneId", "value");
         });
+    };
+    
+    $scope.limit = 10;
+    $scope.limitOptions = {
+        "10": 10,
+        "20": 20,
+        "50": 50,
+        "100": 100,
+        "No Limit": undefined
     };
 
     // Format data into rows to ease the display in the view

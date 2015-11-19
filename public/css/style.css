@@ -49,6 +49,10 @@ main {
     border: none !important;
 }
 
+.greenBadge {
+    background-color: #73A839;
+}
+
 .buttonCell:hover {
     color: #004C8F;
 }
