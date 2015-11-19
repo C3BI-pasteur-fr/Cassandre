@@ -21,7 +21,24 @@ angular.module("cassandre", [ "ngResource" ])
 
 // ----- Run Phase ------------------------------------------------------ //
 
-.run(function (datasets) {
-    datasets.get();
-    console.log("Run block");
+/*
+ * Initialize the datasets and select them all by default.
+ * The resource is used directly because the initialization of the selected
+ * datasets has to occur only at the start.
+ *
+ * Then get all the experiments.
+ * 
+ */
+
+.run(function (datasets, datasetsHttp, experiments) {
+    var init = datasets.list.all();
+
+    datasetsHttp.get(function (sets) {
+        init.all = sets;
+        init.selected = sets.map(function (set) {
+            return set.name;
+        });
+        
+        experiments.get();
+    });
 });

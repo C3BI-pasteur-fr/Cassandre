@@ -6,8 +6,8 @@
 angular.module("cassandre")
 
 // Resource to get the list of datasets and POST new datasets to the server
-.factory("datasetsResource", ["$resource", "$filter", function datasetsResource ($resource, $filter) {
-    return $resource("/api/measurements", {}, {
+.factory("datasetsHttp", ["$resource", "$filter", function datasetsResource ($resource, $filter) {
+    return $resource("/api/datasets", {}, {
         get: {
             method: "GET",
             isArray: true
@@ -20,18 +20,6 @@ angular.module("cassandre")
             }
         },
         update: {
-            method: "PATCH",
-            params: {
-                id: "@id"
-            }
-        },
-        hide: {
-            method: "PATCH",
-            params: {
-                id: "@id"
-            }
-        },
-        show: {
             method: "PATCH",
             params: {
                 id: "@id"
@@ -64,9 +52,9 @@ angular.module("cassandre")
 }])
 
 // Resource to get the list of exp (columns) for the given datasets
-.factory("exp", ["$resource", function expResource ($resource) {
-    return $resource("/api/measurements/:mId/exp", {}, {
-        list: {
+.factory("expHttp", ["$resource", function expResource ($resource) {
+    return $resource("/api/measurements/exp", {}, {
+        get: {
             method: "GET",
             isArray: true,
             params: {

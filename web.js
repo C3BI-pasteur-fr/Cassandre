@@ -77,7 +77,7 @@ var router = function(app) {
 
 // =========================================================================
 
-    app.route('/api/measurements/')
+    app.route('/api/datasets')
 
     // Get the list of datasets
     .get(function (req, res) {
@@ -122,10 +122,7 @@ var router = function(app) {
         Datasets.collection.update({
             name: decodeURIComponent(req.query.name)
         }, {
-            $set: {
-                name: req.body.name,
-                description: req.body.description
-            }
+            $set: req.body
         }, function (err) {
             if (err) {
                 if (err.name === 'MongoError') {
@@ -135,22 +132,24 @@ var router = function(app) {
                 return res.status(400).send(err.message);
             }
 
-            // Then update the whole data
-            Measurements.collection.update({
-                measId: decodeURIComponent(req.query.name)
-            }, {
-                $set: {
-                    measId: req.body.name
-                }
-            }, {
-               multi: true
-            }, function (err) {
-                if (err) {
-                    return res.status(400).send(err.message);
-                }
-
-                return res.sendStatus(200);
-            });
+            // Also update the data collection if a dataset name changes
+            if (req.body.name) {
+                Measurements.collection.update({
+                    measId: decodeURIComponent(req.query.name)
+                }, {
+                    $set: { measId: req.body.newName }
+                }, {
+                    multi: true
+                }, function (err) {
+                    if (err) {
+                        return res.status(400).send(err.message);
+                    }
+                    return res.sendStatus(204);
+                });
+            }
+            else {
+                return res.sendStatus(204);
+            }
         });
     })
 
@@ -204,13 +203,13 @@ var router = function(app) {
 
 // =========================================================================
 
-    app.route('/api/measurements/:mId/exp/')
+    app.route('/api/measurements/exp/')
 
     // List all the columns for given datasets
     .get(function (req, res, next) {
         Measurements.collection.distinct('expId', {
             'measId': {
-                '$in' : decodeURIComponent(req.params.mId).split(',')
+                '$in' : decodeURIComponent(req.query.mId).split(',')
             }
         },
         function (err, list) {

@@ -21,7 +21,9 @@
         <script src="js/services/xlsxToJson.js"></script>
         <script src="js/services/resources.js"></script>
         <script src="js/services/datasets.js"></script>
+        <script src="js/services/experiments.js"></script>
         <script src="js/controllers/mainController.js"></script>
+        <script src="js/controllers/menuController.js"></script>
         <script src="js/controllers/experimentsController.js"></script>
         <script src="js/controllers/datasetsController.js"></script>
         <script src="js/controllers/addDatasetsController.js"></script>
@@ -86,14 +88,14 @@
             </div>
         </nav>
 
-        <aside id="sideMenu" ng-controller="ExperimentsController">
-            <div class="asideBlock" ng-repeat="(title, list) in sideLists">
+        <aside id="sideMenu" ng-controller="MenuController">
+            <div class="asideBlock" ng-repeat="(title, list) in exp.sideMenu">
                 <h5 class="asideBlockTitle"
-                    ng-click="displayList(title)"
+                    ng-click="display(title)"
                     title="List of experiments that match the word {{ title }}">
                     <span class="caret"></span>
-                    {{ title }}
-                    <span class="pull-right badge" title="Number of experiments in this list">{{ list.length }}</span>
+                    <span ng-bind="title"></span>
+                    <span class="pull-right badge" ng-bind="list.length" title="Number of experiments in this list"></span>
                     <span class="pull-right glyphicon glyphicon-remove removeList"
                           role="button"
                           ng-click="removeList(title)"
@@ -103,7 +105,8 @@
                     <li class="asideListItem"
                         ng-class="{ 'bg-primary': selected.exp.indexOf(exp) > -1 }"
                         ng-repeat="exp in list"
-                        ng-click="select('exp', exp)">{{ exp }}</li>
+                        ng-click="select('exp', exp)"
+                        ng-bind="exp"></li>
                 </ul>
             </div>
         </aside>
@@ -131,10 +134,10 @@
                 </section>
 
                 <div id="results">
-                    <h2 class="page-header" ng-show="dataRows.length > 0">
+                    <h2 class="page-header" ng-show="data.rows.length > 0">
                         Results
                         <small ng-show="isLoading">Loading data..</small>
-                        <small ng-show="dataRows.length > 0">{{ dataRows.slice(0, limits.results).length }} lines displayed on {{ dataRows.length }}</small>
+                        <small ng-show="data.rows.length > 0">{{ data.rows.slice(0, limits.results).length }} lines displayed on {{ data.rows.length }}</small>
                         <small class="pull-right">
                             <label for="resultsLimit">Limit</label>
                             <select id="resultsLimit"
@@ -148,7 +151,7 @@
                     <a ng-href="{{ dataHref }}"
                        download="Data.txt"
                        ng-click="download()"
-                       ng-show="dataRows.length > 0"><span class="glyphicon glyphicon-download"></span> Download in TSV
+                       ng-show="data.rows.length > 0"><span class="glyphicon glyphicon-download"></span> Download in TSV
                     </a>
 
                     <table class="table table-hover">
@@ -156,7 +159,7 @@
                             <tr>
                                 <th class="buttonCell"
                                     role="button"
-                                    ng-repeat="(header, value) in dataRows[0]"
+                                    ng-repeat="(header, value) in data.rows[0]"
                                     ng-class="{ orderColumn : predicate === header, reverse : reverse === true }"
                                     ng-click="order(header, !reverse)">
                                         {{ header }}
@@ -164,7 +167,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="row in dataRows.slice(0, limits.results)">
+                            <tr ng-repeat="row in data.rows.slice(0, limits.results)">
                                 <td ng-repeat="(header, value) in row" ng-class="{ numericCell: typeof(value) === 'number' }">
                                     {{ value }}
                                 </td>

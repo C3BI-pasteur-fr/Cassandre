@@ -8,27 +8,14 @@ angular.module("cassandre").controller("DatasetsController", [ "$scope", "$filte
 
     // ----- Datasets --------------------------------------------------- //
 
-    $scope.sets = {
-        all: [],                // The list of all datasets
-        selected: [],           // The selected datasets in the menu
-        filter: "",             // The menu filter
-        showHidden: false,      // Marker for the datasets menu
-        changes: {              // When editing a dataset informations
-            name: "",
-            newName: "",
-            description : ""
-        }
+    $scope.sets = datasets.list.all(); // The whole datasets lists and markers
+    $scope.filter = "";             // The menu filter
+    $scope.showHidden = false;      // Marker for the datasets menu
+    $scope.changes = {              // When editing a dataset informations
+        name: "",
+        newName: "",
+        description : ""
     };
-   
-    ////////////// PROBLEM HERE /////////////////////////
-    // Listener for datasets changes
-    $scope.$on("datasets.update", function () {
-        $scope.sets.all = datasets.list.all();
-        $scope.sets.selected = datasets.list.names();
-    });
-
-    // Initialization
-    //$scope.sets.selected = datasets.list.names();
 
     // Function to select a dataset
     $scope.select = function (name) {
@@ -37,7 +24,6 @@ angular.module("cassandre").controller("DatasetsController", [ "$scope", "$filte
         if ( index > -1) {
             $scope.sets.selected.splice(index, 1);
         }
-
         else {
             $scope.sets.selected.push(name);
         }
@@ -46,7 +32,9 @@ angular.module("cassandre").controller("DatasetsController", [ "$scope", "$filte
     // Function to check/uncheck all
     $scope.selectAll = function () {
         if ($scope.sets.selected.length !== $scope.sets.all.length) {
-            $scope.sets.selected = datasets.list.names();
+            $scope.sets.selected = $scope.sets.all.map(function (set) {
+                return set.name;
+            });
         }
         else {
             $scope.sets.selected = [];
@@ -54,18 +42,18 @@ angular.module("cassandre").controller("DatasetsController", [ "$scope", "$filte
     };
 
     // Hide a dataset in the menu
-    $scope.hide = function (id) {
-        datasets.hide(id);
+    $scope.hide = function (name) {
+        datasets.hide(name);
     };
 
     // Make a dataset visible in the menu
-    $scope.show = function (id) {
-        datasets.show(id);
+    $scope.show = function (name) {
+        datasets.show(name);
     };
 
     // Update datasets informations
-    $scope.update = function (datasetsChanges) {
-        datasets.update(datasetsChanges);
+    $scope.update = function () {
+        datasets.update($scope.changes);
     };
 
     // Remove a dataset
@@ -88,7 +76,7 @@ angular.module("cassandre").controller("DatasetsController", [ "$scope", "$filte
         $scope.stats.all = stats;
         $scope.stats.selected = stats;
     });
-    
+
     // Total numbers of datasets, experiments and genes
     $scope.stats = {
         all: statistics.get(),

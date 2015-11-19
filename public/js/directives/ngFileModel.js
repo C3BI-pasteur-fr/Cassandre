@@ -16,14 +16,18 @@ angular.module("cassandre").directive('ngFileModel', ['$parse', function ($parse
         restrict: 'A',
         link: function (scope, element, attrs) {
             var model = $parse(attrs.ngFileModel);
-            var modelName = $parse(attrs.ngFileName);
-            var modelSetter = model.assign;
-            var modelNameSetter = modelName.assign;
+            
+            if (attrs.ngFileName) {
+                var modelName = $parse(attrs.ngFileName);
+            }
 
             element.bind('change', function () {
                 scope.$apply(function () {
-                    modelSetter(scope, element[0].files[0]);
-                    modelNameSetter(scope, element[0].files[0].name);
+                    model.assign(scope, element[0].files[0]);
+                    
+                    if (attrs.ngFileName) {
+                        modelName.assign(scope, element[0].files[0].name);
+                    }
                 });
             });
         }

@@ -6,7 +6,7 @@
 <form id="annotUploadForm" name="annotUploadForm" class="form-inline" ng-submit="sendFile()">
     <input id="annotFile"
         type="file"
-        ng-file-model="annotations"
+        ng-file-model="annotations.file"
         required>
     <p class="help-block">Allowed formats :
         <strong>xlsx, tsv, txt</strong>

@@ -4,36 +4,37 @@
  */
 
 angular.module("cassandre").controller("AddDatasetsController", [
-    "$scope", "allowedMimeTypes", "xlsxToJson", "tsvToJson",
-    function ($scope, allowedMimeTypes, xlsxToJson, tsvToJson) {
+    "$scope", "datasets", "allowedMimeTypes", "xlsxToJson", "tsvToJson",
+    function ($scope, datasets, allowedMimeTypes, xlsxToJson, tsvToJson) {
+    
+    // The whole datasets lists and markers
+    $scope.sets = datasets.list.all();
 
     // Dataset file to upload
     $scope.dataset = {
         file: "",           // The File Object
-        name: "",           // The name possibly modified by the user
+        name: "",           // The name, possibly modified by the user
         description: ""     // A description of the dataset
     };
 
-    // Marker to know when data are uploading
-    $scope.dataIsUploading = false;
-
     // Parse the file depending on its type
     $scope.parseFile = function () {
-        var file = $scope.dataset.file;
-
+        
         // Excel files
-        if (file.type === allowedMimeTypes["xlsx"]) {
-            xlsxToJson(file, function (err, json) {
-                $scope.dataRows = json;
-                $scope.$digest();
+        if ($scope.dataset.file.type === allowedMimeTypes["xlsx"]) {
+            xlsxToJson($scope.dataset.file, function (err, json) {
+                $scope.$apply(function () {
+                    $scope.data.rows = json;
+                });
             });
         }
 
         // TSV files
-        else if (file.type === allowedMimeTypes["tsv"] || file.type === allowedMimeTypes["txt"]) {
-            tsvToJson(file, function (err, json) {
-                $scope.dataRows = json;
-                $scope.$digest();
+        else if ($scope.dataset.file.type === allowedMimeTypes["tsv"] || $scope.dataset.file.type === allowedMimeTypes["txt"]) {
+            tsvToJson($scope.dataset.file, function (err, json) {
+                $scope.$apply(function () {
+                    $scope.data.rows = json;
+                });
             });
         }
 
@@ -51,17 +52,6 @@ angular.module("cassandre").controller("AddDatasetsController", [
         allData.append("dataset", $scope.dataset.file);
         allData.append("description", $scope.dataset.description);
 
-        $scope.dataIsUploading = true;
-
-        datasets.add(allData, function () {
-            $scope.dataIsUploading = false;
-            $scope.lists.datasets = datasets.list();
-            $scope.dbStats.total = statistics.get();
-            alert("Data successfully stored.");
-            document.getElementById("dataUploadForm").reset(); // No better solution found with Angular
-        }, function (err) {
-            $scope.dataIsUploading = false;
-            alert("Error : " + err.data);
-        });
+        datasets.add(allData);
     }
 }]);

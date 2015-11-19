@@ -35,18 +35,18 @@
                         <input class="form-control"
                             id="datasetsFilter"
                             type="text"
-                            ng-model="sets.filter"
+                            ng-model="filter"
                             placeholder="Filter..."
                             title="Filter the list by entering names, dates, letters..">
                     </th>
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="set in sets.all | filter:sets.filter | orderBy:postedDate:true" ng-class="{ info: sets.selected.indexOf(set.name) > -1 }">
+                <tr ng-repeat="set in sets.all | filter:filter | orderBy:postedDate:true" ng-class="{ info: sets.selected.indexOf(set.name) > -1 }">
                     <td class="buttonCellHide invisibleCell">
                         <div class="btn-group pull-right" ng-show="sets.showHidden">
-                            <button class="btn btn-xs" type="button" title="Hide this dataset" ng-click="hide(set._id)" ng-class="{ 'btn-danger': set.hidden }">OFF</button>
-                            <button class="btn btn-xs" type="button" title="Show this dataset" ng-click="show(set._id)" ng-class="{ 'btn-info': !set.hidden }">ON</button>
+                            <button class="btn btn-xs" type="button" title="Hide this dataset" ng-click="hide(set.name)" ng-class="{ 'btn-danger': set.hidden }">OFF</button>
+                            <button class="btn btn-xs" type="button" title="Show this dataset" ng-click="show(set.name)" ng-class="{ 'btn-info': !set.hidden }">ON</button>
                         </div>
                     </td>
                     <td class="buttonCell" role="button" ng-click="select(set.name)">
@@ -57,7 +57,7 @@
                     <td class="buttonCellEdit"
                         title="Make changes to the dataset"
                         role="button"
-                        ng-click="sets.changes.name = set.name; sets.changes.newName = set.name; sets.changes.description = set.description;"
+                        ng-click="changes.name = set.name; changes.newName = set.name; changes.description = set.description;"
                         data-toggle="modal"
                         data-target="#datasetEdition">
                         <span class="glyphicon glyphicon-pencil"></span>
@@ -85,9 +85,6 @@
     </div>
 </div>
 
-<pre>{{ sets.selected | json }}</pre>
-<pre>{{ stats | json }}</pre>
-
 <div class="modal" id="datasetEdition">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
@@ -103,7 +100,7 @@
                         class="form-control"
                         type="text"
                         title="You can rename the dataset"
-                        ng-model="sets.changes.newName"
+                        ng-model="changes.newName"
                         required>
                 </div>
 
@@ -111,7 +108,7 @@
                     <label for="currentDescription">Description</label>
                     <textarea id="currentDescription"
                         class="form-control"
-                        ng-model="sets.changes.description"
+                        ng-model="changes.description"
                         title="Write a description here"
                         cols=50
                         rows=8
@@ -126,3 +123,6 @@
         </div>
     </div>
 </div>
+
+<pre>{{ changes | json }}</pre>
+<pre>{{ sets | json }}</pre>

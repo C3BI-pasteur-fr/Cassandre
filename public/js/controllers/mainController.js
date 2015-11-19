@@ -5,18 +5,21 @@
  */
 
 angular.module("cassandre").controller("MainController", [
-    "$scope", "$filter", "$http", "jsonToTsv", "datasetsResource", "annotations", "genes", "exp", "data",
-    function ($scope, $filter, $http, jsonToTsv, datasetsResource, annotations, genes, exp, data) {
+    "$scope", "$filter", "$http", "jsonToTsv", "datasetsHttp", "annotations", "genes", "expHttp", "data",
+    function ($scope, $filter, $http, jsonToTsv, datasetsHttp, annotations, genes, expHttp, data) {
 
-    $scope.dataCells = [];              // Data from database
-    $scope.dataRows = [];               // Data formatted in rows
+    $scope.data = {
+        cells: [],                      // Data from database
+        rows: []                        // Data formatted in rows
+    };
+
     $scope.dataHref = "#";              // Data URI of the display table for the download
     $scope.isLoading = false;           // Marker to know when data are loading
 
     // ----- Variables -------------------------------------------------- //
 
     // Control switch for the displayed section
-    $scope.activeSection = "datasetsSection";
+    $scope.activeSection = "experimentsSection";
 
     // Used for ordering the results and mark the columns
     $scope.predicate = "";
@@ -68,7 +71,7 @@ angular.module("cassandre").controller("MainController", [
 
     // Get the data for the selected genes and/or exp
     $scope.getData = function () {
-        $scope.dataCells = data.get({
+        $scope.data.cells = data.get({
             mId: encodeURIComponent($scope.selected.datasets),
             expId: $scope.selected.exp,
             geneId: $scope.selected.genes
@@ -79,7 +82,7 @@ angular.module("cassandre").controller("MainController", [
 
     // Format data into rows to ease the display in the view
     $scope.cellsToRows = function(data, colName, rowName, valueName) {
-        $scope.dataRows = [];
+        $scope.data.rows = [];
         var headers = [];
         var rows = {};
 
@@ -113,7 +116,7 @@ angular.module("cassandre").controller("MainController", [
                 newRow[header] = rows[rowName][header];
             };
 
-            $scope.dataRows.push(newRow);
+            $scope.data.rows.push(newRow);
         }
     };
 
@@ -121,11 +124,11 @@ angular.module("cassandre").controller("MainController", [
     $scope.order = function (header, reverse) {
         $scope.predicate = header;
         $scope.reverse = reverse;
-        $scope.dataRows = $filter("orderBy")($scope.dataRows, "'" + header + "'", $scope.reverse);
+        $scope.data.rows = $filter("orderBy")($scope.data.rows, "'" + header + "'", $scope.reverse);
     };
 
     // Set the data URI of the display table for the download
     $scope.download = function () {
-        $scope.dataHref = "data:text/plain;charset=utf-8," + encodeURI(jsonToTsv($scope.dataRows));
+        $scope.dataHref = "data:text/plain;charset=utf-8," + encodeURI(jsonToTsv($scope.data.rows));
     };
 }]);

@@ -1,6 +1,6 @@
 <h3 class="page-header">
     Add Datasets
-    <small ng-show="dataIsUploading">Uploading..</small>
+    <small ng-show="sets.uploading">Uploading..</small>
 </h3>
 
 <form id="dataUploadForm" name="dataUploadForm" ng-submit="sendData()">
@@ -16,7 +16,7 @@
             </p>
 
             <div class="btn-group">
-                <input class="btn btn-default" type="submit" value="Send" ng-disabled="dataIsUploading">
+                <input class="btn btn-default" type="submit" value="Send" ng-disabled="sets.uploading">
                 <button class="btn btn-default" type="button" ng-click="parseFile()">Display</button>
                 <button class="btn btn-default" type="reset">Reset</button>
             </div>
