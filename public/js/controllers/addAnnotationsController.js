@@ -16,9 +16,10 @@ angular.module("cassandre").controller("AddAnnotationsController", [
     $scope.annotIsUploading = false;
 
     // Get all annotations
-    $scope.getAnnotations = function () {
-        $scope.data.cells = annotations.get({}, function (data) {
+    $scope.showAnnotations = function () {
+        $scope.data.cells = annotationsHttp.get({}, function (data) {
             $scope.cellsToRows(data, "column", "row", "value");
+            console.log($scope.data.rows);
         });
     };
 
@@ -58,7 +59,7 @@ angular.module("cassandre").controller("AddAnnotationsController", [
 
         annotationsHttp.add(allData, function () {
             $scope.annotIsUploading = false;
-            alert("Data successfully stored.");
+            alert("Annotations successfully stored.");
             document.getElementById("dataUploadForm").reset(); // No better solution found with Angular
         }, function (err) {
             $scope.dataIsUploading = false;

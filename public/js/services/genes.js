@@ -5,11 +5,12 @@
  */
 
 
-angular.module("cassandre").factory("genes", ["genesHttp", "datasets", function (genesHttp, datasets) {
-    
+angular.module("cassandre").factory("genes", ["datasets", "genesHttp", "annotationsHttp", function (datasets, genesHttp, annotationsHttp) {
+
     var genes = {
-        all: [],                 // List of all the genes found in datasets
-        selected: []             // List of all the genes selected in the side menu list.
+        all: [],                 // The genes found in datasets
+        selected: [],            // The genes selected in the side menu list
+        annotations: {}          // Annotations for each gene
     };
 
     return {
@@ -19,6 +20,19 @@ angular.module("cassandre").factory("genes", ["genesHttp", "datasets", function 
         get: function () {
             genesHttp.get({ mId: datasets.list.selected() }, function (genesList) {
                 genes.all = genesList;
+            });
+        },
+        getAnnotations: function () {
+            annotationsHttp.get(function (annotations) {
+                // List the genes
+                annotations.forEach(function (cell) {
+                    if (!genes.annotations[cell.row]) {
+                        genes.annotations[cell.row] = {};
+                    }
+                    if (!genes.annotations[cell.row][cell.column]) {
+                        genes.annotations[cell.row][cell.column] = cell.value;
+                    }
+                });
             });
         }
     };

@@ -12,6 +12,7 @@
         <script src="js/lib/angular.min.js"></script>
         <script src="js/lib/angular-resource.min.js"></script>
         <script src="js/lib/xlsx.core.min.js"></script>
+        <script src="js/lib/D3.min.js"></script>
         <script src="js/cassandre.js"></script>
         <script src="js/directives/ngFileModel.js"></script>
         <script src="js/services/allowedMimeTypes.js"></script>
@@ -130,7 +131,8 @@
                         ng-repeat="gene in genes.all"
                         ng-class="{ 'bg-primary': genes.selected.indexOf(gene) > -1 }"
                         ng-click="select.gene(gene)"
-                        ng-bind="gene"></li>
+                        ng-bind="gene"
+                        title="{{ format(genes.annotations[gene]) }}"></li>
                 </ul>
             </div>
         </aside>

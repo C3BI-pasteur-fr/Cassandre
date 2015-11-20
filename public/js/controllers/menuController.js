@@ -8,10 +8,10 @@ angular.module("cassandre").controller("MenuController", ["$scope", "experiments
 
     // Lists of selected experiments on the side menu
     $scope.exps = experiments.list();
-    
+
     // Lists of genes on the side menu
     $scope.genes = genes.list();
-    
+
     // Select or deselect an element in the side menu
     $scope.select = {
         exp: function (list, exp) {
@@ -46,4 +46,13 @@ angular.module("cassandre").controller("MenuController", ["$scope", "experiments
     $scope.removeList = function (list) {
         delete $scope.exps.sideMenu[list];
     };
+    
+    $scope.format = function (annotation) {
+        var text = "";
+        
+        for (var field in annotation) {
+            text = text.concat(field, " : ", annotation[field], "\n");
+        }
+        return text;
+    }
 }]);

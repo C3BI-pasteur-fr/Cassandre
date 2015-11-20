@@ -191,7 +191,7 @@ var router = function(app) {
     })
 
     // Insert the general annotations file into the database
-    .post(upload.single('annotFile'), function (req, res) {
+    .post(upload.single('annotations'), function (req, res) {
         loadAnnotFile(req.file.path, req.file.mimetype, function (err) {
             if (err) {
                 console.log(err);

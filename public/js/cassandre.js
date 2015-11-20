@@ -41,6 +41,7 @@ angular.module("cassandre", [ "ngResource" ])
         
         experiments.get();
         genes.get();
+        genes.getAnnotations();
     });
 });
 

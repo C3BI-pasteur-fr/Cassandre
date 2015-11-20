@@ -3,11 +3,19 @@
 </h3>
 
 <div class="row">
-    <form class="col-lg-offset-2 col-lg-8" ng-submit="selectList()">
+    <div class="col-lg-2">
+        <div class="btn-group">
+            <button class="btn btn-info" ng-click="getData()" title="Display the raw results">Raw results</button>
+            <button class="btn btn-info" ng-click="histogram()" title="Display an histogram">Histogram</button>            
+        </div>
+    </div>
+    
+    <form class="col-lg-8" ng-submit="selectList()">
         <div class="input-group">
             <span class="input-group-addon">
                 <i class="glyphicon glyphicon-search"></i>
             </span>
+            
             <input class="form-control"
                 type="search"
                 ng-model="exp.filter"
@@ -15,11 +23,13 @@
                 placeholder="Type an experiment name here..."
                 title="Search for experiments in the database"
                 required>
+            
             <span class="input-group-btn">
                 <button class="btn btn-default"
                         type="button"
                         ng-click="resetExp()"
                         title="Erase the current words">Reset</button>
+                
                 <input id="selectButton"
                     class="btn btn-info"
                     type="submit"
@@ -36,6 +46,10 @@
             <li class="list-group-item" ng-repeat="exp in exp.list.all | filter:exp.filter" ng-bind="exp"></li>
         </ul>
     </div>
+</div>
+
+<div class="chart">
+    
 </div>
 
 <!--<pre>{{ exp }}</pre>

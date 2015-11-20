@@ -3,8 +3,8 @@
  *
  */
 
-angular.module("cassandre").controller("DatasetsController", [ "$scope", "$filter", "datasets", "statistics",
-    function ($scope, $filter, datasets, statistics) {
+angular.module("cassandre").controller("DatasetsController", [ "$scope", "$filter", "datasets", "experiments", "statistics",
+    function ($scope, $filter, datasets, experiments, statistics) {
 
     // ----- Datasets --------------------------------------------------- //
 
@@ -95,11 +95,12 @@ angular.module("cassandre").controller("DatasetsController", [ "$scope", "$filte
             };
         }
 
-        // Get the new stats to the database and the new list of experiments
+        // Get the new stats to the database and the new lists of experiments
         else if (!angular.equals(newList, oldList)) {
             statistics.get({ datasets: $scope.sets.selected }, function (newStats) {
                 $scope.stats.selected = newStats;
             });
+            experiments.get();
         }
 
     }, true);
