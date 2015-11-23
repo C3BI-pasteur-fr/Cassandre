@@ -34,7 +34,7 @@ var router = function(app) {
 // ROUTES
 // =========================================================================
 
-    app.route('/api/statistics')
+    app.route('/api/stats')
 
     // Get the numbers of datasets, experiments and genes in the database
     .get(function (req, res) {

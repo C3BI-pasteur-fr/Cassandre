@@ -20,10 +20,8 @@ angular.module("cassandre").controller("MainController", [
     $scope.exps = experiments.list();
     $scope.genes = genes.list();
 
-    // ----- Variables -------------------------------------------------- //
-
     // Control switch for the displayed section
-    $scope.activeSection = "experimentsSection";
+    $scope.activeSection = "datasetsSection";
 
     // Used for ordering the results and mark the columns
     $scope.predicate = "";
