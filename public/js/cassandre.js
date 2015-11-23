@@ -27,10 +27,10 @@ angular.module("cassandre", [ "ngResource" ])
  * datasets has to occur only at the start.
  *
  * Then get all the experiments and genes.
- * 
+ *
  */
 
-.run(function (datasets, datasetsHttp, experiments, genes) {
+.run(function (datasets, datasetsHttp, experiments, genes, stats) {
     var init = datasets.list.all();
 
     datasetsHttp.get(function (sets) {
@@ -38,7 +38,8 @@ angular.module("cassandre", [ "ngResource" ])
         init.selected = sets.map(function (set) {
             return set.name;
         });
-        
+
+        stats.get.all();
         experiments.get();
         genes.get();
         genes.getAnnotations();

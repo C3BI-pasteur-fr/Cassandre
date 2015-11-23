@@ -3,15 +3,15 @@
  *
  */
 
-angular.module("cassandre").controller("DatasetsController", [ "$scope", "$filter", "datasets", "experiments", "statistics",
-    function ($scope, $filter, datasets, experiments, statistics) {
+angular.module("cassandre").controller("DatasetsController", [ "$scope", "$filter", "datasets", "experiments", "stats",
+    function ($scope, $filter, datasets, experiments, stats) {
 
     // ----- Datasets --------------------------------------------------- //
 
-    $scope.sets = datasets.list.all(); // The whole datasets lists and markers
-    $scope.filter = "";             // The menu filter
-    $scope.showHidden = false;      // Marker for the datasets menu
-    $scope.changes = {              // When editing a dataset informations
+    $scope.sets = datasets.list.all();  // The whole datasets lists and markers
+    $scope.filter = "";                 // The menu filter
+    $scope.showHidden = false;          // Marker for the datasets menu
+    $scope.changes = {                  // When editing a dataset informations
         name: "",
         newName: "",
         description : ""
@@ -71,17 +71,8 @@ angular.module("cassandre").controller("DatasetsController", [ "$scope", "$filte
 
     // ----- Database statistics ---------------------------------------- //
 
-    // Initialization
-    statistics.get(function (stats) {
-        $scope.stats.all = stats;
-        $scope.stats.selected = stats;
-    });
-
-    // Total numbers of datasets, experiments and genes
-    $scope.stats = {
-        all: statistics.get(),
-        selected: {}
-    };
+    // List of the database statistics (datasets, experiments and genes)
+    $scope.stats = stats.list();
 
     // Refresh the statistics panel when the datasets selection changes
     $scope.$watch("sets.selected", function (newList, oldList) {
@@ -95,11 +86,9 @@ angular.module("cassandre").controller("DatasetsController", [ "$scope", "$filte
             };
         }
 
-        // Get the new stats to the database and the new lists of experiments
+        // Get the new statistics to the database and the new lists of experiments
         else if (!angular.equals(newList, oldList)) {
-            statistics.get({ datasets: $scope.sets.selected }, function (newStats) {
-                $scope.stats.selected = newStats;
-            });
+            stats.get.selected();
             experiments.get();
         }
 

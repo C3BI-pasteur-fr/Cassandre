@@ -3,10 +3,11 @@
  *
  */
 
+
 angular.module("cassandre")
 
 // Resource to get the list of datasets and POST new datasets to the server
-.factory("datasetsHttp", ["$resource", "$filter", function datasetsResource ($resource, $filter) {
+.factory("datasetsHttp", ["$resource", function datasetsResource ($resource) {
     return $resource("/api/datasets", {}, {
         get: {
             method: "GET",
@@ -93,8 +94,8 @@ angular.module("cassandre")
 }])
 
 // Resource to get statistics from the database
-.factory("statistics", ["$resource", function statisticsResource ($resource) {
-    return $resource("/api/statistics", {}, {
+.factory("statsHttp", ["$resource", function statsResource ($resource) {
+    return $resource("/api/stats", {}, {
         get: {
             method: "GET",
             params: {

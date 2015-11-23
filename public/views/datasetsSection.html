@@ -76,9 +76,18 @@
             <div class="panel-body">
                 <p>Currently selected :</p>
                 <ul>
-                    <li>{{ stats.selected.datasets }} on {{ stats.all.datasets }} Datasets</li>
-                    <li>{{ stats.selected.exp }} on {{ stats.all.exp }} Experiments</li>
-                    <li>{{ stats.selected.genes }} on {{ stats.all.genes }} Genes</li>
+                    <li>
+                        <span ng-bind="stats.selected.datasets"></span> on
+                        <span ng-bind="stats.all.datasets"></span> Datasets
+                    </li>
+                    <li>
+                        <span ng-bind="stats.selected.exp"></span> on
+                        <span ng-bind="stats.all.exp"></span> Experiments
+                    </li>
+                    <li>
+                        <span ng-bind="stats.selected.genes"></span> on
+                        <span ng-bind="stats.all.genes"></span> Genes
+                    </li>
                 </ul>
             </div>
         </div>
@@ -123,7 +132,3 @@
         </div>
     </div>
 </div>
-
-<!--
-<pre>{{ changes | json }}</pre>
-<pre>{{ sets | json }}</pre>-->

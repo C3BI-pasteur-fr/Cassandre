@@ -4,8 +4,8 @@
  */
 
 angular.module("cassandre").controller("AddAnnotationsController", [
-    "$scope", "annotationsHttp", "allowedMimeTypes", "xlsxToJson", "tsvToJson",
-    function ($scope, annotationsHttp, allowedMimeTypes, xlsxToJson, tsvToJson) {
+    "$scope", "genes", "annotationsHttp", "allowedMimeTypes", "xlsxToJson", "tsvToJson",
+    function ($scope, genes, annotationsHttp, allowedMimeTypes, xlsxToJson, tsvToJson) {
 
     // The annotations File object to upload
     $scope.annotations = {
@@ -61,6 +61,7 @@ angular.module("cassandre").controller("AddAnnotationsController", [
             $scope.annotIsUploading = false;
             alert("Annotations successfully stored.");
             document.getElementById("dataUploadForm").reset(); // No better solution found with Angular
+            genes.getAnnotations();
         }, function (err) {
             $scope.dataIsUploading = false;
             alert("Error : " + err.data);

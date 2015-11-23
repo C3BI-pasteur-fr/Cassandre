@@ -4,7 +4,7 @@
  */
 
 
-angular.module("cassandre").factory("datasets", [ "datasetsHttp", function datasetsFactory (datasetsHttp) {
+angular.module("cassandre").factory("datasets", [ "datasetsHttp", "stats", function datasetsFactory (datasetsHttp, stats) {
 
     var datasets = {
         all: [],                // List of all datasets
@@ -32,6 +32,7 @@ angular.module("cassandre").factory("datasets", [ "datasetsHttp", function datas
                 datasets.uploading = false;
                 alert("Data successfully stored.");
                 datasets.all = datasetsHttp.get();
+                stats.get.all();
             }, function (err) {
                 datasets.uploading = false;
                 alert("Error : " + err.data);
