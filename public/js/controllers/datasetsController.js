@@ -88,7 +88,7 @@ angular.module("cassandre").controller("DatasetsController", [ "$scope", "$filte
 
         // Get the new statistics to the database and the new lists of experiments
         else if (!angular.equals(newList, oldList)) {
-            stats.get.selected();
+            stats.get.selected($scope.sets.selected);
             experiments.get();
         }
 

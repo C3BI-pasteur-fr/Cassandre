@@ -40,9 +40,9 @@ angular.module("cassandre", [ "ngResource" ])
         });
 
         stats.get.all();
-        experiments.get();
-        genes.get();
-        genes.getAnnotations();
+        //experiments.get();
+        //genes.get();
+        //genes.getAnnotations();
     });
 });
 

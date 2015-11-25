@@ -5,7 +5,7 @@
  */
 
 
-angular.module("cassandre").factory("stats", [ "statsHttp", "datasets", function statsFactory (statsHttp, datasets) {
+angular.module("cassandre").factory("stats", [ "statsHttp", function statsFactory (statsHttp) {
 
     var stats = {
         all: {},                // Total numbers of datasets, experiments and genes
@@ -22,8 +22,8 @@ angular.module("cassandre").factory("stats", [ "statsHttp", "datasets", function
                     stats.all = statistics;
                 });
             },
-            selected: function () {
-                return statsHttp.get({ datasets: datasets.list.selected() }, function (statistics) {
+            selected: function (sets) {
+                return statsHttp.get({ datasets: sets }, function (statistics) {
                     stats.selected = statistics;
                 });
             }

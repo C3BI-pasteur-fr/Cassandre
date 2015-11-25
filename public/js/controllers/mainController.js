@@ -1,8 +1,8 @@
-
 /*
  * Main controller of Cassandre for the display section.
  *
  */
+
 
 angular.module("cassandre").controller("MainController", [
     "$scope", "$filter", "jsonToTsv", "datasets", "experiments", "genes", "data",
@@ -21,7 +21,7 @@ angular.module("cassandre").controller("MainController", [
     $scope.genes = genes.list();
 
     // Control switch for the displayed section
-    $scope.activeSection = "datasetsSection";
+    $scope.activeSection = "addDatasetsSection";
 
     // Used for ordering the results and mark the columns
     $scope.predicate = "";

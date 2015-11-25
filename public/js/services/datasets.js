@@ -32,6 +32,9 @@ angular.module("cassandre").factory("datasets", [ "datasetsHttp", "stats", funct
                 datasets.uploading = false;
                 alert("Data successfully stored.");
                 datasets.all = datasetsHttp.get();
+                /////////
+                // Get also the genes, experiments and select the new one by default
+                /////////
                 stats.get.all();
             }, function (err) {
                 datasets.uploading = false;
