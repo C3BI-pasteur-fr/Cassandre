@@ -4,7 +4,7 @@
  */
 
 
-angular.module("cassandre").factory("datasets", [ "datasetsHttp", "stats", function datasetsFactory (datasetsHttp, stats) {
+angular.module("cassandre").factory("datasets", ["datasetsHttp", "stats", function datasetsFactory(datasetsHttp, stats) {
 
     var datasets = {
         all: [],                // List of all datasets
@@ -84,7 +84,6 @@ angular.module("cassandre").factory("datasets", [ "datasetsHttp", "stats", funct
             }, function () {
                 // TO CHANGE
                 datasets.all = datasetsHttp.get();
-                $rootScope.$broadcast("datasets.update");
             }, function (err) {
                 alert("Error : " + err.data);
             });

@@ -8,7 +8,7 @@
  */
 
 
-angular.module("cassandre").factory("xlsxToJson", function xlsxToJsonFactory() {
+angular.module("cassandre").factory("xlsxToJson", ["cast", function xlsxToJsonFactory(cast) {
 
     return function (fileObject, callback) {
         var reader = new FileReader();
@@ -51,7 +51,7 @@ angular.module("cassandre").factory("xlsxToJson", function xlsxToJsonFactory() {
                     }
 
                     // Add the cell text value to the row and handle empty cells
-                    row[sheet[header].w] = sheet[cell] ? sheet[cell].w : "";
+                    row[sheet[header].w] = sheet[cell] ? cast(sheet[cell].w) : "";
                 }
 
                 table.push(row);
@@ -62,4 +62,4 @@ angular.module("cassandre").factory("xlsxToJson", function xlsxToJsonFactory() {
 
         reader.readAsBinaryString(fileObject);
     };
-});
+}]);
