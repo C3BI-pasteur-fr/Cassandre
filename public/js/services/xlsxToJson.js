@@ -3,7 +3,8 @@
  * Return the content in JSON, formatted in rows for the display.
  *
  * Since Excel doesn't store any empty cell, we need
- * to go through the whole sheet manually.
+ * to go through the whole sheet manually. This way we can cast
+ * every value and have a nice display.
  *
  */
 

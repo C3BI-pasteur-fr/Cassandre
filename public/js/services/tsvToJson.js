@@ -14,18 +14,22 @@ angular.module("cassandre").factory("tsvToJson", ["cast", function tsvToJsonFact
         reader.onload = function (e) {
             var arrays = e.target.result
                 .trim()
-                .split(/\r\n|\n/g)                  // Get the lines into an array
-                .map(function (line) {
-                    return line.split("\t");        // Split each line into an array
+                .split(/\r\n|\n/g)              // Get the lines into an array
+                .map(function (line) {          // Split each line into an array
+                    return line.split("\t");
                 });
 
-            var headers = arrays.shift();           // Separate headers form the rest
+            // Separate headers form the rest
+            var headers = arrays.shift();
 
-            arrays.forEach(function (array) {       // Build the JSON
+            // Build the JSON
+            arrays.forEach(function (array) {
                 var row = {};
 
                 array.forEach(function (element, index) {
-                    row[headers[index]] = cast(element);
+                    if (headers[index]) {
+                        row[headers[index]] = cast(element);
+                    }
                 })
 
                 rows.push(row);
