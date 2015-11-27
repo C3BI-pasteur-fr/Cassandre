@@ -4,24 +4,27 @@
  */
 
 angular.module("cassandre").controller("AddDatasetsController", [
-    "$scope", "datasets", "allowedMimeTypes", "xlsxToJson", "tsvToJson",
-    function ($scope, datasets, allowedMimeTypes, xlsxToJson, tsvToJson) {
+    "$scope", "datasets", "allowedFileTypes", "xlsxToJson", "tsvToJson",
+    function ($scope, datasets, allowedFileTypes, xlsxToJson, tsvToJson) {
     
     // The whole datasets lists and markers
     $scope.sets = datasets.list.all();
 
     // Dataset file to upload
     $scope.dataset = {
-        file: "",           // The File Object
+        file: "",           // The entire FileObject
         name: "",           // The name, possibly modified by the user
         description: ""     // A description of the dataset
     };
+
+    // List of allowed formats displayed in the view
+    $scope.formats = allowedFileTypes.extensions.join(", ");
 
     // Parse the file depending on its type
     $scope.parseFile = function () {
         
         // Excel files
-        if ($scope.dataset.file.type === allowedMimeTypes["xlsx"]) {
+        if (allowedFileTypes.mime.excel.indexOf($scope.dataset.file.type) > -1) {
             xlsxToJson($scope.dataset.file, function (err, json) {
                 $scope.$apply(function () {
                     $scope.data.rows = json;
@@ -30,7 +33,7 @@ angular.module("cassandre").controller("AddDatasetsController", [
         }
 
         // TSV files
-        else if ($scope.dataset.file.type === allowedMimeTypes["tsv"] || $scope.dataset.file.type === allowedMimeTypes["txt"]) {
+        else if (allowedFileTypes.mime.text.indexOf($scope.dataset.file.type) > -1) {
             tsvToJson($scope.dataset.file, function (err, json) {
                 $scope.$apply(function () {
                     $scope.data.rows = json;

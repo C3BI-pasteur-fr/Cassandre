@@ -37,7 +37,7 @@ angular.module("cassandre").controller("DatasetsController", [ "$scope", "$filte
             });
         }
         else {
-            $scope.sets.selected = [];
+            $scope.sets.selected.splice(0, $scope.sets.selected.length);
         }
     };
 
@@ -74,23 +74,16 @@ angular.module("cassandre").controller("DatasetsController", [ "$scope", "$filte
     // List of the database statistics (datasets, experiments and genes)
     $scope.stats = stats.list();
 
-    // Refresh the statistics panel when the datasets selection changes
+    // Refresh stats and experiments when the datasets selection changes
     $scope.$watch("sets.selected", function (newList, oldList) {
-
-        // Spare a pointless request
         if (newList.length === 0) {
-            $scope.stats.selected = {
-                datasets: 0,
-                exp: 0,
-                genes: 0
-            };
+            stats.reset.selected();
+            experiments.reset.selected();
         }
-
-        // Get the new statistics to the database and the new lists of experiments
-        else if (!angular.equals(newList, oldList)) {
+        else {
             stats.get.selected($scope.sets.selected);
-            experiments.get();
+            experiments.get.selected($scope.sets.selected);
         }
-
     }, true);
+
 }]);

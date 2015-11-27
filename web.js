@@ -110,7 +110,7 @@ var router = function(app) {
                     return res.status(400).send(err.message);
                 }
 
-                return res.sendStatus(201);
+                return res.status(201).send({ name: req.file.filename });
             });
         });
     })

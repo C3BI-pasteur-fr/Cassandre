@@ -4,8 +4,8 @@
  */
 
 angular.module("cassandre").controller("AddAnnotationsController", [
-    "$scope", "genes", "annotationsHttp", "allowedMimeTypes", "xlsxToJson", "tsvToJson",
-    function ($scope, genes, annotationsHttp, allowedMimeTypes, xlsxToJson, tsvToJson) {
+    "$scope", "genes", "annotationsHttp", "allowedFileTypes", "xlsxToJson", "tsvToJson",
+    function ($scope, genes, annotationsHttp, allowedFileTypes, xlsxToJson, tsvToJson) {
 
     // The annotations File object to upload
     $scope.annotations = {
@@ -15,20 +15,15 @@ angular.module("cassandre").controller("AddAnnotationsController", [
     // Marker to know when data are uploading
     $scope.annotIsUploading = false;
 
-    // Get all annotations
-    $scope.showAnnotations = function () {
-        $scope.data.cells = annotationsHttp.get({}, function (data) {
-            $scope.cellsToRows(data, "column", "row", "value");
-            console.log($scope.data.rows);
-        });
-    };
+    // List of allowed formats displayed in the view
+    $scope.formats = allowedFileTypes.extensions.join(", ");
 
     // Parse the file depending on its type
     $scope.parseFile = function () {
 
         // Excel files
-        if ($scope.annotations.file.type === allowedMimeTypes["xlsx"]) {
-            xlsxToJson($scope.annotations.file, function (err, json) {
+        if (allowedFileTypes.mime.excel.indexOf($scope.dataset.file.type) > -1) {
+            xlsxToJson($scope.dataset.file, function (err, json) {
                 $scope.$apply(function () {
                     $scope.data.rows = json;
                 });
@@ -36,8 +31,8 @@ angular.module("cassandre").controller("AddAnnotationsController", [
         }
 
         // TSV files
-        else if ($scope.annotations.file.type === allowedMimeTypes["tsv"] || $scope.annotations.file.type === allowedMimeTypes["txt"]) {99
-            tsvToJson($scope.annotations.file, function (err, json) {
+        else if (allowedFileTypes.mime.text.indexOf($scope.dataset.file.type) > -1) {
+            tsvToJson($scope.dataset.file, function (err, json) {
                 $scope.$apply(function () {
                     $scope.data.rows = json;
                 });
@@ -47,6 +42,13 @@ angular.module("cassandre").controller("AddAnnotationsController", [
         else {
             alert("This file format is invalid.");
         }
+    };
+
+    // Get all annotations
+    $scope.showAnnotations = function () {
+        $scope.data.cells = annotationsHttp.get({}, function (data) {
+            $scope.cellsToRows(data, "column", "row", "value");
+        });
     };
 
     // Send the file to the server using a FormData

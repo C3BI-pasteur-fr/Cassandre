@@ -5,7 +5,7 @@
  */
 
 
-angular.module("cassandre").factory("experiments", ["expHttp", "datasets", function (expHttp, datasets) {
+angular.module("cassandre").factory("experiments", ["expHttp", function (expHttp) {
 
     var experiments = {
         all: [],                 // All the experiments found in datasets
@@ -17,10 +17,22 @@ angular.module("cassandre").factory("experiments", ["expHttp", "datasets", funct
         list: function () {
             return experiments;
         },
-        get: function () {
-            expHttp.get({ mId: datasets.list.selected() }, function (expList) {
-                experiments.all = expList;
-            });
+        get: {
+            all: function () {
+                expHttp.get(function (expList) {
+                    experiments.all = expList;
+                });
+            },
+            selected: function (sets) {
+                expHttp.get({ mId: sets }, function (expList) {
+                    experiments.all = expList;
+                });
+            }
+        },
+        reset: {
+            selected: function () {
+                experiments.selected = [];
+            }
         }
     };
 }]);

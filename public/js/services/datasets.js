@@ -4,7 +4,7 @@
  */
 
 
-angular.module("cassandre").factory("datasets", ["datasetsHttp", "stats", function datasetsFactory(datasetsHttp, stats) {
+angular.module("cassandre").factory("datasets", ["datasetsHttp", "experiments", "genes", "stats", function datasetsFactory(datasetsHttp, stats, experiments, genes) {
 
     var datasets = {
         all: [],                // List of all datasets
@@ -28,14 +28,22 @@ angular.module("cassandre").factory("datasets", ["datasetsHttp", "stats", functi
         },
         add: function (formData) {
             datasets.uploading = true;
-            datasetsHttp.add(formData, function () {
+            datasetsHttp.add(formData, function (response) {
+
                 datasets.uploading = false;
-                alert("Data successfully stored.");
+                alert("Dataset " + response.name + " successfully stored.");
+                
+                // Refresh all the lists
                 datasets.all = datasetsHttp.get();
-                /////////
-                // Get also the genes, experiments and select the new one by default
-                /////////
+                genes.get.all();
                 stats.get.all();
+                
+                // Select the new one by default
+                datasets.selected.push(response.name);
+                experiments.get.selected(datasets.selected);
+                
+                //////// TROUBLES HERE ////////////
+
             }, function (err) {
                 datasets.uploading = false;
                 alert("Error : " + err.data);
@@ -84,6 +92,8 @@ angular.module("cassandre").factory("datasets", ["datasetsHttp", "stats", functi
             }, function () {
                 // TO CHANGE
                 datasets.all = datasetsHttp.get();
+                stats.get.all();
+                //////// TROUBLES HERE ////////////
             }, function (err) {
                 alert("Error : " + err.data);
             });

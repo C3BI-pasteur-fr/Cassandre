@@ -5,7 +5,7 @@
  */
 
 
-angular.module("cassandre").factory("genes", ["datasets", "genesHttp", "annotationsHttp", function (datasets, genesHttp, annotationsHttp) {
+angular.module("cassandre").factory("genes", ["genesHttp", "annotationsHttp", function (genesHttp, annotationsHttp) {
 
     var genes = {
         all: [],                 // The genes found in datasets
@@ -17,10 +17,17 @@ angular.module("cassandre").factory("genes", ["datasets", "genesHttp", "annotati
         list: function () {
             return genes;
         },
-        get: function () {
-            genesHttp.get({ mId: datasets.list.selected() }, function (genesList) {
-                genes.all = genesList;
-            });
+        get: {
+            all: function () {
+                genesHttp.get(function (genesList) {
+                    genes.all = genesList;
+                });
+            },
+            selected: function (sets) {
+                genesHttp.get({ mId: sets }, function (genesList) {
+                    genes.all = genesList;
+                });
+            }
         },
         getAnnotations: function () {
             annotationsHttp.get(function (annotations) {

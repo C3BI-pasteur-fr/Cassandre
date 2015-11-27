@@ -27,6 +27,15 @@ angular.module("cassandre").factory("stats", [ "statsHttp", function statsFactor
                     stats.selected = statistics;
                 });
             }
+        },
+        reset: {
+            selected: function (sets) {
+                stats.selected = {
+                    datasets: 0,
+                    exp: 0,
+                    genes: 0
+                };
+            }
         }
     };
 }]);
