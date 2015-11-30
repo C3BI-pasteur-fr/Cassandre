@@ -59,7 +59,7 @@ angular.module("cassandre")
             method: "GET",
             isArray: true,
             params: {
-                "mId[]": "@mId"
+                "sets[]": "@sets"
             }
         }
     });
@@ -72,7 +72,7 @@ angular.module("cassandre")
             method: "GET",
             isArray: true,
             params: {
-                "mId[]": "@mId"
+                "sets[]": "@sets"
             }
         }
     });
@@ -80,12 +80,12 @@ angular.module("cassandre")
 
 // Resource to get the data stored in the database or delete some of the datasets
 .factory("data", ["$resource", function dataResource ($resource) {
-    return $resource("/api/measurements/:mId", {}, {
+    return $resource("/api/measurements/:sets", {}, {
         get: {
             method: "GET",
             isArray: true,
             params: {
-                "mId[]": "@mId",
+                "sets[]": "@sets",
                 "expId[]": "@expId",
                 "geneId[]": "@geneId"
             }

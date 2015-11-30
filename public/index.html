@@ -164,7 +164,11 @@
                     <h2 class="page-header" ng-show="data.rows.length > 0">
                         Results
                         <small ng-show="isLoading">Loading data..</small>
-                        <small ng-show="data.rows.length > 0">{{ data.rows.slice(0, limit).length }} lines displayed on {{ data.rows.length }}</small>
+                        <small ng-show="data.rows.length > 0">
+                            <span ng-bind="data.rows.slice(0, limit).length"></span>
+                            lines displayed on
+                            <span ng-bind="data.rows.length"></span>
+                        </small>
                         <small class="pull-right">
                             <label for="resultsLimit">Limit</label>
                             <select id="resultsLimit"
@@ -188,15 +192,16 @@
                                     role="button"
                                     ng-repeat="(header, value) in data.rows[0]"
                                     ng-class="{ orderColumn : predicate === header, reverse : reverse === true }"
-                                    ng-click="order(header, !reverse)">
-                                        {{ header }}
+                                    ng-click="order(header, !reverse)"
+                                    ng-bind="header">
                                 </th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr ng-repeat="row in data.rows.slice(0, limit)">
-                                <td ng-repeat="(header, value) in row" ng-class="{ numericCell: typeof(value) === 'number' }">
-                                    {{ value }}
+                                <td ng-repeat="(header, value) in row"
+                                    ng-class="{ numericCell: typeof(value) === 'number' }"
+                                    ng-bind="value">
                                 </td>
                             </tr>
                         </tbody>

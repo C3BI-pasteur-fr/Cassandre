@@ -29,7 +29,7 @@ angular.module("cassandre").factory("stats", [ "statsHttp", function statsFactor
             }
         },
         reset: {
-            selected: function (sets) {
+            selected: function () {
                 stats.selected = {
                     datasets: 0,
                     exp: 0,

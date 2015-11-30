@@ -30,7 +30,7 @@ angular.module("cassandre").controller("MainController", [
     // Get the data for the selected genes and/or exp
     $scope.getData = function () {
         $scope.data.cells = data.get({
-            mId: encodeURIComponent($scope.datasets.selected),
+            sets: encodeURIComponent($scope.datasets.selected),
             expId: $scope.exps.selected,
             geneId: $scope.genes.selected
         }, function (data) {
@@ -102,7 +102,7 @@ angular.module("cassandre").controller("MainController", [
     // Display an histogram
     $scope.histogram = function () {
         $scope.data.cells = data.get({
-            mId: encodeURIComponent($scope.datasets.selected),
+            sets: encodeURIComponent($scope.datasets.selected),
             expId: $scope.exps.selected,
             geneId: $scope.genes.selected
         }, function (cells) {

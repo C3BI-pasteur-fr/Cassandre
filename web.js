@@ -207,15 +207,21 @@ var router = function(app) {
 
     // List all the experiments (columns) for given datasets
     .get(function (req, res, next) {
-        Measurements.collection.distinct('expId', {
-            'measId': {
-                '$in' : decodeURIComponent(req.query.mId).split(',')
-            }
-        },
-        function (err, list) {
+        var query = {};
+        
+        if (req.query.sets) {
+            query.measId = {
+                '$in' : decodeURIComponent(req.query.sets).split(',')
+            };
+        }
+
+        Measurements.collection.distinct('expId', query, function (err, list) {
             if (err) {
                 return res.status(500).send('Error with the database : ' + err.message);
             }
+            console.log(decodeURIComponent(req.query.sets));
+            console.log(decodeURIComponent(req.query.sets).split(','));
+            console.log(list);
             return res.status(200).send(list);
         });
     });
@@ -226,28 +232,34 @@ var router = function(app) {
 
     // List all the genes (lines) for given datasets
     .get(function (req, res, next) {
-        Measurements.collection.distinct('geneId', {
-            'measId': {
-                '$in' : decodeURIComponent(req.query.mId).split(',')
-            }
-        },
-        function (err, list) {
+        var query = {};
+        
+        if (req.query.sets) {
+            query.measId = {
+                '$in' : decodeURIComponent(req.query.sets).split(',')
+            };
+        }
+
+        Measurements.collection.distinct('geneId', query, function (err, list) {
             if (err) {
                 return res.status(500).send('Error with the database : ' + err.message);
             }
+            console.log(decodeURIComponent(req.query.sets));
+            console.log(decodeURIComponent(req.query.sets).split(','));
+            console.log(list);
             return res.status(200).send(list);
         });
     });
 
 // =========================================================================
 
-    app.route('/api/measurements/:mId')
+    app.route('/api/measurements/:sets')
 
     // Get the values for given datasets, possibly filtered by lines and/or columns
     .get(function (req, res) {
         var filter = {
             'measId': {
-                '$in' : decodeURIComponent(req.params.mId).split(',')
+                '$in' : decodeURIComponent(req.params.sets).split(',')
             }
         };
 

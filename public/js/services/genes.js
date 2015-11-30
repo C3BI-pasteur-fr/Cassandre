@@ -24,13 +24,14 @@ angular.module("cassandre").factory("genes", ["genesHttp", "annotationsHttp", fu
                 });
             },
             selected: function (sets) {
-                genesHttp.get({ mId: sets }, function (genesList) {
+                genesHttp.get({ sets: sets }, function (genesList) {
                     genes.all = genesList;
                 });
             }
         },
         getAnnotations: function () {
             annotationsHttp.get(function (annotations) {
+
                 // List the genes
                 annotations.forEach(function (cell) {
                     if (!genes.annotations[cell.row]) {

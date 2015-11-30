@@ -4,7 +4,7 @@
  *
  */
 
-angular.module("cassandre", [ "ngResource" ])
+angular.module("cassandre", ["ngResource"])
 
 // ----- Config phase --------------------------------------------------- //
 
@@ -40,7 +40,8 @@ angular.module("cassandre", [ "ngResource" ])
         });
 
         stats.get.all();
-        //experiments.get.selected(init.selected);
+        stats.get.selected(init.selected);
+        experiments.get.selected(init.selected);
         //genes.get.all();
         //genes.getAnnotations();
     });

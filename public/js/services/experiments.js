@@ -24,12 +24,15 @@ angular.module("cassandre").factory("experiments", ["expHttp", function (expHttp
                 });
             },
             selected: function (sets) {
-                expHttp.get({ mId: sets }, function (expList) {
+                expHttp.get({ sets: sets }, function (expList) {
                     experiments.all = expList;
                 });
             }
         },
         reset: {
+            all: function () {
+                experiments.all = [];
+            },
             selected: function () {
                 experiments.selected = [];
             }

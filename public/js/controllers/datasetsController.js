@@ -17,28 +17,14 @@ angular.module("cassandre").controller("DatasetsController", [ "$scope", "$filte
         description : ""
     };
 
-    // Function to select a dataset
+    // Function to select or deselect a dataset
     $scope.select = function (name) {
-        var index = $scope.sets.selected.indexOf(name);
-
-        if ( index > -1) {
-            $scope.sets.selected.splice(index, 1);
-        }
-        else {
-            $scope.sets.selected.push(name);
-        }
+        datasets.select.one(name);
     };
 
     // Function to check/uncheck all
     $scope.selectAll = function () {
-        if ($scope.sets.selected.length !== $scope.sets.all.length) {
-            $scope.sets.selected = $scope.sets.all.map(function (set) {
-                return set.name;
-            });
-        }
-        else {
-            $scope.sets.selected.splice(0, $scope.sets.selected.length);
-        }
+        datasets.select.all();
     };
 
     // Hide a dataset in the menu
@@ -73,17 +59,5 @@ angular.module("cassandre").controller("DatasetsController", [ "$scope", "$filte
 
     // List of the database statistics (datasets, experiments and genes)
     $scope.stats = stats.list();
-
-    // Refresh stats and experiments when the datasets selection changes
-    $scope.$watch("sets.selected", function (newList, oldList) {
-        if (newList.length === 0) {
-            stats.reset.selected();
-            experiments.reset.selected();
-        }
-        else {
-            stats.get.selected($scope.sets.selected);
-            experiments.get.selected($scope.sets.selected);
-        }
-    }, true);
 
 }]);
