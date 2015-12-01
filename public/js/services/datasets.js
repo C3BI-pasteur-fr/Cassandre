@@ -11,6 +11,45 @@ angular.module("cassandre").factory("datasets", ["datasetsHttp", "experiments", 
         selected: [],           // List of the selected data sets to search
         uploading: false        // Marker to know when a data set is uploading
     };
+    
+    // Handlers for generic actions on datasets
+    function select(name) {
+        datasets.selected.push(name);
+        experiments.get.selected(datasets.selected);
+        stats.get.selected(datasets.selected);
+    }
+
+    function deselect(name) {
+        datasets.selected.splice(datasets.selected.indexOf(name), 1);
+
+        if (datasets.selected.length === 0) {
+            experiments.reset.selected();
+            stats.reset.selected();
+        }
+        else {
+            experiments.get.selected(datasets.selected);
+            stats.get.selected(datasets.selected);
+        }
+    }
+    
+    function selectAll() {
+        datasets.selected = datasets.all
+        .filter(function (set) {
+            return !set.hidden
+        })
+        .map(function (set) {
+            return set.name;
+        });
+        
+        experiments.get.all();
+        stats.get.selected(datasets.selected);
+    }
+    
+    function deselectAll() {
+        datasets.selected.splice(0, datasets.selected.length);
+        experiments.reset.all();
+        stats.reset.selected();
+    }
 
     return {
         list: {
@@ -23,38 +62,29 @@ angular.module("cassandre").factory("datasets", ["datasetsHttp", "experiments", 
         },
         select: {
             all: function () {
-                if (datasets.selected.length !== datasets.all.length) {
-                    datasets.selected = datasets.all.map(function (set) {
-                        return set.name;
-                    });
-                    experiments.get.all();
-                    stats.get.selected(datasets.selected);
+                var displayedSets = datasets.all
+                .filter(function (set) {
+                    return !set.hidden;
+                })
+                .map(function (set) {
+                    return set.name;
+                });
+                
+                if (angular.equals(datasets.selected, displayedSets)) {
+                    deselectAll();
                 }
                 else {
-                    datasets.selected.splice(0, datasets.selected.length);
-                    experiments.reset.all();
-                    stats.reset.selected();
+                    selectAll();
                 }
             },
             one: function (name) {
                 var index = datasets.selected.indexOf(name);
-
-                // Check or uncheck
-                if ( index > -1) {
-                    datasets.selected.splice(index, 1);
-                }
-                else {
-                    datasets.selected.push(name);
-                }
                 
-                // Refresh the lists accordingly
-                if (datasets.selected.length === 0) {
-                    experiments.reset.selected();
-                    stats.reset.selected();
+                if ( index > -1) {
+                    select(name);
                 }
                 else {
-                    experiments.get.selected(datasets.selected);
-                    stats.get.selected(datasets.selected);
+                    deselect(name);
                 }
             }
         },
@@ -70,14 +100,10 @@ angular.module("cassandre").factory("datasets", ["datasetsHttp", "experiments", 
                 datasets.uploading = false;
                 alert("Dataset " + response.name + " successfully stored.");
                 
-                // Select the new one by default
-                datasets.selected.push(response.name);
-
-                // Refresh all the lists
+                // Select the new one by default and refresh the other lists
                 datasets.all = datasetsHttp.get();
-                experiments.get.selected(datasets.selected);
+                select(name);
                 genes.get.all();
-                stats.get.selected(datasets.selected);
                 stats.get.all();
 
             }, function (err) {
@@ -93,6 +119,7 @@ angular.module("cassandre").factory("datasets", ["datasetsHttp", "experiments", 
             }, function () {
                 // TO CHANGE
                 datasets.all = datasetsHttp.get();
+                deselect(name);
             }, function (err) {
                 alert("Error : " + err.data);
             });
@@ -132,8 +159,7 @@ angular.module("cassandre").factory("datasets", ["datasetsHttp", "experiments", 
 
                 // Unselect the removed set if needed
                 if (datasets.selected.indexOf(name) > -1) {
-                    datasets.selected.splice(datasets.selected.indexOf(name), 1);
-                    experiments.get.selected(datasets.selected);
+                    deselect(name);
                 }
 
             }, function (err) {

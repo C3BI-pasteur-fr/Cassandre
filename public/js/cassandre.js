@@ -22,7 +22,7 @@ angular.module("cassandre", ["ngResource"])
 // ----- Run Phase ------------------------------------------------------ //
 
 /*
- * Initialize the data sets and select them all by default.
+ * Initialize the data sets and select them all by default if they're not hidden.
  * The resource is used directly because the initialization of the selected
  * data sets has to occur only at the start.
  *
@@ -35,10 +35,7 @@ angular.module("cassandre", ["ngResource"])
 
     datasetsHttp.get(function (sets) {
         init.all = sets;
-        init.selected = sets.map(function (set) {
-            return set.name;
-        });
-
+        datasets.select.all();
         stats.get.all();
         stats.get.selected(init.selected);
         experiments.get.selected(init.selected);
