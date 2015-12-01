@@ -8,7 +8,7 @@
 angular.module("cassandre").factory("experiments", ["expHttp", function (expHttp) {
 
     var experiments = {
-        all: [],                 // All the experiments found in datasets
+        all: [],                 // All the experiments found in data sets
         selected: [],            // All the experiments selected in the side menu lists
         sideMenu: {}             // The selected lists of experiments in the aside section
     };

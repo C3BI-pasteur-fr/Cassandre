@@ -6,7 +6,7 @@
 
 angular.module("cassandre")
 
-// Resource to get the list of datasets and POST new datasets to the server
+// Resource to get the list of data sets and POST new data sets to the server
 .factory("datasetsHttp", ["$resource", function datasetsResource ($resource) {
     return $resource("/api/datasets", {}, {
         get: {
@@ -52,7 +52,7 @@ angular.module("cassandre")
     });
 }])
 
-// Resource to get the list of exp (columns) for the given datasets
+// Resource to get the list of exp (columns) for the given data sets
 .factory("expHttp", ["$resource", function expResource ($resource) {
     return $resource("/api/measurements/exp", {}, {
         get: {
@@ -65,7 +65,7 @@ angular.module("cassandre")
     });
 }])
 
-// Resource to get the list of genes (rows) for the given datasets
+// Resource to get the list of genes (rows) for the given data sets
 .factory("genesHttp", ["$resource", function genesResource ($resource) {
     return $resource("/api/measurements/genes", {}, {
         get: {
@@ -78,7 +78,7 @@ angular.module("cassandre")
     });
 }])
 
-// Resource to get the data stored in the database or delete some of the datasets
+// Resource to get the data stored in the database or delete some of the data sets
 .factory("data", ["$resource", function dataResource ($resource) {
     return $resource("/api/measurements/:sets", {}, {
         get: {

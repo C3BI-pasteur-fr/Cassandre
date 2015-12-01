@@ -6,10 +6,10 @@
     <div class="col-lg-1">
         <label ng-show="sets.all.length !== 0">Show All</label>
         <div class="btn-group" role="group" ng-show="sets.all.length !== 0">
-            <button class="btn" type="button" title="Show only active datasets" ng-click="sets.showHidden = false" ng-class="{ 'btn-success': !sets.showHidden }">
+            <button class="btn" type="button" title="Show only active datasets" ng-click="showHidden = false" ng-class="{ 'btn-success': !showHidden }">
                 OFF
             </button>
-            <button class="btn" type="button" title="Show hidden datasets" ng-click="sets.showHidden = true" ng-class="{ 'btn-warning': sets.showHidden }">
+            <button class="btn" type="button" title="Show hidden datasets" ng-click="showHidden = true" ng-class="{ 'btn-warning': showHidden }">
                 ON
             </button>
         </div>
@@ -42,9 +42,11 @@
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="set in sets.all | filter:filter | orderBy:postedDate:true" ng-class="{ info: sets.selected.indexOf(set.name) > -1 }">
+                <tr ng-repeat="set in sets.all | filter:filter | orderBy:postedDate:true"
+                    ng-class="{ info: sets.selected.indexOf(set.name) > -1 }"
+                    ng-hide="set.hidden && !showHidden">
                     <td class="buttonCellHide invisibleCell">
-                        <div class="btn-group pull-right" ng-show="sets.showHidden">
+                        <div class="btn-group pull-right" ng-show="showHidden">
                             <button class="btn btn-xs" type="button" title="Hide this dataset" ng-click="hide(set.name)" ng-class="{ 'btn-danger': set.hidden }">OFF</button>
                             <button class="btn btn-xs" type="button" title="Show this dataset" ng-click="show(set.name)" ng-class="{ 'btn-info': !set.hidden }">ON</button>
                         </div>

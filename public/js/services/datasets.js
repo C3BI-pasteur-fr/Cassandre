@@ -1,5 +1,5 @@
 /*
- * Angular service to access, set and share the datasets informations.
+ * Angular service to access, set and share the data sets informations.
  *
  */
 
@@ -7,9 +7,9 @@
 angular.module("cassandre").factory("datasets", ["datasetsHttp", "experiments", "genes", "stats", function datasetsFactory(datasetsHttp, experiments, genes, stats) {
 
     var datasets = {
-        all: [],                // List of all datasets
-        selected: [],           // List of the selected datasets to search
-        uploading: false        // Marker to know when a dataset is uploading
+        all: [],                // List of all data sets
+        selected: [],           // List of the selected data sets to search
+        uploading: false        // Marker to know when a data set is uploading
     };
 
     return {

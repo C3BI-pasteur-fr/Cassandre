@@ -22,9 +22,9 @@ angular.module("cassandre", ["ngResource"])
 // ----- Run Phase ------------------------------------------------------ //
 
 /*
- * Initialize the datasets and select them all by default.
+ * Initialize the data sets and select them all by default.
  * The resource is used directly because the initialization of the selected
- * datasets has to occur only at the start.
+ * data sets has to occur only at the start.
  *
  * Then get all the experiments and genes.
  *

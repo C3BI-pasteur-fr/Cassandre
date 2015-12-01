@@ -8,7 +8,7 @@
 angular.module("cassandre").factory("genes", ["genesHttp", "annotationsHttp", function (genesHttp, annotationsHttp) {
 
     var genes = {
-        all: [],                 // The genes found in datasets
+        all: [],                 // The genes found in data sets
         selected: [],            // The genes selected in the side menu list
         annotations: {}          // Annotations for each gene
     };

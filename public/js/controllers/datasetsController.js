@@ -9,21 +9,21 @@ angular.module("cassandre").controller("DatasetsController", [
 
     // ----- Database statistics ---------------------------------------- //
 
-    // List of the database statistics (datasets, experiments and genes)
+    // List of the database statistics (data sets, experiments and genes)
     $scope.stats = stats.list();
 
     // ----- Data sets --------------------------------------------------- //
 
-    $scope.sets = datasets.list.all();  // The whole datasets lists and markers
+    $scope.sets = datasets.list.all();  // The whole data sets lists and markers
     $scope.filter = "";                 // The menu filter
-    $scope.showHidden = false;          // Marker for the datasets menu
-    $scope.changes = {                  // When editing a dataset informations
+    $scope.showHidden = false;          // Marker for the "Show all" buttons
+    $scope.changes = {                  // When editing a data set informations
         name: "",
         newName: "",
         description : ""
     };
 
-    // Function to select or deselect a dataset
+    // Function to select or deselect a data set
     $scope.select = function (name) {
         datasets.select.one(name);
     };
@@ -33,22 +33,22 @@ angular.module("cassandre").controller("DatasetsController", [
         datasets.select.all();
     };
 
-    // Hide a dataset in the menu
+    // Hide a data set in the menu
     $scope.hide = function (name) {
         datasets.hide(name);
     };
 
-    // Make a dataset visible in the menu
+    // Make a data set visible in the menu
     $scope.show = function (name) {
         datasets.show(name);
     };
 
-    // Update datasets informations
+    // Update data sets informations
     $scope.update = function () {
         datasets.update($scope.changes);
     };
 
-    // Remove a dataset
+    // Remove a data set
     $scope.remove = function (name) {
         if (confirm("Do you really want to remove this dataset permanently?")) {
             datasets.remove(name);
@@ -63,11 +63,11 @@ angular.module("cassandre").controller("DatasetsController", [
 
     // ----- Add a new set ---------------------------------------------- //
 
-     // Dataset file to upload
+     // Data set file to upload
     $scope.dataset = {
         file: "",           // The entire FileObject
         name: "",           // The name, possibly modified by the user
-        description: ""     // A description of the dataset
+        description: ""     // A description of the data set
     };
 
     // List of allowed formats displayed in the view

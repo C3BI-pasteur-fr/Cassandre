@@ -1,6 +1,6 @@
 /*
  * Angular service that list the allowed MIME types and extensions
- * for the upload of datasets or annotations files.
+ * for the upload of data sets or annotations files.
  *
  */
 

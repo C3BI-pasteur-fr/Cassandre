@@ -1,5 +1,5 @@
 /*
- * Angular service to store and share the database statistics about the datasets,
+ * Angular service to store and share the database statistics about the data sets,
  * the experiments and the genes.
  *
  */
@@ -8,8 +8,8 @@
 angular.module("cassandre").factory("stats", [ "statsHttp", function statsFactory (statsHttp) {
 
     var stats = {
-        all: {},                // Total numbers of datasets, experiments and genes
-        selected: {}            // Numbers of selected datasets, experiments and genes
+        all: {},                // Total numbers of data sets, experiments and genes
+        selected: {}            // Numbers of selected data sets, experiments and genes
     };
 
     return {
