@@ -3,7 +3,7 @@
  *
  */
 
-angular.module("cassandre").controller("AddAnnotationsController", [
+angular.module("cassandre").controller("AnnotationsController", [
     "$scope", "genes", "annotationsHttp", "allowedFileTypes", "xlsxToJson", "tsvToJson",
     function ($scope, genes, annotationsHttp, allowedFileTypes, xlsxToJson, tsvToJson) {
 
