@@ -219,9 +219,7 @@ var router = function(app) {
             if (err) {
                 return res.status(500).send('Error with the database : ' + err.message);
             }
-            console.log(decodeURIComponent(req.query.sets));
-            console.log(decodeURIComponent(req.query.sets).split(','));
-            console.log(list);
+
             return res.status(200).send(list);
         });
     });
@@ -244,9 +242,7 @@ var router = function(app) {
             if (err) {
                 return res.status(500).send('Error with the database : ' + err.message);
             }
-            console.log(decodeURIComponent(req.query.sets));
-            console.log(decodeURIComponent(req.query.sets).split(','));
-            console.log(list);
+
             return res.status(200).send(list);
         });
     });
