@@ -116,7 +116,7 @@ var router = function(app) {
     })
 
     // Update datasets informations
-    .patch(function (req, res) {
+    .put(function (req, res) {
 
         // First update the datasets collection
         Datasets.collection.update({

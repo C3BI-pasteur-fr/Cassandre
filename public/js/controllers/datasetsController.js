@@ -7,7 +7,7 @@ angular.module("cassandre").controller("DatasetsController", [
     "$scope", "$filter", "datasets", "experiments", "stats", "allowedFileTypes", "xlsxToJson", "tsvToJson",
     function ($scope, $filter, datasets, experiments, stats, allowedFileTypes, xlsxToJson, tsvToJson) {
 
-    // ----- Database statistics ---------------------------------------- //
+    // ----- Database informations ---------------------------------------- //
 
     // List of the database statistics (data sets, experiments and genes)
     $scope.stats = stats.list();
@@ -22,6 +22,7 @@ angular.module("cassandre").controller("DatasetsController", [
         newName: "",
         description : ""
     };
+    $scope.displayed = [];
 
     // Function to select or deselect a data set
     $scope.select = function (name) {

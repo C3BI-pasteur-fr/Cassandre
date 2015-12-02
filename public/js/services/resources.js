@@ -21,7 +21,7 @@ angular.module("cassandre")
             }
         },
         update: {
-            method: "PATCH",
+            method: "PUT",
             params: {
                 id: "@id"
             }
