@@ -22,7 +22,6 @@ angular.module("cassandre").controller("DatasetsController", [
         newName: "",
         description : ""
     };
-    $scope.displayed = [];
 
     // Function to select or deselect a data set
     $scope.select = function (name) {

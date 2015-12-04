@@ -30,7 +30,7 @@ angular.module("cassandre").factory("tsvToJson", ["cast", function tsvToJsonFact
                     if (headers[index]) {
                         row[headers[index]] = cast(element);
                     }
-                })
+                });
 
                 rows.push(row);
             });

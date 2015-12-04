@@ -1,28 +1,42 @@
 {
-  "name": "cassandre",
-  "version": "0.0.0",
-  "description": "This is the Cassandre project.",
-  "main": "index.js",
-  "dependencies": {
-    "body-parser": "^1.13.1",
-    "colors": "^1.1.0",
-    "commander": "^2.8.1",
-    "config": "^1.14.0",
-    "express": "^4.13.3",
-    "mongoose": "^4.0.5",
-    "multer": "^1.0.5",
-    "underscore": "^1.8.3",
-    "xlsx": "^0.8.0"
-  },
-  "devDependencies": {},
-  "scripts": {
-    "start": "node index.js serve",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://projets.pasteur.fr/git/cassandre"
-  },
-  "author": "Simon Malesys, Hervé Ménager, Christophe Malabat",
-  "license": "ISC"
+    "name": "cassandre",
+    "version": "0.0.0",
+    "description": "Personal database system integrating a user-friendly interface to manage and explore multiple sets of large-scale experimental results",
+    "keywords": [
+        "biology",
+        "bioinformatics",
+        "data visualisation"
+    ],
+    "author": {
+        "name": "Simon Malesys",
+        "email": "simon.malesys@pasteur.fr"
+    },
+    "contributors": [
+        {
+            "name": "Hervé Ménager",
+            "email": "hmenager@pasteur.fr"
+        },
+        {
+            "name": "Christophe Malabat",
+            "email": "malabat@pasteur.fr"
+        }
+    ],
+    "license": "ISC",
+    "main": "app.js",
+    "dependencies": {
+        "body-parser": "^1.13.1",
+        "config": "^1.14.0",
+        "express": "^4.13.3",
+        "mongodb": "^2.0.49",
+        "multer": "^1.0.5",
+        "xlsx": "^0.8.0"
+    },
+    "scripts": {
+        "start": "node app.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://projets.pasteur.fr/git/cassandre"
+    }
 }

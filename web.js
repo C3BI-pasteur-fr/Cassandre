@@ -1,17 +1,13 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var multer = require('multer');
-var _ = require('underscore');
 var ObjectId = require('mongoose').Types.ObjectId;
 
 var getConf = require('./config');
-var Measurements = require('./models/measurement').measurement;
 var loadFile = require('./models/measurement').loadFile;
-var Annotations = require('./models/annotations').annotations;
 var loadAnnotFile = require('./models/annotations').loadAnnotFile;
-var Datasets = require('./models/datasets').datasets;
 
-var router = function(app) {
+module.exports = function (app, db) {
 
 // CONGIGURATION
 // =========================================================================
@@ -30,6 +26,12 @@ var router = function(app) {
         // fileFilter
         // limits
     });
+    
+    // Database collections
+    var stats = db.collection('stats');
+    var datasets = db.collection('datasets');
+    var annotations = db.collection('annotataions');
+    var measurements = db.collection('measurements');
 
 // ROUTES
 // =========================================================================
@@ -65,9 +67,8 @@ var router = function(app) {
             });
         }
 
-        Measurements.collection.aggregate(pipeline, function (err, results) {
+        measurements.aggregate(pipeline, function (err, results) {
             if (err) {
-                console.log(err);
                 return res.status(500).send('Error with the database : ' + err.message);
             }
 
@@ -81,7 +82,7 @@ var router = function(app) {
 
     // Get the list of datasets
     .get(function (req, res) {
-        Datasets.collection.find().toArray(function (err, list) {
+        datasets.find().toArray(function (err, list) {
             if (err) {
                 return res.status(500).send('Error with the database : ' + err.message);
             }
@@ -91,7 +92,7 @@ var router = function(app) {
 
     // Insert the measurements file into the database
     .post(upload.single('dataset'), function (req, res) {
-        Datasets.collection.insert({
+        datasets.insert({
             name: req.file.filename,
             description: req.body.description,
             hidden: false,
@@ -119,7 +120,7 @@ var router = function(app) {
     .put(function (req, res) {
 
         // First update the datasets collection
-        Datasets.collection.update({
+        datasets.update({
             name: decodeURIComponent(req.query.name)
         }, {
             $set: req.body
@@ -134,7 +135,7 @@ var router = function(app) {
 
             // Also update the data collection if a dataset name changes
             if (req.body.name) {
-                Measurements.collection.update({
+                measurements.update({
                     measId: decodeURIComponent(req.query.name)
                 }, {
                     $set: { measId: req.body.newName }
@@ -157,14 +158,14 @@ var router = function(app) {
     .delete(function (req, res) {
         var dataset = decodeURIComponent(req.query.name);
 
-        Datasets.collection.remove({
+        datasets.remove({
             name: dataset
         }, function (err) {
             if (err) {
                 return res.status(500).send(err.message);
             }
 
-            Measurements.collection.remove({
+            measurements.remove({
                 measId: dataset
             }, function (err) {
                 if (err) {
@@ -182,7 +183,7 @@ var router = function(app) {
 
     // Get all the annotations
     .get(function(req, res) {
-        Annotations.collection.find().toArray(function(err, list) {
+        annotations.find().toArray(function (err, list) {
             if (err) {
                 return res.status(500).send('Error with the database : ' + err.message);
             }
@@ -215,7 +216,7 @@ var router = function(app) {
             };
         }
 
-        Measurements.collection.distinct('expId', query, function (err, list) {
+        measurements.distinct('expId', query, function (err, list) {
             if (err) {
                 return res.status(500).send('Error with the database : ' + err.message);
             }
@@ -238,7 +239,7 @@ var router = function(app) {
             };
         }
 
-        Measurements.collection.distinct('geneId', query, function (err, list) {
+        measurements.distinct('geneId', query, function (err, list) {
             if (err) {
                 return res.status(500).send('Error with the database : ' + err.message);
             }
@@ -269,7 +270,7 @@ var router = function(app) {
             filter['expId'] = { '$in': expIds };
         }
 
-        Measurements.collection.find(filter).toArray(function (err, list) {
+        measurements.find(filter).toArray(function (err, list) {
             if (err) {
                 return res.status(500).send('Error with the database : ' + err.message);
             }
@@ -278,25 +279,25 @@ var router = function(app) {
     })
 };
 
-var WebServer = function (contacts) {
-    var app = express();
-
-    app.use(express.static('public'));
-    app.use(bodyParser.urlencoded({
-        extended: false
-    }));
-    app.use(bodyParser.json());
-
-    var webPort = getConf('web.port', 8080);
-    var webHost = getConf('web.host', 'localhost');
-
-    server = app.listen(webPort, webHost);
-    router(app);
-    console.log('Server listening to ' + webHost + ':' + webPort);
-};
-
-var launch = function () {
-    WebServer ();
-};
-
-module.exports = launch;
+//var WebServer = function (contacts) {
+//    var app = express();
+//
+//    app.use(express.static('public'));
+//    app.use(bodyParser.urlencoded({
+//        extended: false
+//    }));
+//    app.use(bodyParser.json());
+//
+//    var webPort = getConf('web.port', 8080);
+//    var webHost = getConf('web.host', 'localhost');
+//
+//    server = app.listen(webPort, webHost);
+//    router(app);
+//    console.log('Server listening to ' + webHost + ':' + webPort);
+//};
+//
+//var launch = function () {
+//    WebServer ();
+//};
+//
+//module.exports = launch;

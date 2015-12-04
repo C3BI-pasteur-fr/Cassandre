@@ -2,23 +2,24 @@ var path = require('path');
 var mongoose = require('mongoose');
 var tsvParser = require('../lib/tsvParser');
 var xlsxParser = require('../lib/xlsxParser');
+var mime = require('../lib/allowedFileTypes');
 
 var Measurement = mongoose.model('Measurement', mongoose.Schema({
-    "measId": String,
-    "expId": String,
-    "geneId": String,
-    "value": Number
+    'measId': String,
+    'expId': String,
+    'geneId': String,
+    'value': Number
 }));
 
-var insertCells = function(fileName, cells, callback) {
-    var saveNextItem = function(cells) {
+var insertCells = function (fileName, cells, callback) {
+    var saveNextItem = function (cells) {
         var item = cells.pop();
         item.value = item.value ? item.value : undefined;
         Measurement.collection.insert({
-            "measId": fileName,
-            "expId": item.column,
-            "geneId": item.row,
-            "value": item.value
+            'measId': fileName,
+            'expId': item.column,
+            'geneId': item.row,
+            'value': item.value
         }, function(err, newMeasurement) {
             if (err) callback(err);
             if (cells.length > 0) {
@@ -33,7 +34,7 @@ var insertCells = function(fileName, cells, callback) {
 };
 
 var loadFile = function(file, callback) {
-    if (file.mimetype === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") {
+    if (mime.excel.indexOf(file.mimetype) > -1) {
         xlsxParser(file.path, function (err, cells) {
             if (err) {
                 return callback(err);

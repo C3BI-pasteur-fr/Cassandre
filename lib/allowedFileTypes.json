@@ -1,0 +1,10 @@
+{
+    "excel": [
+        "application/vnd.ms-excel",
+        "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+    ],
+    "text": [
+        "text/plain",
+        "text/tab-separated-values"
+    ]
+}

@@ -1,9 +1,10 @@
-var config = require('config');
+var config = require ('config');
 
-var getConf = function(key, def){
+var getConf = function (key, def){
     if (config.has(key)) {
         return config.get(key);
-    }else{
+    }
+    else {
         return def;
     }
 };
