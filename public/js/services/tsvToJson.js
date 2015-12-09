@@ -14,7 +14,7 @@ angular.module("cassandre").factory("tsvToJson", ["cast", function tsvToJsonFact
         reader.onload = function (e) {
             var arrays = e.target.result
                 .trim()
-                .split(/\r\n|\n/g)              // Get the lines into an array
+                .split(/\r\n|\n/g)              // Handle each OS end-of-lines
                 .map(function (line) {          // Split each line into an array
                     return line.split("\t");
                 });

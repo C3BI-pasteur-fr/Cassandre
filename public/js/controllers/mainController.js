@@ -17,11 +17,11 @@ angular.module("cassandre").controller("MainController", [
     $scope.isLoading = false;           // Marker to know when data are loading
 
     $scope.datasets = datasets.list.all();
-    $scope.exps = experiments.list();
-    $scope.genes = genes.list();
+    $scope.exps = experiments.list.all();
+    $scope.genes = genes.list.all();
 
     // Control switch for the displayed section
-    $scope.activeSection = "datasetsSection";
+    $scope.activeSection = "experimentsSection";
 
     // Used for ordering the results and mark the columns
     $scope.predicate = "";
@@ -31,10 +31,10 @@ angular.module("cassandre").controller("MainController", [
     $scope.getData = function () {
         $scope.data.cells = data.get({
             sets: encodeURIComponent($scope.datasets.selected),
-            expId: $scope.exps.selected,
-            geneId: $scope.genes.selected
+            exps: $scope.exps.selected,
+            genes: $scope.genes.selected
         }, function (data) {
-            $scope.cellsToRows(data, "expId", "geneId", "value");
+            $scope.cellsToRows(data, "exp", "gene", "value");
         });
     };
 
@@ -103,8 +103,8 @@ angular.module("cassandre").controller("MainController", [
     $scope.histogram = function () {
         $scope.data.cells = data.get({
             sets: encodeURIComponent($scope.datasets.selected),
-            expId: $scope.exps.selected,
-            geneId: $scope.genes.selected
+            exps: $scope.exps.selected,
+            genes: $scope.genes.selected
         }, function (cells) {
 
             // Get all the current values

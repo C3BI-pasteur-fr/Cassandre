@@ -7,7 +7,7 @@
 angular.module("cassandre").controller("ExperimentsController", [ "$scope", "$filter", "experiments", function ($scope, $filter, experiments) {
 
     $scope.exp = {
-        list: experiments.list(),
+        list: experiments.list.all(),
         filter: ""
     };
 

@@ -73,6 +73,10 @@ main {
     color: #004C8F;
 }
 
+.numericCell {
+    text-align: right;
+}
+
 .orderColumn::after {
     content: "\25B2";
 }
@@ -81,28 +85,8 @@ main {
     content: "\25BC";
 }
 
-.numericCell {
-    text-align: right;
-}
-
 .removeList {
     padding-right: 10px;
-}
-
-#datasetsFilter {
-    width: 100%;
-}
-
-#datasetsLimit {
-    width: 80%;
-}
-
-#expFilter, #genesFilter {
-    width: 70%;
-}
-
-#resultsLimit {
-    width: 130px;
 }
 
 /********* D3 **************/
@@ -123,3 +107,23 @@ main {
 }
 
 /**************************/
+
+#datasetsFilter {
+    width: 100%;
+}
+
+#datasetsLimit {
+    width: 80%;
+}
+
+#expFilter, #genesFilter {
+    width: 70%;
+}
+
+#resultsLimit {
+    width: 130px;
+}
+
+#sideMenu {
+    overflow: auto;
+}

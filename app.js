@@ -11,7 +11,7 @@ var bodyParser = require('body-parser');
 var MongoClient = require('mongodb').MongoClient;
 var format = require('util').format;
 var config = require('./config');
-var router = require('./web');
+var router = require('./router');
 
 var host = config('db.host', 'localhost');
 var port = config('db.port', 27017);
@@ -58,7 +58,7 @@ MongoClient.connect(url, function (err, db) {
     }
 
     db.on('close', function () {
-        console.log('Closing connection with the ' + database + ' database.');
+        console.log('Closing connection with the ' + database + ' database');
     });
 
     process.on('SIGINT', function () {

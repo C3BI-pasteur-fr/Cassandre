@@ -39,8 +39,7 @@ angular.module("cassandre")
 .factory("annotationsHttp", ["$resource", function annotationsResource ($resource) {
     return $resource("/api/annotations", {}, {
         get: {
-            method: "GET",
-            isArray: true
+            method: "GET"
         },
         add: {
             method: "POST",
@@ -54,7 +53,7 @@ angular.module("cassandre")
 
 // Resource to get the list of exp (columns) for the given data sets
 .factory("expHttp", ["$resource", function expResource ($resource) {
-    return $resource("/api/measurements/exp", {}, {
+    return $resource("/api/data/exp", {}, {
         get: {
             method: "GET",
             isArray: true,
@@ -67,7 +66,7 @@ angular.module("cassandre")
 
 // Resource to get the list of genes (rows) for the given data sets
 .factory("genesHttp", ["$resource", function genesResource ($resource) {
-    return $resource("/api/measurements/genes", {}, {
+    return $resource("/api/data/genes", {}, {
         get: {
             method: "GET",
             isArray: true,
@@ -80,14 +79,14 @@ angular.module("cassandre")
 
 // Resource to get the data stored in the database or delete some of the data sets
 .factory("data", ["$resource", function dataResource ($resource) {
-    return $resource("/api/measurements/:sets", {}, {
+    return $resource("/api/data/:sets", {}, {
         get: {
             method: "GET",
             isArray: true,
             params: {
                 "sets[]": "@sets",
-                "expId[]": "@expId",
-                "geneId[]": "@geneId"
+                "exps[]": "@exps",
+                "genes[]": "@genes"
             }
         }
     });

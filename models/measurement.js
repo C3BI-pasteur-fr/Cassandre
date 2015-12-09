@@ -1,5 +1,3 @@
-var path = require('path');
-var mongoose = require('mongoose');
 var tsvParser = require('../lib/tsvParser');
 var xlsxParser = require('../lib/xlsxParser');
 var mime = require('../lib/allowedFileTypes');

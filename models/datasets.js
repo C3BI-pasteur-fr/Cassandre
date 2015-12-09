@@ -1,6 +1,3 @@
-var path = require('path');
-var mongoose = require('mongoose');
-
 var Datasets = mongoose.model('Datasets', mongoose.Schema({
     name: {
         type: String,

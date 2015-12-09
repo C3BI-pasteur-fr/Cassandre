@@ -89,15 +89,21 @@ angular.module("cassandre").factory("datasets", ["datasetsHttp", "experiments", 
         add: function (formData) {
             datasets.uploading = true;
             datasetsHttp.add(formData, function (response) {
-
+                var name = response.name;
+            
                 datasets.uploading = false;
-                alert("Dataset " + response.name + " successfully stored.");
+                alert("Dataset " + name + " successfully stored.");
 
                 // Select the new one by default and refresh the other lists
-                datasets.all = datasetsHttp.get();
-                select(name);
-                genes.get.all();
-                stats.get.all();
+                datasetsHttp.get(function (response) {
+                    console.log(response);
+                    datasets.all = response;
+                    genes.get.all();
+                    stats.get.all();
+                    select(name);
+                }, function (err) {
+                    alert("Error : " + err.data);
+                });
 
             }, function (err) {
                 datasets.uploading = false;

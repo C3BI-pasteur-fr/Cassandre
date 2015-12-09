@@ -1,11 +1,8 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var multer = require('multer');
-var ObjectId = require('mongoose').Types.ObjectId;
-
-var getConf = require('./config');
-var loadFile = require('./models/measurement').loadFile;
-var loadAnnotFile = require('./models/annotations').loadAnnotFile;
+var parseFile = require('./lib/parseFile');
+var rowsToCells = require('./lib/rowsToCells');
 
 module.exports = function (app, db) {
 
@@ -26,12 +23,11 @@ module.exports = function (app, db) {
         // fileFilter
         // limits
     });
-    
+
     // Database collections
-    var stats = db.collection('stats');
+    var data = db.collection('data');
     var datasets = db.collection('datasets');
-    var annotations = db.collection('annotataions');
-    var measurements = db.collection('measurements');
+    var annotations = db.collection('annotations');
 
 // ROUTES
 // =========================================================================
@@ -45,15 +41,15 @@ module.exports = function (app, db) {
         var pipeline = [{
             $group: {
                 _id: null,
-                datasets: { $addToSet: '$measId'},
-                exp: { $addToSet: '$expId'},
-                genes: { $addToSet: '$geneId'}
+                datasets: { $addToSet: '$set'},
+                exps: { $addToSet: '$exp'},
+                genes: { $addToSet: '$gene'}
             }
         }, {
             $project: {
                 _id: false,
                 datasets: { $size: '$datasets'},
-                exp: { $size: '$exp'},
+                exps: { $size: '$exps'},
                 genes : { $size: '$genes'}
             }
         }];
@@ -62,12 +58,12 @@ module.exports = function (app, db) {
         if (req.query.datasets) {
             pipeline.unshift({
                 $match: {
-                    measId: { $in: [].concat(req.query.datasets) }
+                    set: { $in: [].concat(req.query.datasets) }
                 }
             });
         }
 
-        measurements.aggregate(pipeline, function (err, results) {
+        data.aggregate(pipeline, function (err, results) {
             if (err) {
                 return res.status(500).send('Error with the database : ' + err.message);
             }
@@ -90,7 +86,7 @@ module.exports = function (app, db) {
         });
     })
 
-    // Insert the measurements file into the database
+    // Insert the data file into the database
     .post(upload.single('dataset'), function (req, res) {
         datasets.insert({
             name: req.file.filename,
@@ -106,12 +102,19 @@ module.exports = function (app, db) {
                 return res.status(400).send(err.message);
             }
 
-            loadFile(req.file, function (err) {
+            parseFile(req.file, function (err, rows) {
                 if (err) {
                     return res.status(400).send(err.message);
                 }
 
-                return res.status(201).send({ name: req.file.filename });
+                // Turn every row into cells before insertion
+                data.insertMany(rowsToCells(rows, req.file.filename), function (err) {
+                    if (err) {
+                        return res.status(500).send(err.message);
+                    }
+
+                    return res.status(201).send({ name: req.file.filename });
+                });
             });
         });
     })
@@ -135,10 +138,10 @@ module.exports = function (app, db) {
 
             // Also update the data collection if a dataset name changes
             if (req.body.name) {
-                measurements.update({
-                    measId: decodeURIComponent(req.query.name)
+                data.update({
+                    set: decodeURIComponent(req.query.name)
                 }, {
-                    $set: { measId: req.body.newName }
+                    $set: { set: req.body.newName }
                 }, {
                     multi: true
                 }, function (err) {
@@ -165,8 +168,8 @@ module.exports = function (app, db) {
                 return res.status(500).send(err.message);
             }
 
-            measurements.remove({
-                measId: dataset
+            data.remove({
+                set: dataset
             }, function (err) {
                 if (err) {
                     return res.status(500).send(err.message);
@@ -183,40 +186,55 @@ module.exports = function (app, db) {
 
     // Get all the annotations
     .get(function(req, res) {
-        annotations.find().toArray(function (err, list) {
+        var list = {};
+        
+        annotations.find().project({ _id: false }).each(function (err, annotation) {
             if (err) {
                 return res.status(500).send('Error with the database : ' + err.message);
             }
-            return res.status(200).send(list);
+            
+            if (annotation === null) {
+                return res.status(200).send(list);
+            }
+            
+            // Turn all the annotations into a single object
+            list[annotation.ID] = annotation;
+            delete list[annotation.ID]['ID'];
         });
     })
 
     // Insert the general annotations file into the database
     .post(upload.single('annotations'), function (req, res) {
-        loadAnnotFile(req.file.path, req.file.mimetype, function (err) {
+        parseFile(req.file, function (err, rows) {
             if (err) {
-                console.log(err);
                 return res.status(400).send(err.message);
             }
-            return res.sendStatus(201);
+
+            annotations.insertMany(rows, function (err) {
+                if (err) {
+                    return res.status(500).send(err.message);
+                }
+
+                return res.status(201).send();
+            });
         });
     });
 
 // =========================================================================
 
-    app.route('/api/measurements/exp/')
+    app.route('/api/data/exp/')
 
     // List all the experiments (columns) for given datasets
     .get(function (req, res, next) {
         var query = {};
-        
+
         if (req.query.sets) {
-            query.measId = {
+            query.set = {
                 '$in' : decodeURIComponent(req.query.sets).split(',')
             };
         }
 
-        measurements.distinct('expId', query, function (err, list) {
+        data.distinct('exp', query, function (err, list) {
             if (err) {
                 return res.status(500).send('Error with the database : ' + err.message);
             }
@@ -227,19 +245,19 @@ module.exports = function (app, db) {
 
 // =========================================================================
 
-    app.route('/api/measurements/genes/')
+    app.route('/api/data/genes/')
 
     // List all the genes (lines) for given datasets
     .get(function (req, res, next) {
         var query = {};
-        
+
         if (req.query.sets) {
-            query.measId = {
+            query.set = {
                 '$in' : decodeURIComponent(req.query.sets).split(',')
             };
         }
 
-        measurements.distinct('geneId', query, function (err, list) {
+        data.distinct('gene', query, function (err, list) {
             if (err) {
                 return res.status(500).send('Error with the database : ' + err.message);
             }
@@ -250,54 +268,31 @@ module.exports = function (app, db) {
 
 // =========================================================================
 
-    app.route('/api/measurements/:sets')
+    app.route('/api/data/:sets')
 
     // Get the values for given datasets, possibly filtered by lines and/or columns
     .get(function (req, res) {
-        var filter = {
-            'measId': {
+        var query = {
+            'set': {
                 '$in' : decodeURIComponent(req.params.sets).split(',')
             }
         };
 
-        if (req.query.geneId){
-            var geneIds = typeof req.query.geneId == 'string' ? [req.query.geneId] : req.query.geneId;
-            filter['geneId'] = { '$in': geneIds };
+        if (req.query.genes){
+            var genes = typeof req.query.genes == 'string' ? [req.query.genes] : req.query.genes;
+            query['gene'] = { '$in': genes };
         }
 
-        if (req.query.expId){
-            var expIds = typeof req.query.expId == 'string' ? [req.query.expId] : req.query.expId;
-            filter['expId'] = { '$in': expIds };
+        if (req.query.exps){
+            var exps = typeof req.query.exps == 'string' ? [req.query.exps] : req.query.exps;
+            query['exp'] = { '$in': exps };
         }
 
-        measurements.find(filter).toArray(function (err, list) {
+        data.find(query).toArray(function (err, list) {
             if (err) {
                 return res.status(500).send('Error with the database : ' + err.message);
             }
             return res.status(200).send(list);
         });
-    })
+    });
 };
-
-//var WebServer = function (contacts) {
-//    var app = express();
-//
-//    app.use(express.static('public'));
-//    app.use(bodyParser.urlencoded({
-//        extended: false
-//    }));
-//    app.use(bodyParser.json());
-//
-//    var webPort = getConf('web.port', 8080);
-//    var webHost = getConf('web.host', 'localhost');
-//
-//    server = app.listen(webPort, webHost);
-//    router(app);
-//    console.log('Server listening to ' + webHost + ':' + webPort);
-//};
-//
-//var launch = function () {
-//    WebServer ();
-//};
-//
-//module.exports = launch;

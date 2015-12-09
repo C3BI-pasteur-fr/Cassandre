@@ -32,7 +32,7 @@ angular.module("cassandre").factory("stats", [ "statsHttp", function statsFactor
             selected: function () {
                 stats.selected = {
                     datasets: 0,
-                    exp: 0,
+                    exps: 0,
                     genes: 0
                 };
             }

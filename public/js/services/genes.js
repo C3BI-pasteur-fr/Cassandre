@@ -14,34 +14,30 @@ angular.module("cassandre").factory("genes", ["genesHttp", "annotationsHttp", fu
     };
 
     return {
-        list: function () {
-            return genes;
+        list: {
+            all: function () {
+                return genes;
+            }
+        },
+        select: function (gene) {
+            if (genes.selected.indexOf(gene) === -1) {
+                genes.selected.push(gene);
+            }
+            else {
+                genes.selected.splice(genes.selected.indexOf(gene), 1);
+            }
         },
         get: {
             all: function () {
-                genesHttp.get(function (genesList) {
-                    genes.all = genesList;
-                });
+                genes.all = genesHttp.get();
             },
             selected: function (sets) {
-                genesHttp.get({ sets: sets }, function (genesList) {
-                    genes.all = genesList;
-                });
+                genes.all = genesHttp.get({ sets: sets });
+            },
+            annotations: function (annotations) {
+                genes.annotations = annotationsHttp.get();
+                console.log(genes.annotations);
             }
-        },
-        getAnnotations: function () {
-            annotationsHttp.get(function (annotations) {
-
-                // List the genes
-                annotations.forEach(function (cell) {
-                    if (!genes.annotations[cell.row]) {
-                        genes.annotations[cell.row] = {};
-                    }
-                    if (!genes.annotations[cell.row][cell.column]) {
-                        genes.annotations[cell.row][cell.column] = cell.value;
-                    }
-                });
-            });
         }
     };
 }]);
