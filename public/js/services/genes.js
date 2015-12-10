@@ -19,12 +19,30 @@ angular.module("cassandre").factory("genes", ["genesHttp", "annotationsHttp", fu
                 return genes;
             }
         },
-        select: function (gene) {
-            if (genes.selected.indexOf(gene) === -1) {
+        select: {
+            one: function (gene) {
                 genes.selected.push(gene);
+            },
+            many: function (list) {
+                var select = this;
+                list.forEach(function (gene) {
+                    if (genes.selected.indexOf(gene) === -1) {
+                        select.one(gene);
+                    }
+                });
             }
-            else {
+        },
+        deselect: {
+            one: function (gene) {
                 genes.selected.splice(genes.selected.indexOf(gene), 1);
+            },
+            many: function (list) {
+                var deselect = this;
+                list.forEach(function (gene) {
+                    if (genes.selected.indexOf(gene) > -1) {
+                        deselect.one(gene);
+                    }
+                });
             }
         },
         get: {
@@ -36,7 +54,6 @@ angular.module("cassandre").factory("genes", ["genesHttp", "annotationsHttp", fu
             },
             annotations: function (annotations) {
                 genes.annotations = annotationsHttp.get();
-                console.log(genes.annotations);
             }
         }
     };

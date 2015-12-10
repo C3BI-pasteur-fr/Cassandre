@@ -85,11 +85,11 @@ main {
     content: "\25BC";
 }
 
-.removeList {
-    padding-right: 10px;
+.redBadge {
+    background-color: #C71C22;
 }
 
-/********* D3 **************/
+/*********** D3 ************/
 
 .bar rect {
   fill: steelblue;
@@ -106,7 +106,7 @@ main {
   shape-rendering: crispEdges;
 }
 
-/**************************/
+/***************************/
 
 #datasetsFilter {
     width: 100%;

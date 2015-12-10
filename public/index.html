@@ -94,11 +94,8 @@
                     <div class="badges pull-right">
                         <span class="badge greenBadge" ng-bind="exps.sideMenu[title].selected.length" ng-show="exps.sideMenu[title].selected.length > 0" title="Number of selected experiments"></span>
                         <span class="badge" ng-bind="exps.sideMenu[title].all.length" title="Number of experiments"></span>
+                        <span class="badge redBadge" ng-click="removeList(title)" title="Remove this list">&#10006;</span>
                     </div>
-                    <span class="pull-right glyphicon glyphicon-remove removeList"
-                          role="button"
-                          ng-click="removeList(title)"
-                          title="Remove this list"></span>
                 </h5>
                 <ul class="asideList" ng-show="displayedList === title">
                     <li class="asideListItem"
@@ -117,16 +114,31 @@
                     <span>Genes</span>
                     <div class="badges pull-right">
                         <span class="badge greenBadge" ng-bind="genes.selected.length" ng-show="genes.selected.length > 0" title="Number of selected genes"></span>
-                        <span class="badge" ng-bind="genes.all.length" title="Number of genes"></span>
+                        <span class="badge" ng-bind="genes.all.length" title="Total number of genes"></span>
                     </div>
                 </h5>
                 <ul class="asideList" ng-show="displayedList === 'genes'">
+                    <li>
+                        <div class="input-group">
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="button" ng-click="select.all.genes()" title="Select or Deselect all">
+                                    <span class="glyphicon glyphicon-check"></span>
+                                </button>
+                            </span>
+                            <input class="form-control" ng-model="filter" type="text" placeholder="Filter..." title="Filter the genes by names or annotations">
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" type="button" ng-click="showSelection()" title="Show the current selection">
+                                    <span class="glyphicon glyphicon-shopping-cart"></span>
+                                </button>
+                            </span>
+                        </div>
+                    </li>
                     <li class="asideListItem"
-                        ng-repeat="gene in genes.all"
+                        ng-repeat="gene in genes.all | filter:filter:comparator | limitTo: limit"
                         ng-class="{ 'bg-primary': genes.selected.indexOf(gene) > -1 }"
                         ng-click="select.gene(gene)"
                         ng-bind="gene"
-                        title="{{ format(genes.annotations[gene]) }}"></li>
+                        title="{{ annotation(gene) }}"></li>
                 </ul>
             </div>
         </aside>
