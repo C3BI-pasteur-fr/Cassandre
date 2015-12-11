@@ -160,6 +160,8 @@
                 <section id="genesSection" ng-show="activeSection === 'genesSection'">
                     <ng-include src="'views/genesSection.html'"></ng-include>
                 </section>
+                
+                <div class="chart" ng-show="data.values.length > 0"></div>
 
                 <div id="results" ng-show="data.rows.length > 0">
                     <h2 class="page-header">

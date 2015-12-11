@@ -91,6 +91,10 @@ main {
 
 /*********** D3 ************/
 
+.chart {
+    border: 1px solid;
+}
+
 .bar rect {
   fill: steelblue;
   shape-rendering: crispEdges;

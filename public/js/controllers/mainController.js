@@ -10,7 +10,8 @@ angular.module("cassandre").controller("MainController", [
 
     $scope.data = {
         cells: [],                      // Data from database
-        rows: []                        // Data formatted in rows
+        rows: [],                        // Data formatted in rows
+        values: []
     };
 
     $scope.isLoading = false;           // Marker to know when data are loading
@@ -125,10 +126,9 @@ angular.module("cassandre").controller("MainController", [
         }, function (cells) {
 
             // Get all the current values
-            var values = cells.map(function (cell) {
+            $scope.data.values = cells.map(function (cell) {
                 return cell.value;
             });
-            console.log(values);
     
             // A formatter for counts.
             var formatCount = d3.format(",.0f");
@@ -137,14 +137,14 @@ angular.module("cassandre").controller("MainController", [
                 width = 960 - margin.left - margin.right,
                 height = 500 - margin.top - margin.bottom;
 
-            var x = d3.scale.linear()
+            var x = d3.scale.linea()
                 .domain([0, 2])
                 .range([0, width]);
 
             // Generate a histogram using twenty uniformly-spaced bins.
             var data = d3.layout.histogram()
                 .bins(x.ticks(20))
-                (values);
+                ($scope.data.values)
 
             var y = d3.scale.linear()
                 .domain([0, d3.max(data, function(d) { return d.y; })])
@@ -153,8 +153,9 @@ angular.module("cassandre").controller("MainController", [
             var xAxis = d3.svg.axis()
                 .scale(x)
                 .orient("bottom");
-    
-            var svg = d3.select(".chart").append("svg")
+
+            var svg = d3.select(".chart")
+                .append("svg")
                 .attr("width", width + margin.left + margin.right)
                 .attr("height", height + margin.top + margin.bottom)
                 .append("g")
