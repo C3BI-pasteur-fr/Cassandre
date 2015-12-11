@@ -12,6 +12,9 @@ angular.module("cassandre").controller("MenuController", ["$scope", "$filter", "
     // Lists of genes on the side menu
     $scope.genes = genes.list.all();
 
+    // Boolean to manage the display in the side menu as an accordion
+    $scope.displayedList = "";
+
     // Genes list filter
     $scope.filter =  "";
 
@@ -48,17 +51,8 @@ angular.module("cassandre").controller("MenuController", ["$scope", "$filter", "
         }
     };
 
-    //$scope.comparator2 = function (actual, expected) {
-    //    if (!expected) {
-    //        return true;
-    //    }
-    //};
-
     // Genes list limit for display
     $scope.limit = 20;
-
-    // Boolean to manage the display in the side menu as an accordion
-    $scope.displayedList = "genes";
 
     // Select or deselect elements in the side menu
     $scope.select = {

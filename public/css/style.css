@@ -120,10 +120,6 @@ main {
     width: 70%;
 }
 
-#resultsLimit {
-    width: 130px;
-}
-
 #sideMenu {
     overflow: auto;
 }

@@ -13,7 +13,6 @@ angular.module("cassandre").controller("MainController", [
         rows: []                        // Data formatted in rows
     };
 
-    $scope.dataHref = "#";              // Data URI of the display table for the download
     $scope.isLoading = false;           // Marker to know when data are loading
 
     $scope.datasets = datasets.list.all();
@@ -40,11 +39,33 @@ angular.module("cassandre").controller("MainController", [
 
     $scope.limit = 10;
     $scope.limitOptions = {
-        "10": 10,
-        "20": 20,
-        "50": 50,
-        "100": 100,
+        "Limit to 10 lines": 10,
+        "Limit to 20 lines": 20,
+        "Limit to 50 lines": 50,
+        "Limit to 100 lines": 100,
         "No Limit": undefined
+    };
+    
+    $scope.filters = {
+        active: false,
+        list: {},
+        reset: function () {
+            this.list = {};
+        }
+    };
+
+    // Handle the data URI of the display table for the download
+    $scope.download = {
+        href: "",           
+        emptyCells: "",
+        setHref: function () {
+            this.href = "data:text/plain;charset=utf-8," + encodeURI(jsonToTsv($scope.data.rows, this.emptyCells));
+        }
+    };
+    
+    // Erase the table results
+    $scope.erase = function () {
+        $scope.data.rows = [];
     };
 
     // Format data into rows to ease the display in the view
@@ -94,10 +115,6 @@ angular.module("cassandre").controller("MainController", [
         $scope.data.rows = $filter("orderBy")($scope.data.rows, "'" + header + "'", $scope.reverse);
     };
 
-    // Set the data URI of the display table for the download
-    $scope.download = function () {
-        $scope.dataHref = "data:text/plain;charset=utf-8," + encodeURI(jsonToTsv($scope.data.rows));
-    };
 
     // Display an histogram
     $scope.histogram = function () {

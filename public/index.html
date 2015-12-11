@@ -161,30 +161,65 @@
                     <ng-include src="'views/genesSection.html'"></ng-include>
                 </section>
 
-                <div id="results">
-                    <h2 class="page-header" ng-show="data.rows.length > 0">
+                <div id="results" ng-show="data.rows.length > 0">
+                    <h2 class="page-header">
                         Results
                         <small ng-show="isLoading">Loading data..</small>
-                        <small ng-show="data.rows.length > 0">
+                        <small>
                             <span ng-bind="data.rows.slice(0, limit).length"></span>
                             lines displayed on
                             <span ng-bind="data.rows.length"></span>
                         </small>
-                        <small class="pull-right">
-                            <label for="resultsLimit">Limit</label>
-                            <select id="resultsLimit"
-                                    class="form-control"
-                                    ng-model="limit"
-                                    ng-options="limit for (limit, value) in limitOptions">
-                            </select>
-                        </small>
                     </h2>
 
-                    <a ng-href="{{ dataHref }}"
-                       download="Data.txt"
-                       ng-click="download()"
-                       ng-show="data.rows.length > 0"><span class="glyphicon glyphicon-download"></span> Download in TSV
-                    </a>
+                    <form class="form-inline pull-right">
+                        <select id="resultsLimit"
+                                class="form-control"
+                                ng-model="limit"
+                                ng-options="limit for (limit, value) in limitOptions">
+                        </select>
+
+                        <div class="input-group">
+                            <span class="input-group-addon">Filters</span>
+                            <span class="input-group-btn">
+                                <button class="btn btn-default" ng-class="{ 'btn-success': filters.active, active: filters.active }" type="button" ng-click="filters.active = true">ON</button>
+                                <button class="btn btn-default" ng-class="{ 'btn-primary': !filters.active, active: !filters.active }" type="button" ng-click="filters.active = false">OFF</button>
+                                <button class="btn btn-default" ng-click="filters.reset()" title="Erase all filters">Reset</button>
+                            </span>
+                        </div>
+
+                        <div class="btn-group">
+                            <a class="btn btn-default"
+                                role="button"
+                                download="CassandreData.txt"
+                                ng-href="{{ download.href }}"
+                                ng-click="download.setHref()">
+                                <span class="glyphicon glyphicon-download"></span>
+                                Download
+                            </a>
+                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
+                                <span class="caret"></span>
+                            </button>
+                            <ul class="dropdown-menu">
+                                <li class="dropdown-header">Empty cells value</li>
+                                <li class="divider"></li>
+                                <li ng-class="{ active: download.emptyCells === '' }" ng-click="download.emptyCells = ''">
+                                    <a>Nothing</a>
+                                </li>
+                                <li ng-class="{ active: download.emptyCells === 'null' }" ng-click="download.emptyCells = 'null'">
+                                    <a>"null"</a>
+                                </li>
+                                <li ng-class="{ active: download.emptyCells === 'NA' }" ng-click="download.emptyCells = 'NA'">
+                                    <a>"NA"</a>
+                                </li>
+                            </ul>
+                        </div>
+
+                        <button class="btn btn-default" type="button" ng-click="erase()">
+                            <span class="glyphicon glyphicon-erase"></span>
+                            Erase table
+                        </button>
+                    </form>
 
                     <table class="table table-hover">
                         <thead>
@@ -197,9 +232,14 @@
                                     ng-bind="header">
                                 </th>
                             </tr>
+                            <tr ng-show="filters.active">
+                                <th ng-repeat="(header, value) in data.rows[0]">
+                                    <input class="form-control" type="text" ng-model="filters.list[header]" title="Filter this column">
+                                </th>
+                            </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="row in data.rows.slice(0, limit)">
+                            <tr ng-repeat="row in data.rows.slice(0, limit) | filter:filters.list">
                                 <td ng-repeat="(header, value) in row"
                                     ng-class="{ numericCell: typeof(value) === 'number' }"
                                     ng-bind="value">

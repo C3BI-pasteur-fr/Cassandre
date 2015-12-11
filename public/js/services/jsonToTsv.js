@@ -6,7 +6,7 @@
  */
 
 angular.module("cassandre").factory("jsonToTsv", function writeDataFactory() {
-    return function (data) {
+    return function (data, emptyCellsValue) {
 
         // Ensure the order of the columns
         var orderedKeys = Object.keys(data[0]);
@@ -22,13 +22,14 @@ angular.module("cassandre").factory("jsonToTsv", function writeDataFactory() {
 
             for (var j = 0; j < orderedKeys.length; j++) {
                 var key = orderedKeys[j];
+                var value = row[key] || emptyCellsValue;
 
                 // The last value of each row get a new line instead of a tab
                 if (j !== orderedKeys.length - 1) {
-                    tsv = tsv.concat(row[key], "\t");
+                    tsv = tsv.concat(value, "\t");
                 }
                 else {
-                    tsv = tsv.concat(row[key], "\n");
+                    tsv = tsv.concat(value, "\n");
                 }
             }
         }
