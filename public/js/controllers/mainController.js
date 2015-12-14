@@ -137,7 +137,7 @@ angular.module("cassandre").controller("MainController", [
                 width = 960 - margin.left - margin.right,
                 height = 500 - margin.top - margin.bottom;
 
-            var x = d3.scale.linea()
+            var x = d3.scale.linear()
                 .domain([0, 2])
                 .range([0, width]);
 
