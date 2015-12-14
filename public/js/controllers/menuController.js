@@ -6,11 +6,8 @@
 
 angular.module("cassandre").controller("MenuController", ["$scope", "$filter", "experiments", "genes", function ($scope, $filter, exps, genes) {
 
-    // Lists of selected experiments on the side menu
-    $scope.exps = exps.list.all();
-
-    // Lists of genes on the side menu
-    $scope.genes = genes.list.all();
+    // MENU
+    // =====================================================================
 
     // Boolean to manage the display in the side menu as an accordion
     $scope.displayedList = "";
@@ -20,10 +17,10 @@ angular.module("cassandre").controller("MenuController", ["$scope", "$filter", "
         $scope.displayedList = $scope.displayedList !== list ? list : "";
     };
 
-    // Select or deselect elements in the side menu
+    // Select or deselect elements in the menu
     $scope.select = {
         exp: function (list, exp) {
-            if ($scope.exps.selected.indexOf(exp) === -1) {
+            if ($scope.exps.list.selected.indexOf(exp) === -1) {
                 exps.select.one(list, exp);
             }
             else {
@@ -31,7 +28,7 @@ angular.module("cassandre").controller("MenuController", ["$scope", "$filter", "
             }
         },
         gene: function (gene) {
-            if ($scope.genes.selected.indexOf(gene) === -1) {
+            if ($scope.genes.list.selected.indexOf(gene) === -1) {
                 genes.select.one(gene);
             }
             else {
@@ -40,9 +37,9 @@ angular.module("cassandre").controller("MenuController", ["$scope", "$filter", "
         },
         all: {
             genes: function () {
-                var list = $filter("filter")($scope.genes.all, $scope.filter, $scope.comparator);
+                var list = $filter("filter")($scope.genes.list.all, $scope.filter, $scope.comparator);
                 var allSelected = list.every(function (gene) {
-                    return $scope.genes.selected.indexOf(gene) > -1;
+                    return $scope.genes.list.selected.indexOf(gene) > -1;
                 });
 
                 if (allSelected) {
@@ -54,62 +51,70 @@ angular.module("cassandre").controller("MenuController", ["$scope", "$filter", "
             }
         }
     };
-    
+
+    // EXPERIMENTS
+    // =====================================================================
+
+    // All experiments variables and methods
+    $scope.exps = {
+        list: exps.list.all(),
+        removeList: function (list) {
+            exps.remove.list(list);
+        }
+    };
+
     // GENES
     // =====================================================================
 
-    $scope.filter =  "";
+    // All genes variables and methods
+    $scope.genes = {
+        list: genes.list.all(),
+        filter: "",
+        limit: 20,
+        show: {
+            selected: false,
+            selection: function () {
+                this.selected = !this.selected;
+            }
+        },
 
-    $scope.showSelected = false;
+        // Special comparator to handle annotations in the genes filter
+        comparator: function (actual, expected) {
+            if ($scope.genes.show.selected && $scope.genes.list.selected.indexOf(actual) === -1) {
+                return false;
+            }
 
-    $scope.showSelection = function () {
-        $scope.showSelected = !$scope.showSelected;
-    };
-
-    // Genes list limit for display
-    $scope.limit = 20;
-
-    // Special comparator to handle annotations in the genes filter
-    $scope.comparator = function (actual, expected) {
-        if ($scope.showSelected && $scope.genes.selected.indexOf(actual) === -1) {
-            return false;
-        }
-
-        if (!expected) {
-            return true;
-        }
-
-        var filter = expected.toLowerCase();
-        var gene = actual.toLowerCase();
-        var annotations = $scope.genes.annotations[actual] || {};
-
-        // Match the gene name
-        if (gene.indexOf(filter) > -1) {
-            return true;
-        }
-
-        // Match something in the annotations
-        for (var key in annotations) {
-            if (annotations[key].toString().toLowerCase().indexOf(filter) > -1) {
+            if (!expected) {
                 return true;
             }
+
+            var filter = expected.toLowerCase();
+            var gene = actual.toLowerCase();
+            var annotations = $scope.genes.list.annotations[actual] || {};
+
+            // Match the gene name
+            if (gene.indexOf(filter) > -1) {
+                return true;
+            }
+
+            // Match something in the annotations
+            for (var key in annotations) {
+                if (annotations[key].toString().toLowerCase().indexOf(filter) > -1) {
+                    return true;
+                }
+            }
+        },
+
+        // Format an annotation to display in the genes list
+        annotation: function (gene) {
+            var annotation = this.list.annotations[gene];
+            var text = "";
+
+            for (var field in annotation) {
+                text = text.concat(field, " : ", annotation[field], "\n");
+            }
+
+            return text;
         }
     };
-
-    // Remove a list from the side menu
-    $scope.removeList = function (list) {
-        exps.remove.list(list);
-    };
-
-    // Format an annotation to display in the genes list
-    $scope.annotation = function (gene) {
-        var annotation = $scope.genes.annotations[gene];
-        var text = "";
-
-        for (var field in annotation) {
-            text = text.concat(field, " : ", annotation[field], "\n");
-        }
-
-        return text;
-    }
 }]);
