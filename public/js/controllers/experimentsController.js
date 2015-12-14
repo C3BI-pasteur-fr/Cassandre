@@ -6,21 +6,24 @@
 
 angular.module("cassandre").controller("ExperimentsController", [ "$scope", "$filter", "experiments", function ($scope, $filter, experiments) {
 
-    $scope.exps = {
-        list: experiments.list.all(),
-        filter: ""
-    };
+    $scope.exps = experiments.list.all();
 
-    // Select a list of experiments from the searchBar, nothing preselected by default
-    $scope.selectList = function () {
-        $scope.exps.list.sideMenu[$scope.exps.filter] = {
-            all: $filter("filter")($scope.exps.list.all, $scope.exps.filter),
-            selected: []
-        };
-    };
+    $scope.searchBar = {
+        filter: "",
+        reset: function () {
+            this.filter = "";
+        },
+        select: function () {
+            var expsList = $filter("filter")($scope.exps.list.all, this.filter);
 
-    // Reset the experiment search bar
-    $scope.resetExp = function () {
-        $scope.exps.filter = "";
+            if (expsList.length !== 0) {
+                $scope.exps.list.sideMenu[this.filter] = {
+                    all: expsList,
+                    selected: []
+                };
+            }
+
+            this.reset();
+        }
     };
 }]);

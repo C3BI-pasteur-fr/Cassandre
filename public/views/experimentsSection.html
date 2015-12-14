@@ -6,30 +6,30 @@
     <div class="col-lg-2">
         <div class="btn-group">
             <button class="btn btn-info" ng-click="getData()" title="Display the raw results">Raw results</button>
-            <button class="btn btn-info" ng-click="histogram()" title="Display an histogram">Histogram</button>            
+            <button class="btn btn-info" ng-click="histogram()" title="Display an histogram">Histogram</button>
         </div>
     </div>
-    
-    <form class="col-lg-8" ng-submit="selectList()">
+
+    <form class="col-lg-8" ng-submit="searchBar.select">
         <div class="input-group">
             <span class="input-group-addon">
                 <i class="glyphicon glyphicon-search"></i>
             </span>
-            
+
             <input class="form-control"
                 type="search"
-                ng-model="exps.filter"
+                ng-model="searchBar.filter"
                 ng-model-options="{ allowInvalid: true }"
                 placeholder="Type an experiment name here..."
                 title="Search for experiments in the database"
                 required>
-            
+
             <span class="input-group-btn">
                 <button class="btn btn-default"
                         type="button"
-                        ng-click="resetExp()"
-                        title="Erase the current words">Reset</button>
-                
+                        ng-click="searchBar.reset()"
+                        title="Erase the current filter">Reset</button>
+
                 <input id="selectButton"
                     class="btn btn-info"
                     type="submit"
@@ -42,10 +42,8 @@
 
 <div class="row">
     <div class="col-lg-offset-2 col-lg-8">
-        <ul class="list-group" ng-show="exps.filter" title="List of experiments that match your criteria">
-            <li class="list-group-item" ng-repeat="exp in exps.list.all | filter:exps.filter" ng-bind="exp"></li>
+        <ul class="list-group" ng-show="searchBar.filter" title="List of experiments that match your criteria">
+            <li class="list-group-item" ng-repeat="exp in exps.list.all | filter:searchBar.filter" ng-bind="exp"></li>
         </ul>
     </div>
 </div>
-
-<pre>{{ exps.list | json }}</pre>
