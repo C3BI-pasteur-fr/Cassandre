@@ -89,7 +89,8 @@
                 <h5 class="asideBlockTitle"
                     ng-click="display(title)"
                     title="List of experiments that match the word {{ title }}">
-                    <span class="caret"></span>
+                    <span ng-show="displayedList !== title">&#9656;</span>
+                    <span ng-show="displayedList === title">&#9662;</span>
                     <span ng-bind="title"></span>
                     <div class="badges pull-right">
                         <span class="badge greenBadge" ng-bind="exps.sideMenu[title].selected.length" ng-show="exps.sideMenu[title].selected.length > 0" title="Number of selected experiments"></span>
@@ -110,7 +111,8 @@
                 <h5 class="asideBlockTitle"
                     ng-click="display('genes')"
                     title="List of genes">
-                    <span class="caret"></span>
+                    <span ng-show="displayedList !== 'genes'">&#9656;</span>
+                    <span ng-show="displayedList === 'genes'">&#9662;</span>
                     <span>Genes</span>
                     <div class="badges pull-right">
                         <span class="badge greenBadge" ng-bind="genes.selected.length" ng-show="genes.selected.length > 0" title="Number of selected genes"></span>

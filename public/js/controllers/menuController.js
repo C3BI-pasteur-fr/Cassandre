@@ -4,10 +4,10 @@
  *
  */
 
-angular.module("cassandre").controller("MenuController", ["$scope", "$filter", "experiments", "genes", function ($scope, $filter, experiments, genes) {
+angular.module("cassandre").controller("MenuController", ["$scope", "$filter", "experiments", "genes", function ($scope, $filter, exps, genes) {
 
     // Lists of selected experiments on the side menu
-    $scope.exps = experiments.list.all();
+    $scope.exps = exps.list.all();
 
     // Lists of genes on the side menu
     $scope.genes = genes.list.all();
@@ -15,7 +15,49 @@ angular.module("cassandre").controller("MenuController", ["$scope", "$filter", "
     // Boolean to manage the display in the side menu as an accordion
     $scope.displayedList = "";
 
-    // Genes list filter
+    // Handle the side menu display as an accordion
+    $scope.display = function (list) {
+        $scope.displayedList = $scope.displayedList !== list ? list : "";
+    };
+
+    // Select or deselect elements in the side menu
+    $scope.select = {
+        exp: function (list, exp) {
+            if ($scope.exps.selected.indexOf(exp) === -1) {
+                exps.select.one(list, exp);
+            }
+            else {
+                exps.deselect.one(list, exp);
+            }
+        },
+        gene: function (gene) {
+            if ($scope.genes.selected.indexOf(gene) === -1) {
+                genes.select.one(gene);
+            }
+            else {
+                genes.deselect.one(gene);
+            }
+        },
+        all: {
+            genes: function () {
+                var list = $filter("filter")($scope.genes.all, $scope.filter, $scope.comparator);
+                var allSelected = list.every(function (gene) {
+                    return $scope.genes.selected.indexOf(gene) > -1;
+                });
+
+                if (allSelected) {
+                    genes.deselect.many(list);
+                }
+                else {
+                    genes.select.many(list);
+                }
+            }
+        }
+    };
+    
+    // GENES
+    // =====================================================================
+
     $scope.filter =  "";
 
     $scope.showSelected = false;
@@ -23,6 +65,9 @@ angular.module("cassandre").controller("MenuController", ["$scope", "$filter", "
     $scope.showSelection = function () {
         $scope.showSelected = !$scope.showSelected;
     };
+
+    // Genes list limit for display
+    $scope.limit = 20;
 
     // Special comparator to handle annotations in the genes filter
     $scope.comparator = function (actual, expected) {
@@ -51,46 +96,9 @@ angular.module("cassandre").controller("MenuController", ["$scope", "$filter", "
         }
     };
 
-    // Genes list limit for display
-    $scope.limit = 20;
-
-    // Select or deselect elements in the side menu
-    $scope.select = {
-        exp: experiments.select,
-        gene: function (gene) {
-            if ($scope.genes.selected.indexOf(gene) === -1) {
-                genes.select.one(gene);
-            }
-            else {
-                genes.deselect.one(gene);
-            }
-        },
-        all: {
-            genes: function () {
-                var list = $filter("filter")($scope.genes.all, $scope.filter, $scope.comparator);
-                var allSelected = list.every(function (gene) {
-                    return $scope.genes.selected.indexOf(gene) > -1;
-                });
-
-                if (allSelected) {
-                    genes.deselect.many(list);
-                }
-                else {
-                    genes.select.many(list);
-                }
-            }
-        }
-    };
-
-
-    // Handle the side menu display
-    $scope.display = function (list) {
-        $scope.displayedList = $scope.displayedList !== list ? list : "";
-    };
-
     // Remove a list from the side menu
     $scope.removeList = function (list) {
-        delete $scope.exps.sideMenu[list];
+        exps.remove.list(list);
     };
 
     // Format an annotation to display in the genes list

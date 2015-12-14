@@ -7,7 +7,7 @@
 
 angular.module("cassandre").factory("experiments", ["expHttp", function (expHttp) {
 
-    var experiments = {
+    var exps = {
         all: [],                 // All the experiments found in data sets
         selected: [],            // All the experiments selected in the side menu lists
         sideMenu: {}             // The selected lists of experiments in the aside section
@@ -16,36 +16,49 @@ angular.module("cassandre").factory("experiments", ["expHttp", function (expHttp
     return {
         list: {
             all: function () {
-                return experiments;
+                return exps;
             }
         },
-        select: function (list, exp) {
-            if (experiments.selected.indexOf(exp) === -1) {
-                experiments.selected.push(exp);
-                experiments.sideMenu[list].selected.push(exp);
+        select: {
+            one: function (list, exp) {
+                exps.selected.push(exp);
+                exps.sideMenu[list].selected.push(exp);
             }
-            else {
-                experiments.selected.splice(experiments.selected.indexOf(exp), 1);
-                experiments.sideMenu[list].selected.splice(experiments.sideMenu[list].selected.indexOf(exp), 1);
+        },
+        deselect: {
+            one: function (list, exp) {
+                exps.selected.splice(exps.selected.indexOf(exp), 1);
+                exps.sideMenu[list].selected.splice(exps.sideMenu[list].selected.indexOf(exp), 1);
+            }
+        },
+        remove: {
+            list: function (list) {
+                exps.sideMenu[list].selected.forEach(function (exp) {
+                    if (exps.selected.indexOf(exp) > -1) {
+                        exps.selected.splice(exps.selected.indexOf(exp), 1);
+                    }
+                });
+                
+                delete exps.sideMenu[list];
             }
         },
         reset: {
             all: function () {
-                experiments.all = [];
+                exps.all = [];
             },
             selected: function () {
-                experiments.selected = [];
+                exps.selected = [];
             }
         },
         get: {
             all: function () {
                 expHttp.get(function (expList) {
-                    experiments.all = expList;
+                    exps.all = expList;
                 });
             },
             selected: function (sets) {
                 expHttp.get({ sets: sets }, function (expList) {
-                    experiments.all = expList;
+                    exps.all = expList;
                 });
             }
         }
