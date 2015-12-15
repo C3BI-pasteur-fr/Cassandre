@@ -14,10 +14,10 @@ angular.module("cassandre").controller("ExperimentsController", [ "$scope", "$fi
             this.filter = "";
         },
         select: function () {
-            var expsList = $filter("filter")($scope.exps.list.all, this.filter);
+            var expsList = $filter("filter")($scope.exps.all, this.filter);
 
             if (expsList.length !== 0) {
-                $scope.exps.list.sideMenu[this.filter] = {
+                $scope.exps.sideMenu[this.filter] = {
                     all: expsList,
                     selected: []
                 };
