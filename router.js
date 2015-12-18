@@ -24,6 +24,13 @@ module.exports = function (app, db) {
         // limits
     });
 
+    var setsHandler = upload.fields([
+        { name: 'dataset', maxCount: 1},
+        { name: 'metadata', maxCount: 1},
+    ]);
+
+    var annotHandler = upload.single('annotations');
+
     // Database collections
     var data = db.collection('data');
     var datasets = db.collection('datasets');
@@ -87,36 +94,53 @@ module.exports = function (app, db) {
     })
 
     // Insert the data file into the database
-    .post(upload.single('dataset'), function (req, res) {
-        datasets.insert({
-            name: req.file.filename,
-            description: req.body.description,
-            hidden: false,
-            postedDate: new Date()
-        }, function (err) {
-            if (err) {
-                if (err.name === 'MongoError') {
-                    return res.status(400).send("A dataset with this name already exists.");
-                }
+    .post(setsHandler, function (req, res) {
+        console.log(req.files);
+        var metadata = null;
 
-                return res.status(400).send(err.message);
-            }
-
-            parseFile(req.file, function (err, rows) {
+        if (req.files.metadata) {
+            parseFile(req.files.metadata[0], function (err, rows) {
                 if (err) {
                     return res.status(400).send(err.message);
                 }
 
-                // Turn every row into cells before insertion
-                data.insertMany(rowsToCells(rows, req.file.filename), function (err) {
-                    if (err) {
-                        return res.status(500).send(err.message);
-                    }
-
-                    return res.status(201).send({ name: req.file.filename });
-                });
+                metadata = rows;
             });
-        });
+        }
+
+        console.log(metadata);
+        res.sendStatus(200);
+        //datasets.insert({
+        //    name: req.file.filename,
+        //    description: req.body.description,
+        //    hidden: false,
+        //    postedDate: new Date(),
+        //    metadata: metadata
+        //}, function (err) {
+        //    if (err) {
+        //        if (err.name === 'MongoError') {
+        //            return res.status(400).send("A dataset with this name already exists.");
+        //        }
+        //
+        //        return res.status(400).send(err.message);
+        //    }
+        //
+        //    parseFile(req.file, function (err, rows) {
+        //        if (err) {
+        //            return res.status(400).send(err.message);
+        //        }
+        //
+        //        // Turn every row into cells before insertion
+        //        data.insertMany(rowsToCells(rows, req.file.filename), function (err) {
+        //            if (err) {
+        //                return res.status(500).send(err.message);
+        //            }
+        //
+        //            ////// REMOVE FILE HERE /////////////////////////
+        //            return res.status(201).send({ name: req.file.filename });
+        //        });
+        //    });
+        //});
     })
 
     // Update datasets informations
@@ -187,16 +211,16 @@ module.exports = function (app, db) {
     // Get all the annotations
     .get(function(req, res) {
         var list = {};
-        
+
         annotations.find().project({ _id: false }).each(function (err, annotation) {
             if (err) {
                 return res.status(500).send('Error with the database : ' + err.message);
             }
-            
+
             if (annotation === null) {
                 return res.status(200).send(list);
             }
-            
+
             // Turn all the annotations into a single object
             list[annotation.ID] = annotation;
             delete list[annotation.ID]['ID'];
@@ -204,7 +228,7 @@ module.exports = function (app, db) {
     })
 
     // Insert the general annotations file into the database
-    .post(upload.single('annotations'), function (req, res) {
+    .post(annotHandler, function (req, res) {
         parseFile(req.file, function (err, rows) {
             if (err) {
                 return res.status(400).send(err.message);
