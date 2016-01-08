@@ -53,13 +53,16 @@ angular.module("cassandre").factory("genes", ["genesHttp", "annotationsHttp", fu
                 genes.all = genesHttp.get({ sets: sets });
             },
             annotations: function (annotations) {
-                genes.annotations = annotationsHttp.get();
+                annotationsHttp.get({}, function (annotations) {
+                    // Use toJSON because ngResource return an object with extra properties (promise)
+                    genes.annotations = annotations.toJSON();
+                });
             }
         },
         remove: {
             annotations: function (annotations) {
                 annotationsHttp.remove({}, function (response) {
-                    console.log(response);
+                    genes.annotations = {};
                     alert("Annotations successfully deleted.")
                 });
             } 

@@ -241,14 +241,20 @@ module.exports = function (app, db) {
                     return res.status(500).send(err.message);
                 }
 
-                return res.status(201).send();
+                return res.sendStatus(201);
             });
         });
     })
 
     // Remove annotations from the database
-    .delete(function (res, req) {
+    .delete(function (req, res) {
+        annotations.deleteMany({}, function (err) {
+            if (err) {
+                return res.status(500).send(err.message);
+            }
 
+            return res.sendStatus(204);
+        })
     });
 
 // =========================================================================

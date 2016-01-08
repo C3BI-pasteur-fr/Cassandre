@@ -65,7 +65,7 @@ angular.module("cassandre").controller("AnnotationsController", [
     
     // Remove all annotations from the database
     $scope.deleteAnnotations = function () {
-        if (confirm("Do you really want to remove all annotataions permanently?")) {
+        if (confirm("Do you really want to remove all annotations permanently?")) {
             genes.remove.annotations();
         }
     };
