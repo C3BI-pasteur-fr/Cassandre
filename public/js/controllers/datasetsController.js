@@ -17,8 +17,8 @@ angular.module("cassandre").controller("DatasetsController", [
     $scope.sets = datasets.list.all();  // The whole data sets lists and markers
     $scope.filter = "";                 // The menu filter
     $scope.showHidden = false;          // Marker for the "Show all" buttons
-    $scope.changes = {                  // When editing a data set informations
-        name: "",
+    $scope.changes = {                  // When changing a data set informations
+        datasetName: "",
         newName: "",
         description : ""
     };
@@ -43,11 +43,18 @@ angular.module("cassandre").controller("DatasetsController", [
         datasets.show(name);
     };
 
+    // Set the modal information when modifying a dataset
+    $scope.edit = function (set) {
+        $scope.changes.datasetName = set.name;
+        $scope.changes.newName = set.name;
+        $scope.changes.description = set.description;
+    };
+
     // Update data sets informations
     $scope.update = function () {
         datasets.update($scope.changes);
     };
-
+    
     // Remove a data set
     $scope.remove = function (name) {
         if (confirm("Do you really want to remove this dataset permanently?")) {
@@ -71,9 +78,9 @@ angular.module("cassandre").controller("DatasetsController", [
     };
 
     // The file of experiments metadata if there's one
-    $scope.metadata = {
-        file: ""
-    }
+    //$scope.metadata = {
+    //    file: ""
+    //}
 
     // List of allowed formats displayed in the view
     $scope.formats = allowedFileTypes.extensions.join(", ");
@@ -112,10 +119,10 @@ angular.module("cassandre").controller("DatasetsController", [
         allData.append("name", $scope.dataset.name);
         allData.append("dataset", $scope.dataset.file);
         allData.append("description", $scope.dataset.description);
-        console.log($scope.metadata.file);
-        if ($scope.metadata.file) {
-            allData.append("metadata", $scope.metadata.file);
-        }
+
+        //if ($scope.metadata.file) {
+        //    allData.append("metadata", $scope.metadata.file);
+        //}
 
         datasets.add(allData);
     };

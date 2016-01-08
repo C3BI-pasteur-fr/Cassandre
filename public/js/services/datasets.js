@@ -153,7 +153,7 @@ angular.module("cassandre").factory("datasets", ["datasetsHttp", "experiments", 
         },
         update: function (changes) {
             datasetsHttp.update({
-                name: encodeURIComponent(changes.name)
+                name: encodeURIComponent(changes.datasetName)
             }, {
                 name: changes.newName,
                 description: changes.description
@@ -161,12 +161,12 @@ angular.module("cassandre").factory("datasets", ["datasetsHttp", "experiments", 
 
                 // Update the list
                 datasets.all.forEach(function (set) {
-                    if (set.name === changes.name) {
+                    if (set.name === changes.datasetName) {
                         set.name = changes.newName,
                         set.description = changes.description
 
-                        if (datasets.selected.indexOf(changes.name)) {
-                            var index = datasets.selected.indexOf(changes.name);
+                        if (datasets.selected.indexOf(changes.datasetName)) {
+                            var index = datasets.selected.indexOf(changes.datasetName);
                             datasets.selected.splice(index, 1, changes.newName)
                         }
                     }

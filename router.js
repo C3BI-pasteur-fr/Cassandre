@@ -24,10 +24,12 @@ module.exports = function (app, db) {
         // limits
     });
 
-    var setsHandler = upload.fields([
-        { name: 'dataset', maxCount: 1},
-        { name: 'metadata', maxCount: 1},
-    ]);
+    var datasetsHandler = upload.single('dataset');
+    
+    //var datasetsHandler = upload.fields([
+    //    { name: 'dataset', maxCount: 1},
+    //    { name: 'metadata', maxCount: 1},
+    //]);
 
     var annotHandler = upload.single('annotations');
 
@@ -94,58 +96,58 @@ module.exports = function (app, db) {
     })
 
     // Insert the data file into the database
-    .post(setsHandler, function (req, res) {
-        console.log(req.files);
-        var metadata = null;
-
-        if (req.files.metadata) {
-            parseFile(req.files.metadata[0], function (err, rows) {
-                if (err) {
-                    return res.status(400).send(err.message);
-                }
-
-                metadata = rows;
-            });
-        }
-
-        console.log(metadata);
-        res.sendStatus(200);
-        //datasets.insert({
-        //    name: req.file.filename,
-        //    description: req.body.description,
-        //    hidden: false,
-        //    postedDate: new Date(),
-        //    metadata: metadata
-        //}, function (err) {
-        //    if (err) {
-        //        if (err.name === 'MongoError') {
-        //            return res.status(400).send("A dataset with this name already exists.");
-        //        }
+    .post(datasetsHandler, function (req, res) {
+        //console.log(req.files);
+        //var metadata = null;
         //
-        //        return res.status(400).send(err.message);
-        //    }
-        //
-        //    parseFile(req.file, function (err, rows) {
+        //if (req.files.metadata) {
+        //    parseFile(req.files.metadata[0], function (err, rows) {
         //        if (err) {
         //            return res.status(400).send(err.message);
         //        }
         //
-        //        // Turn every row into cells before insertion
-        //        data.insertMany(rowsToCells(rows, req.file.filename), function (err) {
-        //            if (err) {
-        //                return res.status(500).send(err.message);
-        //            }
-        //
-        //            ////// REMOVE FILE HERE /////////////////////////
-        //            return res.status(201).send({ name: req.file.filename });
-        //        });
+        //        metadata = rows;
         //    });
-        //});
+        //}
+        //
+        //console.log(metadata);
+        //res.sendStatus(200);
+        datasets.insert({
+            name: req.file.filename,
+            description: req.body.description,
+            hidden: false,
+            postedDate: new Date(),
+            // metadata: metadata
+        }, function (err) {
+            if (err) {
+                if (err.name === 'MongoError') {
+                    return res.status(400).send("A dataset with this name already exists.");
+                }
+
+                return res.status(400).send(err.message);
+            }
+
+            parseFile(req.file, function (err, rows) {
+                if (err) {
+                    return res.status(400).send(err.message);
+                }
+
+                // Turn every row into cells before insertion
+                data.insertMany(rowsToCells(rows, req.file.filename), function (err) {
+                    if (err) {
+                        return res.status(500).send(err.message);
+                    }
+
+                    ////// REMOVE FILE HERE /////////////////////////
+                    return res.status(201).send({ name: req.file.filename });
+                });
+            });
+        });
     })
 
     // Update datasets informations
     .put(function (req, res) {
-
+        console.log(req.body);
         // First update the datasets collection
         datasets.update({
             name: decodeURIComponent(req.query.name)
@@ -161,11 +163,11 @@ module.exports = function (app, db) {
             }
 
             // Also update the data collection if a dataset name changes
-            if (req.body.name) {
+            if (req.query.name !== req.body.name) {
                 data.update({
                     set: decodeURIComponent(req.query.name)
                 }, {
-                    $set: { set: req.body.newName }
+                    $set: { set: req.body.name }
                 }, {
                     multi: true
                 }, function (err) {
@@ -242,6 +244,11 @@ module.exports = function (app, db) {
                 return res.status(201).send();
             });
         });
+    })
+
+    // Remove annotations from the database
+    .delete(function (res, req) {
+
     });
 
 // =========================================================================

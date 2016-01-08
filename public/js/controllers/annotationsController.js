@@ -62,6 +62,13 @@ angular.module("cassandre").controller("AnnotationsController", [
             alert("No annotations found in the database.")
         }
     };
+    
+    // Remove all annotations from the database
+    $scope.deleteAnnotations = function () {
+        if (confirm("Do you really want to remove all annotataions permanently?")) {
+            genes.remove.annotations();
+        }
+    };
 
     // Send the file to the server using a FormData
     $scope.sendFile = function () {

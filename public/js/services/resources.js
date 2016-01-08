@@ -47,6 +47,9 @@ angular.module("cassandre")
             headers: {                              // Let the browser set the Content-Type
                 "Content-Type": undefined           // to fill in the boundary parameter properly
             }
+        },
+        remove: {
+            method:"DELETE"
         }
     });
 }])

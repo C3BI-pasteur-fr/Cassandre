@@ -55,6 +55,14 @@ angular.module("cassandre").factory("genes", ["genesHttp", "annotationsHttp", fu
             annotations: function (annotations) {
                 genes.annotations = annotationsHttp.get();
             }
+        },
+        remove: {
+            annotations: function (annotations) {
+                annotationsHttp.remove({}, function (response) {
+                    console.log(response);
+                    alert("Annotations successfully deleted.")
+                });
+            } 
         }
     };
 }]);

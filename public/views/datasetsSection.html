@@ -59,7 +59,7 @@
                     <td class="buttonCellEdit"
                         title="Make changes to the dataset"
                         role="button"
-                        ng-click="changes.name = set.name; changes.newName = set.name; changes.description = set.description;"
+                        ng-click="edit(set)"
                         data-toggle="modal"
                         data-target="#datasetEdition">
                         <span class="glyphicon glyphicon-pencil"></span>
@@ -184,7 +184,8 @@
             </div>
         </div>
 
-        <div class="col-lg-offset-1 col-lg-3">
+        <!----------- Coming soon -------------->
+        <div class="col-lg-offset-1 col-lg-3" hidden>
             <label for="metadata">Experiments Metadata (optionnal)</label>
             <input id="metadata"
                    type="file"
