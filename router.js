@@ -99,7 +99,7 @@ module.exports = function (app, db) {
     .post(datasetsHandler, function (req, res) {
 
         var datafile = req.files.dataset[0];
-        var metafile = req.files.dataset[0] || null;
+        var metafile = req.files.metadata[0] || null;
 
         async.waterfall([
 
@@ -109,14 +109,22 @@ module.exports = function (app, db) {
                     return callback(null);
                 }
 
-                parseFile(metafile, function (err, metadata) {
+                parseFile(metafile, function (err, rows) {
                     if (err) {
-                        console.log(err);
                         err.httpCode = 400;
-                        console.log(err);
                         return callback(err);
                     }
-                    return callback(null, metadata);
+                    
+                    var metadata = {};
+
+                    // Turn the rows into a single object
+                    async.each(rows, function (row, callback) {
+                        metadata[row.ID] = row;
+                        delete metadata[row.ID]['ID'];
+                        callback();
+                    }, function () {
+                        return callback(null, metadata);
+                    });
                 });
             },
 
@@ -124,9 +132,7 @@ module.exports = function (app, db) {
             function (metadata, callback) {
                 parseFile(datafile, function (err, dataset) {
                     if (err) {
-                        console.log(err);
                         err.httpCode = 400;
-                        console.log(err);
                         return callback(err);
                     }
                     return callback(null, metadata, dataset);
@@ -153,10 +159,8 @@ module.exports = function (app, db) {
                 }, function (err) {
                     if (err) {
                         if (err.name === 'MongoError') {
-                            console.log(err);
                             err.httpCode = 400;
                             err.message = "A dataset with this name already exists.";
-                            console.log(err);
                             return callback(err);
                         }
                         return callback(err);
@@ -170,9 +174,7 @@ module.exports = function (app, db) {
                 data.insertMany(rowsToCells(dataset, req.body.name), function (err) {
                     if (err) {
                         datasets.deleteOne({ name: req.body.name });
-                        console.log(err);
                         err.httpCode = 500;
-                        console.log(err);
                         return callback(err);
                     }
                     ////// REMOVE FILE HERE /////////////////////////
@@ -182,7 +184,6 @@ module.exports = function (app, db) {
 
         ], function (err, result) {
             if (err) {
-                console.log(err);
                 return res.status(err.httpCode).send(err.message);
             }
 
