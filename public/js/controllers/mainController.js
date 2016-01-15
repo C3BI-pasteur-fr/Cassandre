@@ -10,7 +10,7 @@ angular.module("cassandre").controller("MainController", [
 
     $scope.data = {
         cells: [],                      // Data from database
-        rows: [],                        // Data formatted in rows
+        rows: [],                       // Data formatted in rows
         values: []
     };
 

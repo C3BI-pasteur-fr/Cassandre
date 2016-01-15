@@ -1,6 +1,7 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var multer = require('multer');
+var async = require('async');
 var parseFile = require('./lib/parseFile');
 var rowsToCells = require('./lib/rowsToCells');
 
@@ -13,8 +14,7 @@ module.exports = function (app, db) {
     var storage = multer.diskStorage({
         destination: './uploads/',
         filename: function (req, file, callback) {
-            var newName = req.body.name || file.originalname;
-            return callback(null, newName);
+            return callback(null, file.fieldname + '-' + Date.now());
         }
     });
 
@@ -24,12 +24,12 @@ module.exports = function (app, db) {
         // limits
     });
 
-    var datasetsHandler = upload.single('dataset');
-    
-    //var datasetsHandler = upload.fields([
-    //    { name: 'dataset', maxCount: 1},
-    //    { name: 'metadata', maxCount: 1},
-    //]);
+    //var datasetsHandler = upload.single('dataset');
+
+    var datasetsHandler = upload.fields([
+        { name: 'dataset', maxCount: 1},
+        { name: 'metadata', maxCount: 1},
+    ]);
 
     var annotHandler = upload.single('annotations');
 
@@ -97,51 +97,96 @@ module.exports = function (app, db) {
 
     // Insert the data file into the database
     .post(datasetsHandler, function (req, res) {
-        //console.log(req.files);
-        //var metadata = null;
-        //
-        //if (req.files.metadata) {
-        //    parseFile(req.files.metadata[0], function (err, rows) {
-        //        if (err) {
-        //            return res.status(400).send(err.message);
-        //        }
-        //
-        //        metadata = rows;
-        //    });
-        //}
-        //
-        //console.log(metadata);
-        //res.sendStatus(200);
-        datasets.insert({
-            name: req.file.filename,
-            description: req.body.description,
-            hidden: false,
-            postedDate: new Date(),
-            // metadata: metadata
-        }, function (err) {
-            if (err) {
-                if (err.name === 'MongoError') {
-                    return res.status(400).send("A dataset with this name already exists.");
+
+        var datafile = req.files.dataset[0];
+        var metafile = req.files.dataset[0] || null;
+
+        async.waterfall([
+
+            // Read The metadata file if exists
+            function (callback) {
+                if (!metafile) {
+                    return callback(null);
                 }
 
-                return res.status(400).send(err.message);
+                parseFile(metafile, function (err, metadata) {
+                    if (err) {
+                        console.log(err);
+                        err.httpCode = 400;
+                        console.log(err);
+                        return callback(err);
+                    }
+                    return callback(null, metadata);
+                });
+            },
+
+            // Read the dataset
+            function (metadata, callback) {
+                parseFile(datafile, function (err, dataset) {
+                    if (err) {
+                        console.log(err);
+                        err.httpCode = 400;
+                        console.log(err);
+                        return callback(err);
+                    }
+                    return callback(null, metadata, dataset);
+                });
+            },
+
+            // Check the compatibility between metadata and dataset
+            function (metadata, dataset, callback) {
+                if (!metadata) {
+                    return callback(null, null, dataset);
+                }
+
+                return callback(null, metadata, dataset);
+            },
+
+            // Insert the datasets information and its metadata
+            function (metadata, dataset, callback) {
+                datasets.insert({
+                    name: req.body.name,
+                    description: req.body.description,
+                    hidden: false,
+                    postedDate: new Date(),
+                    metadata: metadata
+                }, function (err) {
+                    if (err) {
+                        if (err.name === 'MongoError') {
+                            console.log(err);
+                            err.httpCode = 400;
+                            err.message = "A dataset with this name already exists.";
+                            console.log(err);
+                            return callback(err);
+                        }
+                        return callback(err);
+                    }
+                    return callback(null, dataset);
+                });
+            },
+
+            // Insert the dataset, turn every row into cells before insertion
+            function (dataset, callback) {
+                data.insertMany(rowsToCells(dataset, req.body.name), function (err) {
+                    if (err) {
+                        datasets.deleteOne({ name: req.body.name });
+                        console.log(err);
+                        err.httpCode = 500;
+                        console.log(err);
+                        return callback(err);
+                    }
+                    ////// REMOVE FILE HERE /////////////////////////
+                    return callback(null);
+                });
             }
 
-            parseFile(req.file, function (err, rows) {
-                if (err) {
-                    return res.status(400).send(err.message);
-                }
+        ], function (err, result) {
+            if (err) {
+                console.log(err);
+                return res.status(err.httpCode).send(err.message);
+            }
 
-                // Turn every row into cells before insertion
-                data.insertMany(rowsToCells(rows, req.file.filename), function (err) {
-                    if (err) {
-                        return res.status(500).send(err.message);
-                    }
-
-                    ////// REMOVE FILE HERE /////////////////////////
-                    return res.status(201).send({ name: req.file.filename });
-                });
-            });
+            return res.status(201).send({ name: req.body.name });
         });
     })
 

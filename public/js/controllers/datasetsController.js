@@ -70,7 +70,7 @@ angular.module("cassandre").controller("DatasetsController", [
 
     // ----- Add a new set ---------------------------------------------- //
 
-     // Data set file to upload
+    // Data set file to upload
     $scope.dataset = {
         file: "",           // The entire FileObject
         name: "",           // The name, possibly modified by the user
@@ -78,18 +78,21 @@ angular.module("cassandre").controller("DatasetsController", [
     };
 
     // The file of experiments metadata if there's one
-    //$scope.metadata = {
-    //    file: ""
-    //}
+    $scope.metadata = {
+        file: ""
+    }
 
     // List of allowed formats displayed in the view
     $scope.formats = allowedFileTypes.extensions.join(", ");
 
     // Parse a file depending on its type
     $scope.parseFile = function (file) {
+        if ($scope.dataset.file === "") {
+            alert("Nothing to display.");
+        }
 
         // Excel files
-        if (allowedFileTypes.mime.excel.indexOf(file.type) > -1) {
+        else if (allowedFileTypes.mime.excel.indexOf(file.type) > -1) {
             xlsxToJson(file, function (err, json) {
                 $scope.$apply(function () {
                     $scope.data.rows = json;
@@ -120,9 +123,9 @@ angular.module("cassandre").controller("DatasetsController", [
         allData.append("dataset", $scope.dataset.file);
         allData.append("description", $scope.dataset.description);
 
-        //if ($scope.metadata.file) {
-        //    allData.append("metadata", $scope.metadata.file);
-        //}
+        if ($scope.metadata.file) {
+            allData.append("metadata", $scope.metadata.file);
+        }
 
         datasets.add(allData);
     };

@@ -96,7 +96,6 @@ angular.module("cassandre").factory("datasets", ["datasetsHttp", "experiments", 
 
                 // Select the new one by default and refresh the other lists
                 datasetsHttp.get(function (response) {
-                    console.log(response);
                     datasets.all = response;
                     genes.get.all();
                     stats.get.all();

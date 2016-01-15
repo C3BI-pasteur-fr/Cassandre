@@ -55,7 +55,6 @@ angular.module("cassandre").controller("MenuController", ["$scope", "$filter", "
     // EXPERIMENTS
     // =====================================================================
 
-    // All experiments variables and methods
     $scope.exps = {
         list: exps.list.all(),
         removeList: function (list) {
@@ -66,7 +65,6 @@ angular.module("cassandre").controller("MenuController", ["$scope", "$filter", "
     // GENES
     // =====================================================================
 
-    // All genes variables and methods
     $scope.genes = {
         list: genes.list.all(),
         filter: "",

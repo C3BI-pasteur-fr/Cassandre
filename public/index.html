@@ -73,6 +73,12 @@
                         </li>
                     </ul>
                     <ul class="nav navbar-nav navbar-right">
+                        <!--<li title="Go to the documentation of Cassandre">
+                            <a href="https://projets.pasteur.fr/projects/cassandre/wiki/_Documentation_" target="_blank">
+                                <span class="glyphicon glyphicon-book"></span>
+                                Documentation
+                            </a>
+                        </li>-->
                         <li title="Send an email to the developer">
                             <a href="mailto:simon.malesys@pasteur.fr">
                                 <span class="glyphicon glyphicon-envelope"></span>
@@ -180,15 +186,16 @@
                         <select id="resultsLimit"
                                 class="form-control"
                                 ng-model="limit"
-                                ng-options="limit for (limit, value) in limitOptions">
+                                ng-options="limit for (limit, value) in limitOptions"
+                                title="Choose the limit of displayed lines">
                         </select>
 
                         <div class="input-group">
                             <span class="input-group-addon">Filters</span>
                             <span class="input-group-btn">
-                                <button class="btn btn-default" ng-class="{ 'btn-success': filters.active, active: filters.active }" type="button" ng-click="filters.active = true">ON</button>
-                                <button class="btn btn-default" ng-class="{ 'btn-primary': !filters.active, active: !filters.active }" type="button" ng-click="filters.active = false">OFF</button>
-                                <button class="btn btn-default" ng-click="filters.reset()" title="Erase all filters">Reset</button>
+                                <button class="btn btn-default" ng-class="{ 'btn-success': filters.active, active: filters.active }" type="button" ng-click="filters.active = true" title="Activate filters">ON</button>
+                                <button class="btn btn-default" ng-class="{ 'btn-primary': !filters.active, active: !filters.active }" type="button" ng-click="filters.active = false" title="Deactivate filters">OFF</button>
+                                <button class="btn btn-default" ng-click="filters.reset()" title="Reset all filters">Reset</button>
                             </span>
                         </div>
 
@@ -197,12 +204,13 @@
                                 role="button"
                                 download="CassandreData.txt"
                                 ng-href="{{ download.href }}"
-                                ng-click="download.setHref()">
+                                ng-click="download.setHref()"
+                                title="Download the current results">
                                 <span class="glyphicon glyphicon-download"></span>
                                 Download
                             </a>
-                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown">
-                                <span class="caret"></span>
+                            <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" title="Options for download">
+                                <span class="glyphicon glyphicon-menu-hamburger"></span>
                             </button>
                             <ul class="dropdown-menu">
                                 <li class="dropdown-header">Empty cells value</li>
@@ -219,7 +227,7 @@
                             </ul>
                         </div>
 
-                        <button class="btn btn-default" type="button" ng-click="erase()">
+                        <button class="btn btn-default" type="button" ng-click="erase()" title="Erase this table">
                             <span class="glyphicon glyphicon-erase"></span>
                             Erase table
                         </button>
