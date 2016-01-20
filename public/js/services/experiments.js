@@ -8,7 +8,7 @@
 angular.module("cassandre").factory("experiments", ["expHttp", function (expHttp) {
 
     var exps = {
-        all: [],                 // All the experiments found in data sets
+        all: [],                 // All the experiments found in datasets
         selected: [],            // All the experiments selected in the side menu lists
         sideMenu: {}             // The selected lists of experiments in the aside section
     };
@@ -38,7 +38,7 @@ angular.module("cassandre").factory("experiments", ["expHttp", function (expHttp
                         exps.selected.splice(exps.selected.indexOf(exp), 1);
                     }
                 });
-                
+
                 delete exps.sideMenu[list];
             }
         },

@@ -72,24 +72,25 @@ angular.module("cassandre").controller("DatasetsController", [
 
     // Data set file to upload
     $scope.dataset = {
-        file: "",           // The entire FileObject
+        file: null,         // The entire FileObject
         name: "",           // The name, possibly modified by the user
         description: ""     // A description of the data set
     };
 
     // The file of experiments metadata if there's one
     $scope.metadata = {
-        file: ""
-    }
+        file: null
+    };
 
     // List of allowed formats displayed in the view
     $scope.formats = allowedFileTypes.extensions.join(", ");
 
     // Parse a file depending on its type
     $scope.parseFile = function (file) {
-        if ($scope.dataset.file === "") {
+        if (!$scope.dataset.file && !$scope.metadata.file) {
             alert("Nothing to display.");
         }
+        // Need to handle which one of the file is parsed
 
         // Excel files
         else if (allowedFileTypes.mime.excel.indexOf(file.type) > -1) {

@@ -99,22 +99,22 @@ module.exports = function (app, db) {
     .post(datasetsHandler, function (req, res) {
 
         var datafile = req.files.dataset[0];
-        var metafile = req.files.metadata[0] || null;
+        var metafile = req.files.metadata ? req.files.metadata[0] : null;
 
         async.waterfall([
 
             // Read The metadata file if exists
-            function (callback) {
+            function (mainCallback) {
                 if (!metafile) {
-                    return callback(null);
+                    return mainCallback();
                 }
 
                 parseFile(metafile, function (err, rows) {
                     if (err) {
                         err.httpCode = 400;
-                        return callback(err);
+                        return mainCallback(err);
                     }
-                    
+
                     var metadata = {};
 
                     // Turn the rows into a single object
@@ -123,33 +123,34 @@ module.exports = function (app, db) {
                         delete metadata[row.ID]['ID'];
                         callback();
                     }, function () {
-                        return callback(null, metadata);
+                        return mainCallback(null, metadata);
                     });
                 });
             },
 
             // Read the dataset
-            function (metadata, callback) {
+            function (metadata, mainCallback) {
+                mainCallback = arguments.length === 2 ? mainCallback : metadata;
                 parseFile(datafile, function (err, dataset) {
                     if (err) {
                         err.httpCode = 400;
-                        return callback(err);
+                        return mainCallback(err);
                     }
-                    return callback(null, metadata, dataset);
+                    return mainCallback(null, metadata, dataset);
                 });
             },
 
             // Check the compatibility between metadata and dataset
-            function (metadata, dataset, callback) {
+            function (metadata, dataset, mainCallback) {
                 if (!metadata) {
-                    return callback(null, null, dataset);
+                    return mainCallback(null, null, dataset);
                 }
 
-                return callback(null, metadata, dataset);
+                return mainCallback(null, metadata, dataset);
             },
 
             // Insert the datasets information and its metadata
-            function (metadata, dataset, callback) {
+            function (metadata, dataset, mainCallback) {
                 datasets.insert({
                     name: req.body.name,
                     description: req.body.description,
@@ -161,24 +162,24 @@ module.exports = function (app, db) {
                         if (err.name === 'MongoError') {
                             err.httpCode = 400;
                             err.message = "A dataset with this name already exists.";
-                            return callback(err);
+                            return mainCallback(err);
                         }
-                        return callback(err);
+                        return mainCallback(err);
                     }
-                    return callback(null, dataset);
+                    return mainCallback(null, dataset);
                 });
             },
 
             // Insert the dataset, turn every row into cells before insertion
-            function (dataset, callback) {
+            function (dataset, mainCallback) {
                 data.insertMany(rowsToCells(dataset, req.body.name), function (err) {
                     if (err) {
                         datasets.deleteOne({ name: req.body.name });
                         err.httpCode = 500;
-                        return callback(err);
+                        return mainCallback(err);
                     }
                     ////// REMOVE FILE HERE /////////////////////////
-                    return callback(null);
+                    return mainCallback(null);
                 });
             }
 
