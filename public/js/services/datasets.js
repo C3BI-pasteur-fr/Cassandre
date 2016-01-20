@@ -9,7 +9,8 @@ angular.module("cassandre").factory("datasets", ["datasetsHttp", "experiments", 
     var datasets = {
         all: [],                // List of all data sets
         selected: [],           // List of the selected data sets to search
-        uploading: false        // Marker to know when a data set is uploading
+        uploading: false,       // Marker to know when a data set is uploading
+        deleting: true         // Marker to know when a data set is being deleted
     };
 
     // Handlers for generic actions on datasets
@@ -176,9 +177,12 @@ angular.module("cassandre").factory("datasets", ["datasetsHttp", "experiments", 
             });
         },
         remove: function (name) {
+            datasets.deleting = true;
             datasetsHttp.remove({
                 name: encodeURIComponent(name)
             }, function () {
+                datasets.deleting = false;
+                
                 stats.get.all();
 
                 // Deselect the removed set if needed
@@ -194,6 +198,7 @@ angular.module("cassandre").factory("datasets", ["datasetsHttp", "experiments", 
                 });
 
             }, function (err) {
+                datasets.deleting = false;
                 alert("Error : " + err.data);
             });
         },

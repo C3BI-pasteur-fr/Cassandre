@@ -14,7 +14,8 @@ module.exports = function (app, db) {
     var storage = multer.diskStorage({
         destination: './uploads/',
         filename: function (req, file, callback) {
-            return callback(null, file.fieldname + '-' + Date.now());
+            console.log(file);
+            return callback(null, file.originalname + '-' + Date.now());
         }
     });
 
@@ -247,9 +248,9 @@ module.exports = function (app, db) {
                 if (err) {
                     return res.status(500).send(err.message);
                 }
+                
+                return res.sendStatus(204);
             });
-
-            return res.sendStatus(204);
         });
     });
 
