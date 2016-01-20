@@ -10,7 +10,7 @@ angular.module("cassandre").factory("datasets", ["datasetsHttp", "experiments", 
         all: [],                // List of all data sets
         selected: [],           // List of the selected data sets to search
         uploading: false,       // Marker to know when a data set is uploading
-        deleting: true         // Marker to know when a data set is being deleted
+        deleting: false         // Marker to know when a data set is being deleted
     };
 
     // Handlers for generic actions on datasets
