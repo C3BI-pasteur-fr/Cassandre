@@ -194,41 +194,49 @@ module.exports = function (app, db) {
     })
 
     // Update datasets informations
-    .put(function (req, res) {
-        console.log(req.body);
-        // First update the datasets collection
+    .put(function (req, res, next) {
         datasets.update({
             name: decodeURIComponent(req.query.name)
         }, {
             $set: req.body
         }, function (err) {
             if (err) {
-                if (err.name === 'MongoError') {
-                    return res.status(400).send("A dataset with this name already exists.");
-                }
-
-                return res.status(400).send(err.message);
+                return next(err);
             }
 
-            // Also update the data collection if a dataset name changes
-            if (req.query.name !== req.body.name) {
-                data.update({
-                    set: decodeURIComponent(req.query.name)
-                }, {
-                    $set: { set: req.body.name }
-                }, {
-                    multi: true
-                }, function (err) {
-                    if (err) {
-                        return res.status(400).send(err.message);
-                    }
-                    return res.sendStatus(204);
-                });
-            }
-            else {
-                return res.sendStatus(204);
-            }
+            return next();
         });
+    },
+
+    // Also update the data collection if a dataset name changes
+    function (req, res, next) {
+
+        if (req.query.name === req.body.name) {
+            return res.sendStatus(204);
+        }
+
+        data.update({
+            set: decodeURIComponent(req.query.name)
+        }, {
+            $set: { set: req.body.name }
+        }, {
+            multi: true
+        }, function (err) {
+            if (err) {
+                return next(err);
+            }
+
+            return res.sendStatus(204);
+        });
+    },
+
+    // Error handler
+    function (err, req, res, next) {
+        if (err.name === 'MongoError') {
+            return res.status(400).send("A dataset with this name already exists.");
+        }
+        
+        return res.status(500).send(err.message);
     })
 
     // Remove the given datasets from the database
@@ -248,7 +256,7 @@ module.exports = function (app, db) {
                 if (err) {
                     return res.status(500).send(err.message);
                 }
-                
+
                 return res.sendStatus(204);
             });
         });

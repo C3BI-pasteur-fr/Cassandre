@@ -17,6 +17,7 @@ angular.module("cassandre").factory("datasets", ["datasetsHttp", "experiments", 
     var select = function (name) {
         datasets.selected.push(name);
         experiments.get.selected(datasets.selected);
+        genes.get.selected(datasets.selected);
         stats.get.selected(datasets.selected);
     }
 
@@ -25,10 +26,12 @@ angular.module("cassandre").factory("datasets", ["datasetsHttp", "experiments", 
 
         if (datasets.selected.length === 0) {
             experiments.reset.selected();
+            genes.reset.selected();
             stats.reset.selected();
         }
         else {
             experiments.get.selected(datasets.selected);
+            genes.get.selected(datasets.selected);
             stats.get.selected(datasets.selected);
         }
     }
@@ -40,8 +43,9 @@ angular.module("cassandre").factory("datasets", ["datasetsHttp", "experiments", 
     }
 
     var deselectAll = function () {
-        datasets.selected.splice(0, datasets.selected.length);
+        datasets.selected = [];
         experiments.reset.all();
+        genes.reset.all();
         stats.reset.selected();
     }
 

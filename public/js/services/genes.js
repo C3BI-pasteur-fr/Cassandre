@@ -45,6 +45,14 @@ angular.module("cassandre").factory("genes", ["genesHttp", "annotationsHttp", fu
                 });
             }
         },
+        reset: {
+            all: function () {
+                genes.all = [];
+            },
+            selected: function () {
+                genes.selected = [];
+            }
+        },
         get: {
             all: function () {
                 genes.all = genesHttp.get();
