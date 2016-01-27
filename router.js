@@ -14,7 +14,6 @@ module.exports = function (app, db) {
     var storage = multer.diskStorage({
         destination: './uploads/',
         filename: function (req, file, callback) {
-            console.log(file);
             return callback(null, file.originalname + '-' + Date.now());
         }
     });
@@ -35,9 +34,11 @@ module.exports = function (app, db) {
     var annotHandler = upload.single('annotations');
 
     // Database collections
-    var data = db.collection('data');
     var datasets = db.collection('datasets');
-    var annotations = db.collection('annotations');
+    var experiments = db.collection('experiments');
+    var annotations = db.collections('annotations');
+    var genes = db.collection('genes');
+    var data = db.collection('data');
 
 // ROUTES
 // =========================================================================
@@ -97,100 +98,101 @@ module.exports = function (app, db) {
     })
 
     // Insert the data file into the database
-    .post(datasetsHandler, function (req, res) {
+    .post(datasetsHandler, function (req, res, next) {
+        req.cassandre = {};     // Object to pass data between middlewares
+        next();
+    },
 
-        var datafile = req.files.dataset[0];
-        var metafile = req.files.metadata ? req.files.metadata[0] : null;
+    // Read The metadata file if exists
+    function (req, res, next) {
+        if (!req.files.metadata) {
+            return next();
+        }
 
-        async.waterfall([
-
-            // Read The metadata file if exists
-            function (mainCallback) {
-                if (!metafile) {
-                    return mainCallback();
-                }
-
-                parseFile(metafile, function (err, rows) {
-                    if (err) {
-                        err.httpCode = 400;
-                        return mainCallback(err);
-                    }
-
-                    var metadata = {};
-
-                    // Turn the rows into a single object
-                    async.each(rows, function (row, callback) {
-                        metadata[row.ID] = row;
-                        delete metadata[row.ID]['ID'];
-                        callback();
-                    }, function () {
-                        return mainCallback(null, metadata);
-                    });
-                });
-            },
-
-            // Read the dataset
-            function (metadata, mainCallback) {
-                mainCallback = arguments.length === 2 ? mainCallback : metadata;
-                parseFile(datafile, function (err, dataset) {
-                    if (err) {
-                        err.httpCode = 400;
-                        return mainCallback(err);
-                    }
-                    return mainCallback(null, metadata, dataset);
-                });
-            },
-
-            // Check the compatibility between metadata and dataset
-            function (metadata, dataset, mainCallback) {
-                if (!metadata) {
-                    return mainCallback(null, null, dataset);
-                }
-
-                return mainCallback(null, metadata, dataset);
-            },
-
-            // Insert the datasets information and its metadata
-            function (metadata, dataset, mainCallback) {
-                datasets.insert({
-                    name: req.body.name,
-                    description: req.body.description,
-                    hidden: false,
-                    postedDate: new Date(),
-                    metadata: metadata
-                }, function (err) {
-                    if (err) {
-                        if (err.name === 'MongoError') {
-                            err.httpCode = 400;
-                            err.message = "A dataset with this name already exists.";
-                            return mainCallback(err);
-                        }
-                        return mainCallback(err);
-                    }
-                    return mainCallback(null, dataset);
-                });
-            },
-
-            // Insert the dataset, turn every row into cells before insertion
-            function (dataset, mainCallback) {
-                data.insertMany(rowsToCells(dataset, req.body.name), function (err) {
-                    if (err) {
-                        datasets.deleteOne({ name: req.body.name });
-                        err.httpCode = 500;
-                        return mainCallback(err);
-                    }
-                    ////// REMOVE FILE HERE /////////////////////////
-                    return mainCallback(null);
-                });
-            }
-
-        ], function (err, result) {
+        parseFile(req.files.metadata[0], function (err, rows) {
             if (err) {
-                return res.status(err.httpCode).send(err.message);
+                return next({ status: 400, error: err});
             }
 
-            return res.status(201).send({ name: req.body.name });
+            req.cassandre.metadata = {};
+
+            // Turn the rows into a single object
+            //// SHOULD NOT BE ///////
+            rows.forEach(function (row) {
+                req.cassandre.metadata[row.ID] = row;
+                delete req.cassandre.metadata[row.ID]['ID'];
+            });
+
+            return next();
         });
+    },
+
+    // Read the dataset
+    function (req, res, next) {
+        parseFile(req.files.dataset[0], function (err, dataset) {
+            if (err) {
+                return next({ status: 400, error: err});
+            }
+
+            req.cassandre.dataset = dataset;
+            next();
+        });
+    },
+    
+    //// Check the compatibility between metadata and dataset //////
+    
+    // Insert the dataset information
+    function (req, res, next) {
+        datasets.insertOne({
+            name: req.body.name,
+            description: req.body.description,
+            hidden: false,
+            postedDate: new Date()
+        }, function (err, result) {
+            if (err) {
+                if (err.code === 11000) {
+                    err.message = "A dataset with this name already exists.";
+                    return next({status: 400, error: err});
+                }
+                return next({status: 500, error: err});
+            }
+
+            next();
+        });
+    },
+
+    // Upsert the genes information
+    function (req, res, next) {
+        //var list = req.cassandre.dataset
+        
+        //genes.update({}, {}, {});
+    },
+
+    //
+    //// Insert the dataset, turn every row into cells before insertion
+    //function (dataset, mainCallback) {
+    //    data.insertMany(rowsToCells(dataset, req.body.name), function (err) {
+    //        if (err) {
+    //            datasets.deleteOne({ name: req.body.name });
+    //            err.httpCode = 500;
+    //            return mainCallback(err);
+    //        }
+    //        ////// REMOVE FILE HERE /////////////////////////
+    //        return mainCallback(null);
+    //    });
+    //},
+    //
+    //function (err, result) {
+    //    if (err) {
+    //        return res.status(err.httpCode).send(err.message);
+    //    }
+    //
+    //    return res.status(201).send({ name: req.body.name });
+    //})
+    
+    function (err, req, res, next) {
+        console.log(err);
+        return res.status(err.status).send(err.error.message);
     })
 
     // Update datasets informations
