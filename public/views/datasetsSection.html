@@ -169,7 +169,8 @@
                 <input id="datasetName"
                     class="form-control"
                     type="text"
-                    title="You can rename your dataset"
+                    title="You can rename your dataset.&#13It can't start with a '$' or contain dots."
+                    pattern="{{ dataset.validator }}"
                     ng-model="dataset.name"
                     required>
             </div>

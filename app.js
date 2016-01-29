@@ -30,6 +30,7 @@ MongoClient.connect(url, function (err, db) {
     // =========================================================================
     
     db.collection("datasets").createIndex({ name: 1 }, { unique: true, background: true });
+    db.collection("genes").createIndex({ ID: 1 }, { unique: true, background: true });
 
     // SERVER CONGIGURATION
     // =========================================================================

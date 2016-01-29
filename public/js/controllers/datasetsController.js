@@ -72,9 +72,10 @@ angular.module("cassandre").controller("DatasetsController", [
 
     // Data set file to upload
     $scope.dataset = {
-        file: null,         // The entire FileObject
-        name: "",           // The name, possibly modified by the user
-        description: ""     // A description of the data set
+        file: null,                 // The entire FileObject
+        name: "",                   // The name, possibly modified by the user
+        description: "",            // A description of the data set
+        validator: "^[^$.][^.]*$"   // Validator to ensure the name is Mongo-field compatible
     };
 
     // The file of experiments metadata if there's one

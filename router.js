@@ -1,3 +1,4 @@
+var fs = require('fs');
 var express = require('express');
 var bodyParser = require('body-parser');
 var multer = require('multer');
@@ -13,7 +14,7 @@ module.exports = function (app, db) {
     var storage = multer.diskStorage({
         destination: './uploads/',
         filename: function (req, file, callback) {
-            return callback(null, file.originalname + '-' + Date.now());
+            return callback(null, file.originalname + '-' + (new Date()).toISOString());
         }
     });
 
@@ -35,7 +36,6 @@ module.exports = function (app, db) {
     // Database collections
     var datasets = db.collection('datasets');
     var experiments = db.collection('experiments');
-    var annotations = db.collections('annotations');
     var genes = db.collection('genes');
     var data = db.collection('data');
 
@@ -201,35 +201,42 @@ module.exports = function (app, db) {
 
         bulk.execute(function (err) {
             if (err) return next({status: 500, error: err});
-            //next();
-            return res.status(201).send({ name: req.body.name });
+            return next();
         });
     },
-    //
-    //// Insert the dataset, turn every row into cells before insertion
-    //function (dataset, mainCallback) {
-    //    data.insertMany(rowsToCells(dataset, req.body.name), function (err) {
-    //        if (err) {
-    //            datasets.deleteOne({ name: req.body.name });
-    //            err.httpCode = 500;
-    //            return mainCallback(err);
-    //        }
-    //        ////// REMOVE FILE HERE /////////////////////////
-    //        return mainCallback(null);
-    //    });
-    //},
-    //
-    //function (err, result) {
-    //    if (err) {
-    //        return res.status(err.httpCode).send(err.message);
-    //    }
-    //
-    //    return res.status(201).send({ name: req.body.name });
-    //})
 
+    // Insert the dataset, turn every row into cells before insertion
+    function (req, res, next) {
+        var rows = req.cassandre.dataset
+        var setName = req.body.name;
+        
+        data.insertMany(rowsToCells(rows, setName), function (err) {
+            if (err) return next({status: 500, error: err});
+            res.status(201).send({ name: req.body.name });
+            return next();
+        });
+    },
+
+    // Error handler
     function (err, req, res, next) {
+        if (err.status && err.error) {
+            res.status(err.status).send(err.error.message);
+        }
+        else {
+            res.status(500).send(err.message);
+        }
+
         console.log(err);
-        return res.status(err.status).send(err.error.message);
+        next();
+    },
+    
+    // Remove the files from the system, errors or not
+    function (req, res, next) {
+        fs.unlinkSync(req.files.dataset[0].path);
+
+        if (req.files.metadata) {
+            fs.unlinkSync(req.files.metadata[0].path);
+        }
     })
 
     // Update datasets informations
@@ -309,7 +316,7 @@ module.exports = function (app, db) {
     .get(function(req, res) {
         var list = {};
 
-        annotations.find().project({ _id: false }).each(function (err, annotation) {
+        genes.find().project({ _id: false }).each(function (err, annotation) {
             if (err) {
                 return res.status(500).send('Error with the database : ' + err.message);
             }
@@ -317,10 +324,6 @@ module.exports = function (app, db) {
             if (annotation === null) {
                 return res.status(200).send(list);
             }
-
-            // Turn all the annotations into a single object
-            list[annotation.ID] = annotation;
-            delete list[annotation.ID]['ID'];
         });
     })
 
