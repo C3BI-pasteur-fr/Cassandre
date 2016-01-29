@@ -14,7 +14,6 @@ module.exports = function (app, db) {
     var storage = multer.diskStorage({
         destination: './uploads/',
         filename: function (req, file, callback) {
-            console.log(file);
             return callback(null, file.originalname + '-' + Date.now());
         }
     });
@@ -152,7 +151,7 @@ module.exports = function (app, db) {
 
             // Insert the datasets information and its metadata
             function (metadata, dataset, mainCallback) {
-                datasets.insert({
+                datasets.insertOne({
                     name: req.body.name,
                     description: req.body.description,
                     hidden: false,
@@ -215,12 +214,10 @@ module.exports = function (app, db) {
             return res.sendStatus(204);
         }
 
-        data.update({
+        data.updateMany({
             set: decodeURIComponent(req.query.name)
         }, {
             $set: { set: req.body.name }
-        }, {
-            multi: true
         }, function (err) {
             if (err) {
                 return next(err);
