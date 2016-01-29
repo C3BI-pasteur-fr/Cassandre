@@ -1,7 +1,6 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var multer = require('multer');
-var async = require('async');
 var parseFile = require('./lib/parseFile');
 var rowsToCells = require('./lib/rowsToCells');
 
@@ -27,8 +26,8 @@ module.exports = function (app, db) {
     //var datasetsHandler = upload.single('dataset');
 
     var datasetsHandler = upload.fields([
-        { name: 'dataset', maxCount: 1},
-        { name: 'metadata', maxCount: 1},
+        { name: 'dataset', maxCount: 1 },
+        { name: 'metadata', maxCount: 1 }
     ]);
 
     var annotHandler = upload.single('annotations');
@@ -100,7 +99,7 @@ module.exports = function (app, db) {
     // Insert the data file into the database
     .post(datasetsHandler, function (req, res, next) {
         req.cassandre = {};     // Object to pass data between middlewares
-        next();
+        return next();
     },
 
     // Read The metadata file if exists
@@ -109,19 +108,12 @@ module.exports = function (app, db) {
             return next();
         }
 
-        parseFile(req.files.metadata[0], function (err, rows) {
+        parseFile(req.files.metadata[0], function (err, metadata) {
             if (err) {
                 return next({ status: 400, error: err});
             }
 
-            req.cassandre.metadata = {};
-
-            // Turn the rows into a single object
-            //// SHOULD NOT BE ///////
-            rows.forEach(function (row) {
-                req.cassandre.metadata[row.ID] = row;
-                delete req.cassandre.metadata[row.ID]['ID'];
-            });
+            req.cassandre.metadata = metadata;
 
             return next();
         });
@@ -135,20 +127,21 @@ module.exports = function (app, db) {
             }
 
             req.cassandre.dataset = dataset;
-            next();
+
+            return next();
         });
     },
-    
+
     //// Check the compatibility between metadata and dataset //////
-    
+
     // Insert the dataset information
     function (req, res, next) {
         datasets.insertOne({
-            name: req.body.name,
-            description: req.body.description,
-            hidden: false,
-            postedDate: new Date()
-        }, function (err, result) {
+            'name': req.body.name,
+            'description': req.body.description,
+            'hidden': false,
+            'postedDate': new Date()
+        }, function (err) {
             if (err) {
                 if (err.code === 11000) {
                     err.message = "A dataset with this name already exists.";
@@ -163,11 +156,55 @@ module.exports = function (app, db) {
 
     // Upsert the genes information
     function (req, res, next) {
-        //var list = req.cassandre.dataset
-        
-        //genes.update({}, {}, {});
+
+        var geneList = Object.keys(req.cassandre.dataset);
+        var bulk = genes.initializeUnorderedBulkOp();
+
+        geneList.forEach(function (gene) {
+            bulk.find({ ID: gene })
+                .upsert()
+                .updateOne({
+                    $addToSet: { 'datasets': req.body.name },
+                    $setOnInsert: { 'annotation': null }
+                }
+            );
+        });
+
+        bulk.execute(function (err) {
+            if (err) return next({status: 500, error: err});
+            return next();
+        });
     },
 
+    // Upsert the experiments information
+    function (req, res, next) {
+
+        var firstID = Object.keys(req.cassandre.dataset)[0];
+        var expList = Object.keys(req.cassandre.dataset[firstID]);
+        var bulk = experiments.initializeUnorderedBulkOp();
+
+        var settings = {
+            $addToSet: {
+                datasets: req.body.name
+            },
+            $set: {}
+        };
+
+        expList.forEach(function (exp) {
+            var meta = req.cassandre.metadata ? req.cassandre.metadata[exp] : null;
+            settings.$set['metadata.' + req.body.name] = meta;
+
+            bulk.find({ ID: exp })
+                .upsert()
+                .updateOne(settings);
+        });
+
+        bulk.execute(function (err) {
+            if (err) return next({status: 500, error: err});
+            //next();
+            return res.status(201).send({ name: req.body.name });
+        });
+    },
     //
     //// Insert the dataset, turn every row into cells before insertion
     //function (dataset, mainCallback) {
@@ -189,7 +226,7 @@ module.exports = function (app, db) {
     //
     //    return res.status(201).send({ name: req.body.name });
     //})
-    
+
     function (err, req, res, next) {
         console.log(err);
         return res.status(err.status).send(err.error.message);
@@ -237,7 +274,7 @@ module.exports = function (app, db) {
         if (err.name === 'MongoError') {
             return res.status(400).send("A dataset with this name already exists.");
         }
-        
+
         return res.status(500).send(err.message);
     })
 
