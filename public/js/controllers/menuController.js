@@ -103,9 +103,12 @@ angular.module("cassandre").controller("MenuController", ["$scope", "$filter", "
             }
         },
 
-        // Format an annotation to display in the genes list
-        annotation: function (gene) {
-            var annotation = this.list.annotations[gene];
+        // Format an annotation to display it in the gene list
+        format: function (annotation) {
+            //if (!annotation) {
+            //    return "";
+            //}
+            
             var text = "";
 
             for (var field in annotation) {

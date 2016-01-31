@@ -35,28 +35,9 @@ angular.module("cassandre")
     });
 }])
 
-// Resource to manage the general annotations
-.factory("annotationsHttp", ["$resource", function annotationsResource ($resource) {
-    return $resource("/api/annotations", {}, {
-        get: {
-            method: "GET"
-        },
-        add: {
-            method: "POST",
-            transformRequest: angular.identity,     // Override Angular's default serialization
-            headers: {                              // Let the browser set the Content-Type
-                "Content-Type": undefined           // to fill in the boundary parameter properly
-            }
-        },
-        remove: {
-            method:"DELETE"
-        }
-    });
-}])
-
 // Resource to get the list of exp (columns) for the given data sets
 .factory("expHttp", ["$resource", function expResource ($resource) {
-    return $resource("/api/data/exp", {}, {
+    return $resource("/api/exp", {}, {
         get: {
             method: "GET",
             isArray: true,
@@ -69,13 +50,29 @@ angular.module("cassandre")
 
 // Resource to get the list of genes (rows) for the given data sets
 .factory("genesHttp", ["$resource", function genesResource ($resource) {
-    return $resource("/api/data/genes", {}, {
+    return $resource("/api/genes", {}, {
         get: {
             method: "GET",
             isArray: true,
             params: {
                 "sets[]": "@sets"
             }
+        }
+    });
+}])
+
+// Resource to manage the general annotations
+.factory("annotationsHttp", ["$resource", function annotationsResource ($resource) {
+    return $resource("/api/genes/annotations", {}, {
+        add: {
+            method: "POST",
+            transformRequest: angular.identity,     // Override Angular's default serialization
+            headers: {                              // Let the browser set the Content-Type
+                "Content-Type": undefined           // to fill in the boundary parameter properly
+            }
+        },
+        remove: {
+            method:"DELETE"
         }
     });
 }])

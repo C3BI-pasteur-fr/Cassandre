@@ -143,10 +143,10 @@
                     </li>
                     <li class="asideListItem"
                         ng-repeat="gene in genes.list.all | filter:genes.filter:genes.comparator | limitTo: genes.limit"
-                        ng-class="{ 'bg-primary': genes.list.selected.indexOf(gene) > -1 }"
-                        ng-click="select.gene(gene)"
-                        ng-bind="gene"
-                        title="{{ genes.annotation(gene) }}"></li>
+                        ng-class="{ 'bg-primary': genes.list.selected.indexOf(gene.ID) > -1 }"
+                        ng-click="select.gene(gene.ID)"
+                        ng-bind="gene.ID"
+                        title="{{ genes.format(gene.annotation) }}"></li>
                 </ul>
             </div>
         </aside>

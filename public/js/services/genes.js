@@ -10,7 +10,6 @@ angular.module("cassandre").factory("genes", ["genesHttp", "annotationsHttp", fu
     var genes = {
         all: [],                 // The genes found in data sets
         selected: [],            // The genes selected in the side menu list
-        annotations: {}          // Annotations for each gene
     };
 
     return {
@@ -59,18 +58,12 @@ angular.module("cassandre").factory("genes", ["genesHttp", "annotationsHttp", fu
             },
             selected: function (sets) {
                 genes.all = genesHttp.get({ sets: sets });
-            },
-            annotations: function (annotations) {
-                annotationsHttp.get({}, function (annotations) {
-                    // Use toJSON because ngResource return an object with extra properties (promise)
-                    genes.annotations = annotations.toJSON();
-                });
             }
         },
         remove: {
             annotations: function (annotations) {
                 annotationsHttp.remove({}, function (response) {
-                    genes.annotations = {};
+                    genes.all = genesHttp.get();
                     alert("Annotations successfully deleted.")
                 });
             } 

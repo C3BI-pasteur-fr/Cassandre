@@ -40,7 +40,6 @@ angular.module("cassandre", ["ngResource"])
         stats.get.selected(init.selected);
         experiments.get.selected(init.selected);
         genes.get.all();
-        genes.get.annotations();
     });
 });
 

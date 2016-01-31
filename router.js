@@ -357,19 +357,19 @@ module.exports = function (app, db) {
 
 // =========================================================================
 
-    app.route('/api/data/exp/')
+    app.route('/api/exp/')
 
     // List all the experiments (columns) for given datasets
     .get(function (req, res, next) {
         var query = {};
 
         if (req.query.sets) {
-            query.set = {
+            query.datasets = {
                 '$in' : decodeURIComponent(req.query.sets).split(',')
             };
         }
 
-        data.distinct('exp', query, function (err, list) {
+        experiments.find(query).toArray(function (err, list) {
             if (err) {
                 return res.status(500).send('Error with the database : ' + err.message);
             }
@@ -380,24 +380,63 @@ module.exports = function (app, db) {
 
 // =========================================================================
 
-    app.route('/api/data/genes/')
+    app.route('/api/genes/')
 
     // List all the genes (lines) for given datasets
     .get(function (req, res, next) {
         var query = {};
 
         if (req.query.sets) {
-            query.set = {
+            query.datasets = {
                 '$in' : decodeURIComponent(req.query.sets).split(',')
             };
         }
 
-        data.distinct('gene', query, function (err, list) {
+        genes.find(query).toArray(function (err, list) {
             if (err) {
                 return res.status(500).send('Error with the database : ' + err.message);
             }
 
             return res.status(200).send(list);
+        });
+    });
+    
+    app.route('/api/genes/annotations')
+    
+    // Insert the genes annotations file into the database
+    .post(annotHandler, function (req, res) {
+        parseFile(req.file, function (err, annotations) {
+            if (err) {
+                return res.status(400).send(err.message);
+            }
+
+            var geneList = Object.keys(annotations);
+            var bulk = genes.initializeUnorderedBulkOp();
+    
+            geneList.forEach(function (gene) {
+                bulk.find({ ID: gene })
+                    .upsert()
+                    .updateOne({
+                        $set: { 'annotation': annotations[gene] },
+                        $setOnInsert: { 'datasets': [] },
+                    }
+                );
+            });
+
+            bulk.execute(function (err) {
+                if (err) return res.status(500).send(err.message);
+                return res.sendStatus(201);
+            });
+        });
+    })
+
+    // Remove annotations from the database
+    .delete(function (req, res) {
+        genes.updateMany({}, {
+            $set: { 'annotation': null }
+        }, function (err) {
+            if (err) return res.status(500).send(err.message);
+            return res.sendStatus(204);
         });
     });
 

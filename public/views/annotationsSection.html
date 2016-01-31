@@ -12,8 +12,8 @@
         <strong ng-bind="formats"></strong>
     </p>
     <div class="btn-group">
-        <input class="btn btn-default" type="submit" value="Send" ng-disabled="annotIsUploading">
-        <button class="btn btn-default" type="button" ng-click="parseFile()">Display</button>
+        <button class="btn btn-default" type="button" ng-click="parseFile()">Preview</button>
+        <input class="btn btn-default" type="submit" value="Upload" ng-disabled="annotIsUploading">
         <button class="btn btn-default" type="reset">Reset</button>
     </div>
     <button class="btn btn-info" type="button" ng-click="showAnnotations()">Show Annotations</button>

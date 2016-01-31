@@ -82,7 +82,7 @@ angular.module("cassandre").controller("AnnotationsController", [
             $scope.annotIsUploading = false;
             alert("Annotations successfully stored.");
             document.getElementById("dataUploadForm").reset(); // No better solution found with Angular
-            genes.get.annotations();
+            genes.get.all();
         }, function (err) {
             $scope.dataIsUploading = false;
             alert("Error : " + err.data);
