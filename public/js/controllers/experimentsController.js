@@ -24,6 +24,33 @@ angular.module("cassandre").controller("ExperimentsController", [ "$scope", "$fi
             }
 
             this.reset();
+        },
+        format: {
+            // TO PUT IN THE EXPERIMENTS SERVICE
+            datasets: function (datasets) {
+                return datasets.join(", ");
+            },
+            metadata: function (metadata) {
+                var datasets = Object.keys(metadata);
+                var text = "";
+                
+                datasets.forEach(function (set) {
+                    text = text.concat("Dataset ", set, " : \n");
+                    
+                    if (metadata[set]) {
+                        for (var field in metadata[set]) {
+                            text = text.concat("-- ", field, " : ", metadata[set][field], "\n");
+                        }
+                    }
+                    else {
+                        text = text.concat("-- ", "No metadata", "\n");
+                    }
+                    
+                    text = text.concat("\n");
+                });
+                
+                return text;
+            }
         }
     };
 }]);

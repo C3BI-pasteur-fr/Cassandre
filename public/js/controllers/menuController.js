@@ -59,6 +59,28 @@ angular.module("cassandre").controller("MenuController", ["$scope", "$filter", "
         list: exps.list.all(),
         removeList: function (list) {
             exps.remove.list(list);
+        },
+        // TO PUT IN THE EXPERIMENTS SERVICE
+        format: function (metadata) {
+            var datasets = Object.keys(metadata);
+            var text = "";
+            
+            datasets.forEach(function (set) {
+                text = text.concat("Dataset ", set, " : \n");
+                
+                if (metadata[set]) {
+                    for (var field in metadata[set]) {
+                        text = text.concat("-- ", field, " : ", metadata[set][field], "\n");
+                    }
+                }
+                else {
+                    text = text.concat("-- ", "No metadata", "\n");
+                }
+                
+                text = text.concat("\n");
+            });
+            
+            return text;
         }
     };
 
@@ -105,10 +127,10 @@ angular.module("cassandre").controller("MenuController", ["$scope", "$filter", "
 
         // Format an annotation to display it in the gene list
         format: function (annotation) {
-            //if (!annotation) {
-            //    return "";
-            //}
-            
+            if (!annotation) {
+                return "No annotation";
+            }
+
             var text = "";
 
             for (var field in annotation) {

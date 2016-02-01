@@ -322,7 +322,7 @@ module.exports = function (app, db) {
             };
         }
 
-        experiments.find(query).toArray(function (err, list) {
+        experiments.find(query).project({ "_id": 0 }).toArray(function (err, list) {
             if (err) {
                 return res.status(500).send('Error with the database : ' + err.message);
             }
@@ -345,7 +345,7 @@ module.exports = function (app, db) {
             };
         }
 
-        genes.find(query).toArray(function (err, list) {
+        genes.find(query).project({ "_id": 0 }).toArray(function (err, list) {
             if (err) {
                 return res.status(500).send('Error with the database : ' + err.message);
             }

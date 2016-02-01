@@ -21,7 +21,7 @@ angular.module("cassandre").controller("MainController", [
     $scope.genes = genes.list.all();
 
     // Control switch for the displayed section
-    $scope.activeSection = "datasetsSection";
+    $scope.activeSection = "genesSection";
 
     // Used for ordering the results and mark the columns
     $scope.predicate = "";

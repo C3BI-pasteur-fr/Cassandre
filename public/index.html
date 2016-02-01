@@ -28,6 +28,7 @@
         <script src="js/controllers/mainController.js"></script>
         <script src="js/controllers/menuController.js"></script>
         <script src="js/controllers/experimentsController.js"></script>
+        <script src="js/controllers/genesController.js"></script>
         <script src="js/controllers/datasetsController.js"></script>
         <script src="js/controllers/annotationsController.js"></script>
     </head>
@@ -53,8 +54,8 @@
                                 Search Experiments
                             </a>
                         </li>
-                        <li class="disabled" title="Coming soon..." ng-class="{ active: activeSection === 'genesSection' }">
-                            <a role="button" ng-click="">
+                        <li ng-class="{ active: activeSection === 'genesSection' }">
+                            <a role="button" ng-click="activeSection = 'genesSection'">
                                 <span class="glyphicon glyphicon-search"></span>
                                 Search Genes
                             </a>
@@ -107,9 +108,10 @@
                 <ul class="asideList" ng-show="displayedList === title">
                     <li class="asideListItem"
                         ng-repeat="exp in list.all"
-                        ng-class="{ 'bg-primary': exps.list.selected.indexOf(exp) > -1 }"
-                        ng-click="select.exp(title, exp)"
-                        ng-bind="exp"></li>
+                        ng-class="{ 'bg-primary': exps.list.selected.indexOf(exp.ID) > -1 }"
+                        ng-click="select.exp(title, exp.ID)"
+                        ng-bind="exp.ID"
+                        title="{{ exps.format(exp.metadata) }}"></li>
                 </ul>
             </div>
 
@@ -165,10 +167,10 @@
                     <ng-include src="'views/experimentsSection.html'"></ng-include>
                 </section>
 
-                <section id="genesSection" ng-show="activeSection === 'genesSection'">
+                <section id="genesSection" ng-show="activeSection === 'genesSection'" ng-controller="GenesController">
                     <ng-include src="'views/genesSection.html'"></ng-include>
                 </section>
-                
+
                 <div class="chart" ng-show="data.values.length > 0"></div>
 
                 <div id="results" ng-show="data.rows.length > 0">

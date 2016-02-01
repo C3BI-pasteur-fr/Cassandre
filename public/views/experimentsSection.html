@@ -42,10 +42,15 @@
 
 <div class="row">
     <div class="col-lg-offset-2 col-lg-8">
-        <ul class="list-group" ng-show="searchBar.filter" title="List of experiments that match your criteria">
+        <ul class="list-group" ng-show="searchBar.filter">
             <li class="list-group-item"
-                ng-repeat="exp in exps.all | filter:searchBar.filter"
-                ng-bind="exp">
+                ng-repeat="exp in exps.all | filter:searchBar.filter">
+                <span ng-bind="exp.ID" title="{{ searchBar.format.metadata(exp.metadata) }}"></span>
+                <span class="pull-right">
+                    <em class="text-muted"
+                        ng-bind="searchBar.format.datasets(exp.datasets)"
+                        title="List of datasets where this experiment is found"></em>
+                </span>
             </li>
         </ul>
     </div>
