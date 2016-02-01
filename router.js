@@ -310,53 +310,6 @@ module.exports = function (app, db) {
 
 // =========================================================================
 
-    app.route('/api/annotations/')
-
-    // Get all the annotations
-    .get(function(req, res) {
-        var list = {};
-
-        genes.find().project({ _id: false }).each(function (err, annotation) {
-            if (err) {
-                return res.status(500).send('Error with the database : ' + err.message);
-            }
-
-            if (annotation === null) {
-                return res.status(200).send(list);
-            }
-        });
-    })
-
-    // Insert the general annotations file into the database
-    .post(annotHandler, function (req, res) {
-        parseFile(req.file, function (err, rows) {
-            if (err) {
-                return res.status(400).send(err.message);
-            }
-
-            annotations.insertMany(rows, function (err) {
-                if (err) {
-                    return res.status(500).send(err.message);
-                }
-
-                return res.sendStatus(201);
-            });
-        });
-    })
-
-    // Remove annotations from the database
-    .delete(function (req, res) {
-        annotations.deleteMany({}, function (err) {
-            if (err) {
-                return res.status(500).send(err.message);
-            }
-
-            return res.sendStatus(204);
-        })
-    });
-
-// =========================================================================
-
     app.route('/api/exp/')
 
     // List all the experiments (columns) for given datasets
