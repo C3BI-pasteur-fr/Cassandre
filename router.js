@@ -183,20 +183,24 @@ module.exports = function (app, db) {
         var expList = Object.keys(req.cassandre.dataset[firstID]);
         var bulk = experiments.initializeUnorderedBulkOp();
 
-        var settings = {
-            $addToSet: {
-                datasets: req.body.name
-            },
-            $set: {}
-        };
-
         expList.forEach(function (exp) {
             var meta = req.cassandre.metadata ? req.cassandre.metadata[exp] : null;
-            settings.$set['metadata.' + req.body.name] = meta;
+
+            var settings = {
+                $addToSet: {
+                    datasets: req.body.name
+                },
+                $set: {
+                    metadata: {
+                        setName : meta
+                    }
+                }
+            }
 
             bulk.find({ ID: exp })
                 .upsert()
                 .updateOne(settings);
+
         });
 
         bulk.execute(function (err) {
@@ -209,7 +213,7 @@ module.exports = function (app, db) {
     function (req, res, next) {
         var rows = req.cassandre.dataset
         var setName = req.body.name;
-        
+
         data.insertMany(rowsToCells(rows, setName), function (err) {
             if (err) return next({status: 500, error: err});
             res.status(201).send({ name: req.body.name });
@@ -229,7 +233,7 @@ module.exports = function (app, db) {
         console.log(err);
         next();
     },
-    
+
     // Remove the files from the system, errors or not
     function (req, res, next) {
         fs.unlinkSync(req.files.dataset[0].path);
@@ -353,9 +357,9 @@ module.exports = function (app, db) {
             return res.status(200).send(list);
         });
     });
-    
+
     app.route('/api/genes/annotations')
-    
+
     // Insert the genes annotations file into the database
     .post(annotHandler, function (req, res) {
         parseFile(req.file, function (err, annotations) {
@@ -365,7 +369,7 @@ module.exports = function (app, db) {
 
             var geneList = Object.keys(annotations);
             var bulk = genes.initializeUnorderedBulkOp();
-    
+
             geneList.forEach(function (gene) {
                 bulk.find({ ID: gene })
                     .upsert()

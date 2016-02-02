@@ -25,10 +25,10 @@ MongoClient.connect(url, function (err, db) {
     }
 
     console.log('Connected to the ' + database + ' database on port ' + port);
-    
+
     // DATABASE CONGIGURATION
     // =========================================================================
-    
+
     db.collection("datasets").createIndex({ name: 1 }, { unique: true, background: true });
     db.collection("genes").createIndex({ ID: 1 }, { unique: true, background: true });
 
