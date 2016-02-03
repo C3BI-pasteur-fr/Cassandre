@@ -245,10 +245,42 @@ module.exports = function (app, db) {
 
     // Update datasets informations
     .put(function (req, res, next) {
+        var oldName = decodeURIComponent(req.query.name);
+
         datasets.update({
-            name: decodeURIComponent(req.query.name)
+            name: oldName
         }, {
-            $set: req.body
+            $set: {
+                name: req.body.name,
+                description: req.body.description
+            }
+        }, function (err) {
+            if (err) {
+                if (err.code === 11000) {
+                    err.message = "A dataset with this name already exists.";
+                    return next({status: 400, error: err});
+                }
+                return next({status: 500, error: err});
+            }
+
+            return next();
+        });
+    },
+
+    // If needed, update the genes collection
+    function (req, res, next) {
+        var oldName = decodeURIComponent(req.query.name);
+
+        if (oldName === req.body.name) {
+            return res.sendStatus(204);
+        }
+
+        genes.updateMany({
+            datasets: oldName
+        }, {
+            $set: {
+                "datasets.$": req.body.name
+            }
         }, function (err) {
             if (err) {
                 return next(err);
@@ -258,19 +290,38 @@ module.exports = function (app, db) {
         });
     },
 
-    // Also update the data collection if a dataset name changes
+    // Then the experiments collection
     function (req, res, next) {
+        var oldName = decodeURIComponent(req.query.name);
+        var query = { datasets: oldName };
+        var updates = {};
 
-        if (req.query.name === req.body.name) {
-            return res.sendStatus(204);
-        }
+        updates.$set = {
+            "datasets.$": req.body.name
+        };
 
-        data.update({
-            set: decodeURIComponent(req.query.name)
+        updates.$rename = {};
+        updates.$rename["metadata." + oldName] = req.body.name;
+
+        experiments.updateMany(query, updates, function (err) {
+            if (err) {
+                return next(err);
+            }
+
+            return next();
+        });
+    },
+
+    // And finally the data collection
+    function (req, res, next) {
+        var oldName = decodeURIComponent(req.query.name);
+
+        data.updateMany({
+            set: oldName
         }, {
-            $set: { set: req.body.name }
-        }, {
-            multi: true
+            $set: {
+                set: req.body.name
+            }
         }, function (err) {
             if (err) {
                 return next(err);
