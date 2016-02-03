@@ -280,10 +280,7 @@ module.exports = function (app, db) {
                 "datasets.$": req.body.name
             }
         }, function (err) {
-            if (err) {
-                return next(err);
-            }
-
+            if (err) return next(err);
             return next();
         });
     },
@@ -302,10 +299,7 @@ module.exports = function (app, db) {
         updates.$rename["metadata." + oldName] = req.body.name;
 
         experiments.updateMany(query, updates, function (err) {
-            if (err) {
-                return next(err);
-            }
-
+            if (err) return next(err);
             return next();
         });
     },
@@ -321,44 +315,119 @@ module.exports = function (app, db) {
                 set: req.body.name
             }
         }, function (err) {
-            if (err) {
-                return next(err);
-            }
-
+            if (err) return next(err);
             return res.sendStatus(204);
         });
     },
 
     // Error handler
     function (err, req, res, next) {
-        if (err.name === 'MongoError') {
-            return res.status(400).send("A dataset with this name already exists.");
+        if (err.status && err.error) {
+            res.status(err.status).send(err.error.message);
         }
-
-        return res.status(500).send(err.message);
+        else {
+            res.status(500).send(err.message);
+        }
     })
 
-    // Remove the given datasets from the database
-    .delete(function (req, res) {
-        var dataset = decodeURIComponent(req.query.name);
+    // Remove the given dataset from the database
+    .delete(function (req, res, next) {
+        var setName = decodeURIComponent(req.query.name);
 
         datasets.remove({
-            name: dataset
+            name: setName
         }, function (err) {
-            if (err) {
-                return res.status(500).send(err.message);
-            }
-
-            data.remove({
-                set: dataset
-            }, function (err) {
-                if (err) {
-                    return res.status(500).send(err.message);
-                }
-
-                return res.sendStatus(204);
-            });
+            if (err) return next(err);
+            return next();
         });
+    },
+
+    // Remove the dataset in the genes collection.
+    // Also remove the genes that no longer appear
+    // in any dataset and have no annotation.
+    function (req, res, next) {
+
+        var setName = decodeURIComponent(req.query.name);
+        var bulk = genes.initializeOrderedBulkOp();
+        
+        var query = {
+            forUpdate: { datasets: setName },
+            forRemove: {
+                datasets: { $size: 0 },
+                annotation: null
+            }
+        };
+
+        var updates = {
+            $pull: {
+                datasets: setName
+            }
+        };
+
+        bulk.find(query.forUpdate).update(updates);
+        bulk.find(query.forRemove).delete();
+
+        bulk.execute(function (err) {
+            if (err) return next(err);
+            return next();
+        });
+    },
+
+    // Remove the dataset in the experiments collection.
+    // Also remove the genes that no longer appear
+    // in any dataset.
+    function (req, res, next) {
+
+        var setName = decodeURIComponent(req.query.name);
+        var bulk = experiments.initializeOrderedBulkOp();
+
+        var query = {
+            forUpdate: { datasets: setName },
+            forRemove: {
+                datasets: { $size: 0 }
+            }
+        };
+
+        var updates = {
+            $pull: {
+                datasets: setName
+            },
+            $unset: {
+                metadata: {}
+            }
+        };
+
+        updates.$unset.metadata[setName] = "";
+
+        bulk.find(query.forUpdate).update(updates);
+        bulk.find(query.forRemove).delete();
+
+        bulk.execute(function (err) {
+            if (err) return next(err);
+            return next();
+        });
+    },
+
+    // Remove all the data corresponding to the dataset
+    function (req, res, next) {
+        var setName = decodeURIComponent(req.query.name);
+
+        data.deleteMany({
+            set: setName
+        }, function (err) {
+            if (err) return next(err);
+            return res.sendStatus(204);
+        });
+    },
+
+    // Error handler
+    function (err, req, res, next) {
+        if (err.status && err.error) {
+            res.status(err.status).send(err.error.message);
+        }
+        else {
+            res.status(500).send(err.message);
+        }
     });
 
 // =========================================================================

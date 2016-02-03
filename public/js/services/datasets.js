@@ -186,8 +186,9 @@ angular.module("cassandre").factory("datasets", ["datasetsHttp", "experiments", 
                 name: encodeURIComponent(name)
             }, function () {
                 datasets.deleting = false;
-                
+
                 stats.get.all();
+                genes.get.all();
 
                 // Deselect the removed set if needed
                 if (datasets.selected.indexOf(name) > -1) {
