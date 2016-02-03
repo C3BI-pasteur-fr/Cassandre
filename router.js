@@ -164,8 +164,8 @@ module.exports = function (app, db) {
             bulk.find({ ID: gene })
                 .upsert()
                 .updateOne({
-                    $addToSet: { 'datasets': req.body.name },
-                    $setOnInsert: { 'annotation': null }
+                    $addToSet: { datasets: req.body.name },
+                    $setOnInsert: { annotation: null }
                 }
             );
         });
@@ -185,22 +185,20 @@ module.exports = function (app, db) {
 
         expList.forEach(function (exp) {
             var meta = req.cassandre.metadata ? req.cassandre.metadata[exp] : null;
-
-            var settings = {
+            var updates = {
                 $addToSet: {
                     datasets: req.body.name
                 },
                 $set: {
-                    metadata: {
-                        setName : meta
-                    }
+                    metadata: {}
                 }
-            }
+            };
+
+            updates.$set.metadata[req.body.name] = meta;
 
             bulk.find({ ID: exp })
                 .upsert()
-                .updateOne(settings);
-
+                .updateOne(updates);
         });
 
         bulk.execute(function (err) {
