@@ -349,7 +349,7 @@ module.exports = function (app, db) {
 
         var setName = decodeURIComponent(req.query.name);
         var bulk = genes.initializeOrderedBulkOp();
-        
+
         var query = {
             forUpdate: { datasets: setName },
             forRemove: {
