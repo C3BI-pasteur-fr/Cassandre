@@ -505,11 +505,31 @@ module.exports = function (app, db) {
         });
     })
 
-    // Remove annotations from the database
+    // Remove the genes annotations from the database.
+    // Also remove the genes that no longer appear
+    // in any dataset and have no annotation.
     .delete(function (req, res) {
-        genes.updateMany({}, {
-            $set: { 'annotation': null }
-        }, function (err) {
+
+        var bulk = genes.initializeOrderedBulkOp();
+
+        var query = {
+            forUpdate: {},
+            forRemove: {
+                datasets: { $size: 0 },
+                annotation: null
+            }
+        };
+
+        var updates = {
+            $set: {
+                annotation: null
+            }
+        };
+
+        bulk.find(query.forUpdate).update(updates);
+        bulk.find(query.forRemove).delete();
+
+        bulk.execute(function (err) {
             if (err) return res.status(500).send(err.message);
             return res.sendStatus(204);
         });
