@@ -48,17 +48,20 @@ angular.module("cassandre").controller("AnnotationsController", [
 
     // Get all annotations
     $scope.showAnnotations = function () {
-        if (Object.keys($scope.genes.annotations).length > 0) {
-            $scope.data.rows = [];
+        $scope.data.rows = [];
 
-            // Turn the object into an array of objects
-            for (var gene in $scope.genes.annotations) {
-                var row = $scope.genes.annotations[gene];
-                row['ID'] = gene;
+        // Turn the object into an array of objects
+        $scope.genes.all.forEach(function (gene) {
+            var row = {};
+
+            if (gene.annotation) {
+                row['ID'] = gene.ID;
+                Object.assign(row, gene.annotation);
                 $scope.data.rows.push(row);
             }
-        }
-        else {
+        });
+
+        if ($scope.data.rows.length === 0) {
             alert("No annotations found in the database.")
         }
     };
