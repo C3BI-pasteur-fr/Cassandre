@@ -13,7 +13,7 @@
                 type="search"
                 ng-model="searchBar.filter"
                 ng-model-options="{ allowInvalid: true }"
-                placeholder="Type a gene name here..."
+                placeholder="Type a gene name, annotation..."
                 title="Search for genes in the database"
                 required>
 
@@ -47,7 +47,7 @@
             </li>
         </ul>
     </div>-->
-    <table class="table table-hover">
+    <table class="table table-hover" ng-show="searchBar.filter">
         <thead>
             <tr>
                 <th class="buttonCell"
