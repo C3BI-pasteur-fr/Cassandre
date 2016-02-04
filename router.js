@@ -243,35 +243,43 @@ module.exports = function (app, db) {
 
     // Update datasets informations
     .put(function (req, res, next) {
-        var oldName = decodeURIComponent(req.query.name);
 
-        datasets.update({
-            name: oldName
-        }, {
-            $set: {
-                name: req.body.name,
-                description: req.body.description
-            }
-        }, function (err) {
+        var oldName = decodeURIComponent(req.query.name);
+        var query = { name: oldName };
+        var updates = { $set: {} };
+
+        if (req.body.name) {
+            updates.$set.name = req.body.name;
+        }
+        
+        if (req.body.description) {
+            updates.$set.description = req.body.description;
+        }
+        
+        if (typeof(req.body.hidden) === 'boolean') {
+            updates.$set.hidden = req.body.hidden;
+        }
+
+        datasets.update(query, updates, function (err) {
             if (err) {
                 if (err.code === 11000) {
                     err.message = "A dataset with this name already exists.";
                     return next({status: 400, error: err});
                 }
-                return next({status: 500, error: err});
+                return next(err);
+            }
+            
+            if (req.body.name && oldName !== req.body.name) {
+                return next();
             }
 
-            return next();
+            return res.sendStatus(204);
         });
     },
 
     // If needed, update the genes collection
     function (req, res, next) {
         var oldName = decodeURIComponent(req.query.name);
-
-        if (oldName === req.body.name) {
-            return res.sendStatus(204);
-        }
 
         genes.updateMany({
             datasets: oldName
