@@ -1,8 +1,7 @@
 /*
- * This directive creates new attributes
- * for file inputs. It allows you to detect properly
- * when the selected file changes, and bind it to the
- * controller scope.
+ * This directive creates new attributes for file inputs.
+ * It allows you to detect properly when the selected file changes
+ * and to bind it to the controller scope.
  *
  * The attributes are :
  *
@@ -24,9 +23,10 @@ angular.module("cassandre").directive('ngFileModel', ['$parse', function ($parse
             element.bind('change', function () {
                 scope.$apply(function () {
                     model.assign(scope, element[0].files[0]);
-                    
+
                     if (attrs.ngFileName) {
-                        modelName.assign(scope, element[0].files[0].name);
+                        var name = element[0].files[0].name.replace(/\.[^.]+$/, "");
+                        modelName.assign(scope, name);
                     }
                 });
             });

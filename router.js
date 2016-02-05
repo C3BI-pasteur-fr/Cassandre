@@ -24,8 +24,6 @@ module.exports = function (app, db) {
         // limits
     });
 
-    //var datasetsHandler = upload.single('dataset');
-
     var datasetsHandler = upload.fields([
         { name: 'dataset', maxCount: 1 },
         { name: 'metadata', maxCount: 1 }

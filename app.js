@@ -26,24 +26,28 @@ MongoClient.connect(url, function (err, db) {
 
     console.log('Connected to the ' + database + ' database on port ' + port);
 
-    // DATABASE CONGIGURATION
+    // DATABASE
     // =========================================================================
 
+    // Indexes
     db.collection("datasets").createIndex({ name: 1 }, { unique: true, background: true });
     db.collection("genes").createIndex({ ID: 1 }, { unique: true, background: true });
 
-    // SERVER CONGIGURATION
+    // SERVER
     // =========================================================================
 
     var app = express();
 
+    // Configuration
     var serverPort = config('web.port', 8080);
     var serverHost = config('web.host', 'localhost');
 
+    // Middlewares
     app.use(express.static('public'));
     app.use(bodyParser.urlencoded({ extended: false }));
     app.use(bodyParser.json());
 
+    // Start
     app.listen(serverPort, serverHost, function () {
         console.log('Server listening to ' + serverHost + ' on port ' + serverPort);
         router(app, db);

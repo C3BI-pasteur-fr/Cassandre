@@ -26,7 +26,7 @@
                     <th></th>
                     <th title="Name of the dataset">Name</th>
                     <th title="Date of insertion in the database">Posted Date</th>
-                    <th title="Make changes to the dataset">Edit</th>
+                    <th title="Update the dataset information">Update</th>
                     <th title="Delete this dataset">Remove</th>
                 </tr>
                 <tr>
@@ -60,7 +60,7 @@
                     <td class="buttonCell" ng-bind="set.name" title="{{ set.description }}" role="button" ng-click="select(set.name)"></td>
                     <td class="buttonCell" ng-bind="formatDate(set.postedDate)" title="{{ set.description }}" role="button" ng-click="select(set.name)"></td>
                     <td class="buttonCellEdit"
-                        title="Make changes to the dataset"
+                        title="Update the dataset information"
                         role="button"
                         ng-click="edit(set)"
                         data-toggle="modal"
