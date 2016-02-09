@@ -1,42 +1,59 @@
 {
-  "name": "cassandre",
-  "version": "0.0.0",
-  "description": "Personal database system integrating a user-friendly interface to manage and explore multiple sets of large-scale experimental results",
-  "keywords": [
-    "biology",
-    "bioinformatics",
-    "data visualisation"
-  ],
-  "author": {
-    "name": "Simon Malesys",
-    "email": "simon.malesys@pasteur.fr"
-  },
-  "contributors": [
-    {
-      "name": "Hervé Ménager",
-      "email": "hmenager@pasteur.fr"
+    "name": "cassandre",
+    "version": "0.0.0",
+    "description": "Personal database system integrating a user-friendly interface to manage and explore multiple sets of large-scale experimental results",
+    "homepage": "https://research.pasteur.fr/en/project/gim_cassandre/",
+    "license": "GPL-3.0",
+    "keywords": [
+        "biology",
+        "bioinformatics",
+        "data visualisation",
+        "data sets"
+    ],
+    "author": {
+        "name": "Simon Malesys",
+        "email": "simon.malesys@pasteur.fr",
+        "url": "https://research.pasteur.fr/en/member/simon-malesys/"
     },
-    {
-      "name": "Christophe Malabat",
-      "email": "malabat@pasteur.fr"
+    "contributors": [
+        {
+            "name": "Hervé Ménager",
+            "email": "hmenager@pasteur.fr",
+            "url": "https://research.pasteur.fr/en/member/herve-menager/"
+        },
+        {
+            "name": "Christophe Malabat",
+            "email": "malabat@pasteur.fr",
+            "url": "https://research.pasteur.fr/en/member/christophe-malabat/"
+        }
+    ],
+    "bugs": {
+        "url": "https://github.com/C3BI-pasteur-fr/Cassandre/issues",
+        "email": "simon.malesys@pasteur.fr"
+    },
+    "main": "app.js",
+    "dependencies": {
+        "body-parser": "^1.13.1",
+        "config": "^1.14.0",
+        "express": "^4.13.3",
+        "mongodb": "^2.0.49",
+        "multer": "^1.0.5",
+        "xlsx": "^0.8.0"
+    },
+    "scripts": {
+        "start": "node app.js",
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/C3BI-pasteur-fr/Cassandre.git"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://projets.pasteur.fr/git/cassandre"
+    },
+    "engines": {
+        "node": ">=4.2.6",
+        "npm": ">=3.0.0"
     }
-  ],
-  "license": "ISC",
-  "main": "app.js",
-  "dependencies": {
-    "body-parser": "^1.13.1",
-    "config": "^1.14.0",
-    "express": "^4.13.3",
-    "mongodb": "^2.0.49",
-    "multer": "^1.0.5",
-    "xlsx": "^0.8.0"
-  },
-  "scripts": {
-    "start": "node app.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://projets.pasteur.fr/git/cassandre"
-  }
 }
