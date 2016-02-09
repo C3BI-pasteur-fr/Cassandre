@@ -473,11 +473,15 @@ module.exports = function (app, db) {
             };
         }
 
-        experiments.find(query).project({ "_id": 0 }).toArray(function (err, list) {
+        experiments
+        .find(query)
+        .project({ "_id": 0 })
+        .sort({ "ID": 1 })
+        .toArray(function (err, list) {
             if (err) {
                 return res.status(500).send('Error with the database : ' + err.message);
             }
-
+    
             return res.status(200).send(list);
         });
     });
@@ -496,7 +500,11 @@ module.exports = function (app, db) {
             };
         }
 
-        genes.find(query).project({ "_id": 0 }).toArray(function (err, list) {
+        genes
+        .find(query)
+        .project({ "_id": 0 })
+        .sort({ "ID": 1 })
+        .toArray(function (err, list) {
             if (err) {
                 return res.status(500).send('Error with the database : ' + err.message);
             }
@@ -586,7 +594,10 @@ module.exports = function (app, db) {
             query['exp'] = { '$in': exps };
         }
 
-        data.find(query).toArray(function (err, list) {
+        data
+        .find(query)
+        .sort({ "gene": 1 })
+        .toArray(function (err, list) {
             if (err) {
                 return res.status(500).send('Error with the database : ' + err.message);
             }
