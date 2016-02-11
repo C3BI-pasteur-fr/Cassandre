@@ -528,10 +528,16 @@ module.exports = function (app, db) {
             var bulk = genes.initializeUnorderedBulkOp();
 
             geneList.forEach(function (gene) {
+                var updates = {};
+
+                for (var field in annotations[gene]) {
+                    updates['annotation.' + field] = annotations[gene][field];
+                }
+
                 bulk.find({ ID: gene })
                     .upsert()
                     .updateOne({
-                        $set: { 'annotation': annotations[gene] },
+                        $set: updates,
                         $setOnInsert: { 'datasets': [] },
                     }
                 );
