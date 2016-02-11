@@ -513,13 +513,15 @@ module.exports = function (app, db) {
         });
     });
 
+// =========================================================================
+    
     app.route('/api/genes/annotations')
 
     // Insert the genes annotations file into the database
-    .post(annotHandler, function (req, res) {
+    .post(annotHandler, function (req, res, next) {
         parseFile(req.file, function (err, annotations) {
             if (err) {
-                return res.status(400).send(err.message);
+                return next({ status: 400, message: err.message})
             }
 
             var geneList = Object.keys(annotations);
@@ -536,10 +538,29 @@ module.exports = function (app, db) {
             });
 
             bulk.execute(function (err) {
-                if (err) return res.status(500).send(err.message);
-                return res.sendStatus(201);
+                if (err) return next({ status: 500, message: err.message});
+                res.sendStatus(201);
+                return next();
             });
         });
+    },
+
+    // Error handler
+    function (err, req, res, next) {
+        if (err.status) {
+            res.status(err.status).send(err.message);
+        }
+        else {
+            res.status(500).send(err.message);
+        }
+
+        console.log(err);
+        next();
+    },
+
+    // Remove the files from the system, errors or not
+    function (req, res, next) {
+        fs.unlinkSync(req.file.path);
     })
 
     // Remove the genes annotations from the database.
