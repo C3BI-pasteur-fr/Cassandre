@@ -175,7 +175,7 @@ module.exports = function (app, db) {
         });
     },
 
-    // Upsert the genes information
+    // Upsert the genes
     function (req, res, next) {
 
         var geneList = Object.keys(req.cassandre.dataset);
@@ -186,7 +186,7 @@ module.exports = function (app, db) {
                 .upsert()
                 .updateOne({
                     $addToSet: { datasets: req.body.name },
-                    $setOnInsert: { annotation: null }
+                    $setOnInsert: { annotation: {} }
                 }
             );
         });
@@ -197,7 +197,7 @@ module.exports = function (app, db) {
         });
     },
 
-    // Upsert the experiments information
+    // Upsert the experiments
     function (req, res, next) {
 
         var firstID = Object.keys(req.cassandre.dataset)[0];
@@ -272,11 +272,11 @@ module.exports = function (app, db) {
         if (req.body.name) {
             updates.$set.name = req.body.name;
         }
-        
+
         if (req.body.description) {
             updates.$set.description = req.body.description;
         }
-        
+
         if (typeof(req.body.hidden) === 'boolean') {
             updates.$set.hidden = req.body.hidden;
         }
@@ -289,7 +289,7 @@ module.exports = function (app, db) {
                 }
                 return next(err);
             }
-            
+
             if (req.body.name && oldName !== req.body.name) {
                 return next();
             }
@@ -383,7 +383,7 @@ module.exports = function (app, db) {
             forUpdate: { datasets: setName },
             forRemove: {
                 datasets: { $size: 0 },
-                annotation: null
+                annotation: {}
             }
         };
 
@@ -481,7 +481,7 @@ module.exports = function (app, db) {
             if (err) {
                 return res.status(500).send('Error with the database : ' + err.message);
             }
-    
+
             return res.status(200).send(list);
         });
     });
@@ -514,7 +514,7 @@ module.exports = function (app, db) {
     });
 
 // =========================================================================
-    
+
     app.route('/api/genes/annotations')
 
     // Insert the genes annotations file into the database
@@ -580,13 +580,13 @@ module.exports = function (app, db) {
             forUpdate: {},
             forRemove: {
                 datasets: { $size: 0 },
-                annotation: null
+                annotation: {}
             }
         };
 
         var updates = {
             $set: {
-                annotation: null
+                annotation: {}
             }
         };
 
