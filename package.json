@@ -18,13 +18,18 @@
     "contributors": [
         {
             "name": "Hervé Ménager",
-            "email": "hmenager@pasteur.fr",
+            "email": "herve.menager@pasteur.fr",
             "url": "https://research.pasteur.fr/en/member/herve-menager/"
         },
         {
             "name": "Christophe Malabat",
-            "email": "malabat@pasteur.fr",
+            "email": "christophe.malabat@pasteur.fr",
             "url": "https://research.pasteur.fr/en/member/christophe-malabat/"
+        },
+        {
+            "name": "Cosmin Saveanu",
+            "email": "cosmin.saveanu@pasteur.fr",
+            "url": "https://research.pasteur.fr/fr/member/cosmin-saveanu/"
         }
     ],
     "bugs": {
