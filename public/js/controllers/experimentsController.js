@@ -22,8 +22,7 @@
 // ============================================================================
 
 /*
- * Angular controller for the "Search Experiments" section and the side menu
- * with the selected experiments lists.
+ * Angular controller for the "Search Experiments" section.
  *
  */
 
@@ -56,10 +55,10 @@ angular.module("cassandre").controller("ExperimentsController", [ "$scope", "$fi
             metadata: function (metadata) {
                 var datasets = Object.keys(metadata);
                 var text = "";
-                
+
                 datasets.forEach(function (set) {
                     text = text.concat("Dataset ", set, " : \n");
-                    
+
                     if (metadata[set]) {
                         for (var field in metadata[set]) {
                             text = text.concat("-- ", field, " : ", metadata[set][field], "\n");
@@ -68,10 +67,10 @@ angular.module("cassandre").controller("ExperimentsController", [ "$scope", "$fi
                     else {
                         text = text.concat("-- ", "No metadata", "\n");
                     }
-                    
+
                     text = text.concat("\n");
                 });
-                
+
                 return text;
             }
         }

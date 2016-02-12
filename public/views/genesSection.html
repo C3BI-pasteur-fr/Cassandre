@@ -2,8 +2,11 @@
     Search Genes
 </h3>
 
+<!-- Search Bar -->
+<!------------------------------------------------------------------------->
+
 <div class="row">
-    <form class="col-lg-offset-2 col-lg-8"> <!--ng-submit="searchBar.select()"-->
+    <form class="col-lg-offset-2 col-lg-8" ng-submit="searchBar.select()">
         <div class="input-group">
             <span class="input-group-addon">
                 <i class="glyphicon glyphicon-search"></i>
@@ -23,25 +26,28 @@
                         ng-click="searchBar.reset()"
                         title="Erase the current filter">Reset</button>
 
-                <!--<input id="selectButton"
+                <input id="selectButton"
                     class="btn btn-info"
                     type="submit"
                     value="Select"
-                    title="Add the displayed list to the side menu">-->
+                    title="Add the displayed list to the side menu">
             </span>
         </div>
     </form>
 </div>
 
+<!-- Display section -->
+<!------------------------------------------------------------------------->
+
 <div class="row">
-    <!--<div class="col-lg-offset-2 col-lg-8">
+<!--    <div class="col-lg-offset-2 col-lg-8">
         <ul class="list-group" ng-show="searchBar.filter">
             <li class="list-group-item"
-                ng-repeat="exp in exps.all | filter:searchBar.filter">
-                <span ng-bind="exp.ID" title="{{ searchBar.format.metadata(exp.metadata) }}"></span>
+                ng-repeat="gene in genes.all | filter:searchBar.filter">
+                <span ng-bind="gene.ID" title="{{ searchBar.format.annotation(gene.annotation) }}"></span>
                 <span class="pull-right">
                     <em class="text-muted"
-                        ng-bind="searchBar.format.datasets(exp.datasets)"
+                        ng-bind="searchBar.format.datasets(gene.datasets)"
                         title="List of datasets where this experiment is found"></em>
                 </span>
             </li>
@@ -50,23 +56,22 @@
     <table class="table table-hover" ng-show="searchBar.filter">
         <thead>
             <tr>
-                <th class="buttonCell"
-                    ng-repeat="(header, value) in genes.all[0]"
-                    ng-bind="header">
-                </th>
+                <th rowspan=2>ID</th>
+                <th rowspan=2>Datasets</th>
+                <th colspan=6>Annotations</th>
+                <!--<th class="buttonCell" ng-repeat="(header, value) in genes.all[0]" ng-bind="header"></th>-->
             </tr>
-            <!--<tr ng-show="filters.active">
-                <th ng-repeat="(header, value) in data.rows[0]">
-                    <input class="form-control" type="text" ng-model="filters.list[header]" title="Filter this column">
-                </th>
-            </tr>-->
+            <tr>
+                <th ng-repeat="(header, value) in genes.all[0].annotation" ng-bind="header"></th>
+            </tr>
         </thead>
         <tbody>
-            <tr ng-repeat="gene in genes.all.slice(0, 100) | filter:searchBar.filter">
+            <tr ng-repeat="gene in genes.all.slice(0, 50) | filter:searchBar.filter">
                 <td ng-bind="gene.ID"></td>
-                <td ng-bind="searchBar.format.datasets(gene.datasets)"></td>
-                <td ng-bind="searchBar.format.annotation(gene.annotation)">
+                <td>
+                    <span class="badge" ng-bind="gene.datasets.length"></span>
                 </td>
+                <td ng-repeat="(field, value) in gene.annotation" ng-bind="value"></td>
             </tr>
         </tbody>
     </table>

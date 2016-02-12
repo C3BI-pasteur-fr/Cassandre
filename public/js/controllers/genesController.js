@@ -43,13 +43,13 @@ angular.module("cassandre").controller("GenesController", [ "$scope", "$filter",
                 if (!annotation) {
                     return "No annotation";
                 }
-    
+
                 var text = "";
-    
+
                 for (var field in annotation) {
                     text = text.concat(field, " : ", annotation[field], "\n");
                 }
-    
+
                 return text;
             }
         }
