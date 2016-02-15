@@ -30,28 +30,38 @@ angular.module("cassandre").controller("GenesController", [ "$scope", "$filter",
 
     $scope.genes = genes.list.all();
 
+    // SEARCH BAR
+    // =====================================================================
+
     $scope.searchBar = {
         filter: "",
+        limit: 50,
         reset: function () {
             this.filter = "";
         },
-        format: {
-            datasets: function (datasets) {
-                return datasets.join(", ");
-            },
-            annotation: function (annotation) {
-                if (!annotation) {
-                    return "No annotation";
-                }
+        select: function () {
+            var geneList = $filter("filter")($scope.genes.all, this.filter);
 
-                var text = "";
-
-                for (var field in annotation) {
-                    text = text.concat(field, " : ", annotation[field], "\n");
-                }
-
-                return text;
+            if (geneList.length !== 0) {
+                $scope.genes.sideMenu[this.filter] = {
+                    all: geneList,
+                    selected: []
+                };
             }
+
+            this.reset();
+        }
+    };
+
+    // HELPERS
+    // =====================================================================
+
+    $scope.hasAnnotations = function (gene) {
+        if (Object.keys(gene.annotation).length > 0) {
+            return true;
+        }
+        else {
+            return false;
         }
     };
 }]);

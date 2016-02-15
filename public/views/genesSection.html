@@ -2,11 +2,22 @@
     Search Genes
 </h3>
 
+<div class="row">
+
+<!-- Buttons -->
+<!------------------------------------------------------------------------->
+
+    <div class="col-lg-2">
+        <div class="btn-group">
+            <button class="btn btn-info" ng-click="getData()" title="Display the raw results">Raw results</button>
+            <button class="btn btn-info" ng-click="histogram()" title="Display an histogram">Histogram</button>
+        </div>
+    </div>
+
 <!-- Search Bar -->
 <!------------------------------------------------------------------------->
 
-<div class="row">
-    <form class="col-lg-offset-2 col-lg-8" ng-submit="searchBar.select()">
+    <form class="col-lg-8" ng-submit="searchBar.select()">
         <div class="input-group">
             <span class="input-group-addon">
                 <i class="glyphicon glyphicon-search"></i>
@@ -36,42 +47,31 @@
     </form>
 </div>
 
-<!-- Display section -->
+<!-- Display table -->
 <!------------------------------------------------------------------------->
 
 <div class="row">
-<!--    <div class="col-lg-offset-2 col-lg-8">
-        <ul class="list-group" ng-show="searchBar.filter">
-            <li class="list-group-item"
-                ng-repeat="gene in genes.all | filter:searchBar.filter">
-                <span ng-bind="gene.ID" title="{{ searchBar.format.annotation(gene.annotation) }}"></span>
-                <span class="pull-right">
-                    <em class="text-muted"
-                        ng-bind="searchBar.format.datasets(gene.datasets)"
-                        title="List of datasets where this experiment is found"></em>
-                </span>
-            </li>
-        </ul>
-    </div>-->
     <table class="table table-hover" ng-show="searchBar.filter">
         <thead>
             <tr>
                 <th rowspan=2>ID</th>
                 <th rowspan=2>Datasets</th>
-                <th colspan=6>Annotations</th>
-                <!--<th class="buttonCell" ng-repeat="(header, value) in genes.all[0]" ng-bind="header"></th>-->
+                <th colspan="{{ genes.annotationsFields.length }}">Annotations</th>
             </tr>
-            <tr>
-                <th ng-repeat="(header, value) in genes.all[0].annotation" ng-bind="header"></th>
+            <tr ng-show="genes.annotationsFields.length > 0">
+                <th ng-repeat="field in genes.annotationsFields" ng-bind="field"></th>
             </tr>
         </thead>
         <tbody>
-            <tr ng-repeat="gene in genes.all.slice(0, 50) | filter:searchBar.filter">
+            <tr ng-repeat="gene in genes.all | filter:searchBar.filter | limitTo:searchBar.limit" track by gene.ID>
                 <td ng-bind="gene.ID"></td>
                 <td>
                     <span class="badge" ng-bind="gene.datasets.length"></span>
                 </td>
-                <td ng-repeat="(field, value) in gene.annotation" ng-bind="value"></td>
+                <td ng-show="hasAnnotations(gene)" ng-repeat="field in genes.annotationsFields" ng-bind="gene.annotation[field]"></td>
+                <td ng-show="!hasAnnotations(gene)" colspan="{{ genes.annotationsFields.length }}">
+                    No annotation
+                </td>
             </tr>
         </tbody>
     </table>

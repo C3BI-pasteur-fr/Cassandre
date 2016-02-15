@@ -32,7 +32,23 @@ angular.module("cassandre").factory("genes", ["genesHttp", "annotationsHttp", fu
     var genes = {
         all: [],                 // The genes found in data sets
         selected: [],            // The genes selected in the side menu list
+        annotationsFields: [],   // The complete list of annotation fields, used for the display
+        sideMenu: {}             // The selected lists of genes in the aside section
     };
+
+    function getAnnotationsSize(geneList) {
+        var fields = [];
+
+        geneList.forEach(function (gene) {
+            Object.keys(gene.annotation).forEach(function (field) {
+                if (fields.indexOf(field) === -1) {
+                    fields.push(field);
+                }
+            });
+        });
+
+        return fields;
+    }
 
     return {
         list: {
@@ -76,16 +92,23 @@ angular.module("cassandre").factory("genes", ["genesHttp", "annotationsHttp", fu
         },
         get: {
             all: function () {
-                genes.all = genesHttp.get();
+                genesHttp.get(function (geneList) {
+                    genes.all = geneList;
+                    genes.annotationsFields = getAnnotationsSize(geneList);
+                });
             },
             selected: function (sets) {
-                genes.all = genesHttp.get({ sets: sets });
+                genesHttp.get({ sets: sets }, function (geneList) {
+                    genes.all = geneList;
+                    genes.annotationsFields = getAnnotationsSize(geneList);
+                });
             }
         },
         remove: {
             annotations: function (annotations) {
                 annotationsHttp.remove({}, function (response) {
                     genes.all = genesHttp.get();
+                    genes.annotationsFields = [];
                     alert("Annotations successfully deleted.");
                 });
             }

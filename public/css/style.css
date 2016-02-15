@@ -16,6 +16,11 @@ main {
     margin-left: 270px;
 }
 
+th, td {
+    text-align: center;
+    vertical-align: middle;
+}
+
 .asideBlockTitle {
     background-color: transparent;
     color: #FFF;

@@ -77,7 +77,7 @@ angular.module("cassandre").controller("AnnotationsController", [
         $scope.genes.all.forEach(function (gene) {
             var row = {};
 
-            if (gene.annotation) {
+            if (Object.keys(gene.annotation).length > 0) {
                 row['ID'] = gene.ID;
                 Object.assign(row, gene.annotation);
                 $scope.data.rows.push(row);
@@ -88,7 +88,7 @@ angular.module("cassandre").controller("AnnotationsController", [
             alert("No annotations found in the database.")
         }
     };
-    
+
     // Remove all annotations from the database
     $scope.deleteAnnotations = function () {
         if (confirm("Do you really want to remove all annotations permanently?")) {

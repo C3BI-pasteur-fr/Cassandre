@@ -3,12 +3,19 @@
 </h3>
 
 <div class="row">
+
+<!-- Buttons -->
+<!------------------------------------------------------------------------->
+
     <div class="col-lg-2">
         <div class="btn-group">
             <button class="btn btn-info" ng-click="getData()" title="Display the raw results">Raw results</button>
             <button class="btn btn-info" ng-click="histogram()" title="Display an histogram">Histogram</button>
         </div>
     </div>
+
+<!-- Search Bar -->
+<!------------------------------------------------------------------------->
 
     <form class="col-lg-8" ng-submit="searchBar.select()">
         <div class="input-group">
@@ -40,15 +47,17 @@
     </form>
 </div>
 
+<!-- Typeahead -->
+<!------------------------------------------------------------------------->
+
 <div class="row">
     <div class="col-lg-offset-2 col-lg-8">
         <ul class="list-group" ng-show="searchBar.filter">
-            <li class="list-group-item"
-                ng-repeat="exp in exps.all | filter:searchBar.filter">
-                <span ng-bind="exp.ID" title="{{ searchBar.format.metadata(exp.metadata) }}"></span>
+            <li class="list-group-item" ng-repeat="exp in exps.all | filter:searchBar.filter | limitTo:searchBar.limit" track by exp.ID>
+                <span ng-bind="exp.ID" title="{{ typeahead.format.metadata(exp.metadata) }}"></span>
                 <span class="pull-right">
                     <em class="text-muted"
-                        ng-bind="searchBar.format.datasets(exp.datasets)"
+                        ng-bind="typeahead.format.datasets(exp.datasets)"
                         title="List of datasets where this experiment is found"></em>
                 </span>
             </li>

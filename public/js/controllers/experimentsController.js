@@ -30,8 +30,12 @@ angular.module("cassandre").controller("ExperimentsController", [ "$scope", "$fi
 
     $scope.exps = experiments.list.all();
 
+    // SEARCH BAR
+    // =====================================================================
+
     $scope.searchBar = {
         filter: "",
+        limit: 50,
         reset: function () {
             this.filter = "";
         },
@@ -46,9 +50,14 @@ angular.module("cassandre").controller("ExperimentsController", [ "$scope", "$fi
             }
 
             this.reset();
-        },
+        }
+    }
+
+    // TYPEAHEAD
+    // =====================================================================
+
+    $scope.typeahead = {
         format: {
-            // TO PUT IN THE EXPERIMENTS SERVICE
             datasets: function (datasets) {
                 return datasets.join(", ");
             },
