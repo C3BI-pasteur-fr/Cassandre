@@ -50,29 +50,29 @@ angular.module("cassandre").controller("MenuController", ["$scope", "$filter", "
                 exps.deselect.one(list, exp);
             }
         },
-        gene: function (gene) {
+        gene: function (list, gene) {
             if ($scope.genes.list.selected.indexOf(gene) === -1) {
-                genes.select.one(gene);
+                genes.select.one(list, gene);
             }
             else {
-                genes.deselect.one(gene);
-            }
-        },
-        all: {
-            genes: function () {
-                var list = $filter("filter")($scope.genes.list.all, $scope.filter, $scope.comparator);
-                var allSelected = list.every(function (gene) {
-                    return $scope.genes.list.selected.indexOf(gene) > -1;
-                });
-
-                if (allSelected) {
-                    genes.deselect.many(list);
-                }
-                else {
-                    genes.select.many(list);
-                }
+                genes.deselect.one(list, gene);
             }
         }
+        //all: {
+        //    genes: function () {
+        //        var list = $filter("filter")($scope.genes.list.all, $scope.filter, $scope.comparator);
+        //        var allSelected = list.every(function (gene) {
+        //            return $scope.genes.list.selected.indexOf(gene) > -1;
+        //        });
+        //
+        //        if (allSelected) {
+        //            genes.deselect.many(list);
+        //        }
+        //        else {
+        //            genes.select.many(list);
+        //        }
+        //    }
+        //}
     };
 
     // EXPERIMENTS
@@ -83,7 +83,6 @@ angular.module("cassandre").controller("MenuController", ["$scope", "$filter", "
         removeList: function (list) {
             exps.remove.list(list);
         },
-        // TO PUT IN THE EXPERIMENTS SERVICE
         format: function (metadata) {
             var datasets = Object.keys(metadata);
             var text = "";
@@ -112,42 +111,10 @@ angular.module("cassandre").controller("MenuController", ["$scope", "$filter", "
 
     $scope.genes = {
         list: genes.list.all(),
-        filter: "",
-        limit: 20,
-        show: {
-            selected: false,
-            selection: function () {
-                this.selected = !this.selected;
-            }
+        removeList: function (list) {
+            genes.remove.list(list);
         },
-
-        // Special comparator to handle annotations in the genes filter
-        comparator: function (actual, expected) {
-            if ($scope.genes.show.selected && $scope.genes.list.selected.indexOf(actual) === -1) {
-                return false;
-            }
-
-            if (!expected) {
-                return true;
-            }
-
-            var filter = expected.toLowerCase();
-            var gene = actual.toLowerCase();
-            var annotations = $scope.genes.list.annotations[actual] || {};
-
-            // Match the gene name
-            if (gene.indexOf(filter) > -1) {
-                return true;
-            }
-
-            // Match something in the annotations
-            for (var key in annotations) {
-                if (annotations[key].toString().toLowerCase().indexOf(filter) > -1) {
-                    return true;
-                }
-            }
-        },
-
+        
         // Format an annotation to display it in the gene list
         format: function (annotation) {
             if (!annotation) {
@@ -162,5 +129,41 @@ angular.module("cassandre").controller("MenuController", ["$scope", "$filter", "
 
             return text;
         }
+        //filter: "",
+        //limit: 20,
+        //show: {
+        //    selected: false,
+        //    selection: function () {
+        //        this.selected = !this.selected;
+        //    }
+        //},
+        //
+        //// Special comparator to handle annotations in the genes filter
+        //comparator: function (actual, expected) {
+        //    if ($scope.genes.show.selected && $scope.genes.list.selected.indexOf(actual) === -1) {
+        //        return false;
+        //    }
+        //
+        //    if (!expected) {
+        //        return true;
+        //    }
+        //
+        //    var filter = expected.toLowerCase();
+        //    var gene = actual.toLowerCase();
+        //    var annotations = $scope.genes.list.annotations[actual] || {};
+        //
+        //    // Match the gene name
+        //    if (gene.indexOf(filter) > -1) {
+        //        return true;
+        //    }
+        //
+        //    // Match something in the annotations
+        //    for (var key in annotations) {
+        //        if (annotations[key].toString().toLowerCase().indexOf(filter) > -1) {
+        //            return true;
+        //        }
+        //    }
+        //},
+
     };
 }]);

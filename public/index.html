@@ -93,6 +93,7 @@
 
         <aside id="sideMenu" ng-controller="MenuController">
             <div class="asideBlock" ng-repeat="(title, list) in exps.list.sideMenu">
+                <h4 class="asideSectionTitle" ng-show="$first">Experiments</h4>
                 <h5 class="asideBlockTitle"
                     ng-click="display(title)"
                     title="List of experiments that match the word {{ title }}">
@@ -115,8 +116,29 @@
                 </ul>
             </div>
 
-            <div class="asideBlock">
+            <div class="asideBlock" ng-repeat="(title, list) in genes.list.sideMenu">
+                <h4 class="asideSectionTitle" ng-show="$first">Genes</h4>
                 <h5 class="asideBlockTitle"
+                    ng-click="display(title)"
+                    title="List of genes that match the word {{ title }}">
+                    <span ng-show="displayedList !== title">&#9656;</span>
+                    <span ng-show="displayedList === title">&#9662;</span>
+                    <span ng-bind="title"></span>
+                    <div class="badges pull-right">
+                        <span class="badge greenBadge" ng-bind="genes.list.sideMenu[title].selected.length" ng-show="genes.list.sideMenu[title].selected.length > 0" title="Number of selected genes"></span>
+                        <span class="badge" ng-bind="genes.list.sideMenu[title].all.length" title="Number of genes"></span>
+                        <span class="badge redBadge" ng-click="genes.removeList(title)" title="Remove this list">&#10006;</span>
+                    </div>
+                </h5>
+                <ul class="asideList" ng-show="displayedList === title">
+                    <li class="asideListItem"
+                        ng-repeat="gene in list.all"
+                        ng-class="{ 'bg-primary': genes.list.selected.indexOf(gene.ID) > -1 }"
+                        ng-click="select.gene(title, gene.ID)"
+                        ng-bind="gene.ID"
+                        title="{{ genes.format(gene.annotation) }}"></li>
+                </ul>
+                <!--<h5 class="asideBlockTitle"
                     ng-click="display('genes')"
                     title="List of genes">
                     <span ng-show="displayedList !== 'genes'">&#9656;</span>
@@ -149,7 +171,7 @@
                         ng-click="select.gene(gene.ID)"
                         ng-bind="gene.ID"
                         title="{{ genes.format(gene.annotation) }}"></li>
-                </ul>
+                </ul>-->
             </div>
         </aside>
 

@@ -57,30 +57,32 @@ angular.module("cassandre").factory("genes", ["genesHttp", "annotationsHttp", fu
             }
         },
         select: {
-            one: function (gene) {
+            one: function (list, gene) {
                 genes.selected.push(gene);
-            },
-            many: function (list) {
-                var select = this;
-                list.forEach(function (gene) {
-                    if (genes.selected.indexOf(gene) === -1) {
-                        select.one(gene);
-                    }
-                });
+                genes.sideMenu[list].selected.push(gene);
             }
+            //many: function (list) {
+            //    var select = this;
+            //    list.forEach(function (gene) {
+            //        if (genes.selected.indexOf(gene) === -1) {
+            //            select.one(gene);
+            //        }
+            //    });
+            //}
         },
         deselect: {
-            one: function (gene) {
+            one: function (list, gene) {
                 genes.selected.splice(genes.selected.indexOf(gene), 1);
-            },
-            many: function (list) {
-                var deselect = this;
-                list.forEach(function (gene) {
-                    if (genes.selected.indexOf(gene) > -1) {
-                        deselect.one(gene);
-                    }
-                });
+                genes.sideMenu[list].selected.splice(genes.sideMenu[list].selected.indexOf(gene), 1);
             }
+            //many: function (list) {
+            //    var deselect = this;
+            //    list.forEach(function (gene) {
+            //        if (genes.selected.indexOf(gene) > -1) {
+            //            deselect.one(gene);
+            //        }
+            //    });
+            //}
         },
         reset: {
             all: function () {
@@ -111,6 +113,15 @@ angular.module("cassandre").factory("genes", ["genesHttp", "annotationsHttp", fu
                     genes.annotationsFields = [];
                     alert("Annotations successfully deleted.");
                 });
+            },
+            list: function (list) {
+                genes.sideMenu[list].selected.forEach(function (gene) {
+                    if (genes.selected.indexOf(gene) > -1) {
+                        genes.selected.splice(genes.selected.indexOf(gene), 1);
+                    }
+                });
+
+                delete genes.sideMenu[list];
             }
         }
     };

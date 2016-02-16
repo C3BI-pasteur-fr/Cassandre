@@ -70,7 +70,7 @@
                 </td>
                 <td ng-show="hasAnnotations(gene)" ng-repeat="field in genes.annotationsFields" ng-bind="gene.annotation[field]"></td>
                 <td ng-show="!hasAnnotations(gene)" colspan="{{ genes.annotationsFields.length }}">
-                    No annotation
+                    <em class="text-muted">No annotation</em>
                 </td>
             </tr>
         </tbody>
