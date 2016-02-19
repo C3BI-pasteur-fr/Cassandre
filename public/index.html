@@ -15,6 +15,7 @@
         <script src="js/lib/D3.min.js"></script>
         <script src="js/cassandre.js"></script>
         <script src="js/directives/ngFileModel.js"></script>
+        <script src="js/filters/geneFilter.js"></script>
         <script src="js/services/allowedFileTypes.js"></script>
         <script src="js/services/resources.js"></script>
         <script src="js/services/stats.js"></script>
@@ -26,7 +27,7 @@
         <script src="js/services/tsvToJson.js"></script>
         <script src="js/services/xlsxToJson.js"></script>
         <script src="js/controllers/mainController.js"></script>
-        <script src="js/controllers/menuController.js"></script>
+        <script src="js/controllers/sideMenuController.js"></script>
         <script src="js/controllers/experimentsController.js"></script>
         <script src="js/controllers/genesController.js"></script>
         <script src="js/controllers/datasetsController.js"></script>
@@ -35,144 +36,11 @@
 
     <body ng-controller="MainController">
         <nav class="navbar navbar-inverse navbar-fixed-top">
-            <div class="container">
-                <div class="navbar-header">
-                    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-menu">
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                        <span class="icon-bar"></span>
-                    </button>
-                    <a class="navbar-brand" href="#">
-                        Cassandre
-                    </a>
-                </div>
-                <div id="navbar-menu" class="collapse navbar-collapse">
-                    <ul class="nav navbar-nav">
-                        <li ng-class="{ active: activeSection === 'experimentsSection' }" title="Search for experiments in the database">
-                            <a role="button" ng-click="activeSection = 'experimentsSection'">
-                                <span class="glyphicon glyphicon-search"></span>
-                                Search Experiments
-                            </a>
-                        </li>
-                        <li ng-class="{ active: activeSection === 'genesSection' }">
-                            <a role="button" ng-click="activeSection = 'genesSection'">
-                                <span class="glyphicon glyphicon-search"></span>
-                                Search Genes
-                            </a>
-                        </li>
-                        <li ng-class="{ active: activeSection === 'datasetsSection' }" title="Manage the datasets">
-                            <a role="button" ng-click="activeSection = 'datasetsSection'">
-                                <span class="glyphicon glyphicon-list"></span>
-                                Datasets
-                            </a>
-                        </li>
-                        <li ng-class="{ active: activeSection === 'annotationsSection' }" title="Manage the genes annotations">
-                            <a role="button" ng-click="activeSection = 'annotationsSection'">
-                                <span class="glyphicon glyphicon-th-list"></span>
-                                Annotations
-                            </a>
-                        </li>
-                    </ul>
-                    <ul class="nav navbar-nav navbar-right">
-                        <li title="Go to the documentation of Cassandre">
-                            <a href="https://github.com/C3BI-pasteur-fr/Cassandre/wiki" target="_blank">
-                                <span class="glyphicon glyphicon-book"></span>
-                                Documentation
-                            </a>
-                        </li>
-                        <li title="Send an email to the developer">
-                            <a href="mailto:simon.malesys@pasteur.fr">
-                                <span class="glyphicon glyphicon-envelope"></span>
-                                Contact
-                            </a>
-                        </li>
-                    </ul>
-                </div>
-            </div>
+            <ng-include src="'views/navBar.html'"></ng-include>
         </nav>
 
-        <aside id="sideMenu" ng-controller="MenuController">
-            <div class="asideBlock" ng-repeat="(title, list) in exps.list.sideMenu">
-                <h4 class="asideSectionTitle" ng-show="$first">Experiments</h4>
-                <h5 class="asideBlockTitle"
-                    ng-click="display(title)"
-                    title="List of experiments that match the word {{ title }}">
-                    <span ng-show="displayedList !== title">&#9656;</span>
-                    <span ng-show="displayedList === title">&#9662;</span>
-                    <span ng-bind="title"></span>
-                    <div class="badges pull-right">
-                        <span class="badge greenBadge" ng-bind="exps.list.sideMenu[title].selected.length" ng-show="exps.list.sideMenu[title].selected.length > 0" title="Number of selected experiments"></span>
-                        <span class="badge" ng-bind="exps.list.sideMenu[title].all.length" title="Number of experiments"></span>
-                        <span class="badge redBadge" ng-click="exps.removeList(title)" title="Remove this list">&#10006;</span>
-                    </div>
-                </h5>
-                <ul class="asideList" ng-show="displayedList === title">
-                    <li class="asideListItem"
-                        ng-repeat="exp in list.all"
-                        ng-class="{ 'bg-primary': exps.list.selected.indexOf(exp.ID) > -1 }"
-                        ng-click="select.exp(title, exp.ID)"
-                        ng-bind="exp.ID"
-                        title="{{ exps.format(exp.metadata) }}"></li>
-                </ul>
-            </div>
-
-            <div class="asideBlock" ng-repeat="(title, list) in genes.list.sideMenu">
-                <h4 class="asideSectionTitle" ng-show="$first">Genes</h4>
-                <h5 class="asideBlockTitle"
-                    ng-click="display(title)"
-                    title="List of genes that match the word {{ title }}">
-                    <span ng-show="displayedList !== title">&#9656;</span>
-                    <span ng-show="displayedList === title">&#9662;</span>
-                    <span ng-bind="title"></span>
-                    <div class="badges pull-right">
-                        <span class="badge greenBadge" ng-bind="genes.list.sideMenu[title].selected.length" ng-show="genes.list.sideMenu[title].selected.length > 0" title="Number of selected genes"></span>
-                        <span class="badge" ng-bind="genes.list.sideMenu[title].all.length" title="Number of genes"></span>
-                        <span class="badge redBadge" ng-click="genes.removeList(title)" title="Remove this list">&#10006;</span>
-                    </div>
-                </h5>
-                <ul class="asideList" ng-show="displayedList === title">
-                    <li class="asideListItem"
-                        ng-repeat="gene in list.all"
-                        ng-class="{ 'bg-primary': genes.list.selected.indexOf(gene.ID) > -1 }"
-                        ng-click="select.gene(title, gene.ID)"
-                        ng-bind="gene.ID"
-                        title="{{ genes.format(gene.annotation) }}"></li>
-                </ul>
-                <!--<h5 class="asideBlockTitle"
-                    ng-click="display('genes')"
-                    title="List of genes">
-                    <span ng-show="displayedList !== 'genes'">&#9656;</span>
-                    <span ng-show="displayedList === 'genes'">&#9662;</span>
-                    <span>Genes</span>
-                    <div class="badges pull-right">
-                        <span class="badge greenBadge" ng-bind="genes.list.selected.length" ng-show="genes.list.selected.length > 0" title="Number of selected genes"></span>
-                        <span class="badge" ng-bind="genes.list.all.length" title="Total number of genes"></span>
-                    </div>
-                </h5>
-                <ul class="asideList" ng-show="displayedList === 'genes'">
-                    <li>
-                        <div class="input-group">
-                            <span class="input-group-btn">
-                                <button class="btn btn-default" type="button" ng-click="select.all.genes()" title="Select or Deselect all">
-                                    <span class="glyphicon glyphicon-check"></span>
-                                </button>
-                            </span>
-                            <input class="form-control" ng-model="genes.filter" type="text" placeholder="Filter..." title="Filter the genes by names or annotations">
-                            <span class="input-group-btn">
-                                <button class="btn btn-default" type="button" ng-click="genes.show.selection()" title="Show the current selection">
-                                    <span class="glyphicon glyphicon-shopping-cart"></span>
-                                </button>
-                            </span>
-                        </div>
-                    </li>
-                    <li class="asideListItem"
-                        ng-repeat="gene in genes.list.all | filter:genes.filter:genes.comparator | limitTo: genes.limit"
-                        ng-class="{ 'bg-primary': genes.list.selected.indexOf(gene.ID) > -1 }"
-                        ng-click="select.gene(gene.ID)"
-                        ng-bind="gene.ID"
-                        title="{{ genes.format(gene.annotation) }}"></li>
-                </ul>-->
-            </div>
+        <aside id="sideMenu" ng-controller="SideMenuController">
+            <ng-include src="'views/sideMenu.html'"></ng-include>
         </aside>
 
         <main>

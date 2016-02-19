@@ -57,8 +57,12 @@ module.exports = function (app, db) {
     // Database collections
     var datasets = db.collection('datasets');
     var experiments = db.collection('experiments');
-    var genes = db.collection('genes');
     var data = db.collection('data');
+    var genes = db.collection('genes');
+
+    var db = {
+        genes: db.collection('genes')
+    };
 
 // ROUTES
 // =========================================================================
@@ -490,8 +494,9 @@ module.exports = function (app, db) {
 
     app.route('/api/genes/')
 
-    // List all the genes (lines) for given datasets
+    // Return all the genes of the given datasets
     .get(function (req, res, next) {
+        var genes = {};
         var query = {};
 
         if (req.query.sets) {
@@ -500,16 +505,23 @@ module.exports = function (app, db) {
             };
         }
 
-        genes
+        db.genes
         .find(query)
         .project({ "_id": 0 })
         .sort({ "ID": 1 })
-        .toArray(function (err, list) {
+        .forEach(function (gene) {
+
+            // Put all the genes into a single object
+            genes[gene.ID] = {
+                datasets: gene.datasets,
+                annotation: gene.annotation
+            };
+
+        }, function (err) {
             if (err) {
                 return res.status(500).send('Error with the database : ' + err.message);
             }
-
-            return res.status(200).send(list);
+            return res.status(200).send(genes);
         });
     });
 

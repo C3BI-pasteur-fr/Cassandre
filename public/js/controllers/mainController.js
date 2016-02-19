@@ -26,7 +26,6 @@
  *
  */
 
-
 angular.module("cassandre").controller("MainController", [
     "$scope", "$filter", "jsonToTsv", "datasets", "experiments", "genes", "data",
     function ($scope, $filter, jsonToTsv, datasets, experiments, genes, data) {
@@ -45,6 +44,9 @@ angular.module("cassandre").controller("MainController", [
 
     // Control switch for the displayed section
     $scope.activeSection = "genesSection";
+    $scope.activate = function (section) {
+        $scope.activeSection = section;
+    };
 
     // Used for ordering the results and mark the columns
     $scope.predicate = "";

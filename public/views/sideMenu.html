@@ -1,0 +1,59 @@
+<!-- Experiments -->
+<!------------------------------------------------------------------------->
+
+<div class="asideBlock" ng-repeat="(title, list) in exps.list.sideMenu track by title">
+    <h4 class="asideSectionTitle" ng-if="$first">Experiments</h4>
+    <h5 class="asideBlockTitle"
+        ng-click="display(title, 'Exps')"
+        title="List of experiments that match the word {{ title }}">
+        <span ng-show="displayedList !== title">&#9656;</span>
+        <span ng-show="displayedList === title">&#9662;</span>
+        <span ng-bind="title"></span>
+        <div class="badges pull-right">
+            <span class="badge greenBadge" ng-bind="exps.list.sideMenu[title].selected.length" ng-show="exps.list.sideMenu[title].selected.length > 0" title="Number of selected experiments"></span>
+            <span class="badge" ng-bind="exps.list.sideMenu[title].all.length" title="Number of experiments"></span>
+            <span class="badge redBadge" ng-click="exps.removeList(title)" title="Remove this list">&#10006;</span>
+        </div>
+    </h5>
+    <ul class="asideList" ng-show="displayedList === title + 'Exps'">
+        <li>
+            <button class="asideListButton" type="button" ng-click="exps.select.all(list)">Select all</button>
+        </li>
+        <li class="asideListItem"
+            ng-repeat="exp in list.all track by exp.ID"
+            ng-class="{ 'bg-primary': exps.list.selected.indexOf(exp.ID) > -1 }"
+            ng-click="exps.select.one(title, exp.ID)"
+            ng-bind="exp.ID"
+            title="{{ exps.format(exp.metadata) }}"></li>
+    </ul>
+</div>
+
+<!-- Genes -->
+<!------------------------------------------------------------------------->
+
+<div class="asideBlock" ng-repeat="(title, list) in genes.list.sideMenu">
+    <h4 class="asideSectionTitle" ng-if="$first">Genes</h4>
+    <h5 class="asideBlockTitle"
+        ng-click="display(title, 'Genes')"
+        title="List of genes that match the word {{ title }}">
+        <span ng-show="displayedList !== title">&#9656;</span>
+        <span ng-show="displayedList === title">&#9662;</span>
+        <span ng-bind="title"></span>
+        <div class="badges pull-right">
+            <span class="badge greenBadge" ng-bind="genes.list.sideMenu[title].selected.length" ng-show="genes.list.sideMenu[title].selected.length > 0" title="Number of selected genes"></span>
+            <span class="badge" ng-bind="genes.list.sideMenu[title].all.length" title="Number of genes"></span>
+            <span class="badge redBadge" ng-click="genes.removeList(title)" title="Remove this list">&#10006;</span>
+        </div>
+    </h5>
+    <ul class="asideList" ng-show="displayedList === (title + 'Genes')">
+        <li>
+            <button class="asideListButton" type="button" ng-click="genes.select.all(title)">Select all</button>
+        </li>
+        <li class="asideListItem"
+            ng-repeat="gene in list.all"
+            ng-class="{ 'bg-primary': genes.list.selected.indexOf(gene) > -1 }"
+            ng-click="genes.select.one(gene)"
+            ng-bind="gene"
+            title="{{ genes.annotationOf(gene) }}"></li>
+    </ul>
+</div>

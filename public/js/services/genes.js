@@ -30,22 +30,23 @@
 angular.module("cassandre").factory("genes", ["genesHttp", "annotationsHttp", function (genesHttp, annotationsHttp) {
 
     var genes = {
-        all: [],                 // The genes found in data sets
+        all: {},                 // The genes found in data sets
         selected: [],            // The genes selected in the side menu list
         annotationsFields: [],   // The complete list of annotation fields, used for the display
         sideMenu: {}             // The selected lists of genes in the aside section
     };
 
-    function getAnnotationsSize(geneList) {
+    // Get the complete list of annotations fields for all genes
+    function getAnnotationsFields(geneList) {
         var fields = [];
 
-        geneList.forEach(function (gene) {
-            Object.keys(gene.annotation).forEach(function (field) {
+        for (var ID in geneList) {
+            Object.keys(geneList[ID].annotation).forEach(function (field) {
                 if (fields.indexOf(field) === -1) {
                     fields.push(field);
                 }
             });
-        });
+        };
 
         return fields;
     }
@@ -57,32 +58,43 @@ angular.module("cassandre").factory("genes", ["genesHttp", "annotationsHttp", fu
             }
         },
         select: {
-            one: function (list, gene) {
-                genes.selected.push(gene);
-                genes.sideMenu[list].selected.push(gene);
+            one: function (gene) {
+                if (genes.selected.indexOf(gene) === -1) {
+                    genes.selected.push(gene);
+
+                    for (var list in genes.sideMenu) {
+                        if (genes.sideMenu[list].all.indexOf(gene) > -1) {
+                            genes.sideMenu[list].selected.push(gene);
+                        }
+                    }
+                }
+            },
+            many: function (geneList) {
+                var select = this;
+                geneList.forEach(function (gene) {
+                    select.one(gene);
+                });
             }
-            //many: function (list) {
-            //    var select = this;
-            //    list.forEach(function (gene) {
-            //        if (genes.selected.indexOf(gene) === -1) {
-            //            select.one(gene);
-            //        }
-            //    });
-            //}
         },
         deselect: {
-            one: function (list, gene) {
-                genes.selected.splice(genes.selected.indexOf(gene), 1);
-                genes.sideMenu[list].selected.splice(genes.sideMenu[list].selected.indexOf(gene), 1);
+            one: function (gene) {
+                if (genes.selected.indexOf(gene) > -1) {
+                    genes.selected.splice(genes.selected.indexOf(gene), 1);
+
+                    for (var list in genes.sideMenu) {
+                        if (genes.sideMenu[list].selected.indexOf(gene) > -1) {
+                            var index = genes.sideMenu[list].selected.indexOf(gene);
+                            genes.sideMenu[list].selected.splice(index, 1);
+                        }
+                    }
+                }
+            },
+            many: function (geneList) {
+                var deselect = this;
+                geneList.forEach(function (gene) {
+                    deselect.one(gene);
+                });
             }
-            //many: function (list) {
-            //    var deselect = this;
-            //    list.forEach(function (gene) {
-            //        if (genes.selected.indexOf(gene) > -1) {
-            //            deselect.one(gene);
-            //        }
-            //    });
-            //}
         },
         reset: {
             all: function () {
@@ -95,14 +107,14 @@ angular.module("cassandre").factory("genes", ["genesHttp", "annotationsHttp", fu
         get: {
             all: function () {
                 genesHttp.get(function (geneList) {
-                    genes.all = geneList;
-                    genes.annotationsFields = getAnnotationsSize(geneList);
+                    genes.all = geneList.toJSON();
+                    genes.annotationsFields = getAnnotationsFields(geneList.toJSON());
                 });
             },
             selected: function (sets) {
                 genesHttp.get({ sets: sets }, function (geneList) {
-                    genes.all = geneList;
-                    genes.annotationsFields = getAnnotationsSize(geneList);
+                    genes.all = geneList.toJSON();
+                    genes.annotationsFields = getAnnotationsFields(geneList.toJSON());
                 });
             }
         },

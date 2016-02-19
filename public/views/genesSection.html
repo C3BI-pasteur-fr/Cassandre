@@ -26,7 +26,7 @@
             <input class="form-control"
                 type="search"
                 ng-model="searchBar.filter"
-                ng-model-options="{ allowInvalid: true }"
+                ng-model-options="{ allowInvalid: true, debounce: 150 }"
                 placeholder="Type a gene name, an annotation keyword..."
                 title="Search for genes in the database"
                 required>
@@ -59,16 +59,16 @@
                 <th colspan="{{ genes.annotationsFields.length }}">Annotations</th>
             </tr>
             <tr ng-show="genes.annotationsFields.length > 0">
-                <th ng-repeat="field in genes.annotationsFields" ng-bind="field"></th>
+                <th ng-repeat="field in genes.annotationsFields track by $index" ng-bind="field"></th>
             </tr>
         </thead>
         <tbody>
-            <tr ng-repeat="gene in genes.all | filter:searchBar.filter | limitTo:searchBar.limit" track by gene.ID>
-                <td ng-bind="gene.ID"></td>
+            <tr ng-repeat="(ID, gene) in genes.all | geneFilter:searchBar.filter:searchBar.limit">
+                <td ng-bind="ID"></td>
                 <td>
                     <span class="badge" ng-bind="gene.datasets.length"></span>
                 </td>
-                <td ng-show="hasAnnotations(gene)" ng-repeat="field in genes.annotationsFields" ng-bind="gene.annotation[field]"></td>
+                <td ng-show="hasAnnotations(gene)" ng-repeat="field in genes.annotationsFields track by $index" ng-bind="gene.annotation[field]"></td>
                 <td ng-show="!hasAnnotations(gene)" colspan="{{ genes.annotationsFields.length }}">
                     <em class="text-muted">No annotation</em>
                 </td>

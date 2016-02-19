@@ -75,7 +75,6 @@ angular.module("cassandre")
     return $resource("/api/genes", {}, {
         get: {
             method: "GET",
-            isArray: true,
             params: {
                 "sets[]": "@sets"
             }

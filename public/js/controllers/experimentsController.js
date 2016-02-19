@@ -26,9 +26,9 @@
  *
  */
 
-angular.module("cassandre").controller("ExperimentsController", [ "$scope", "$filter", "experiments", function ($scope, $filter, experiments) {
+angular.module("cassandre").controller("ExperimentsController", [ "$scope", "$filter", "experiments", function ($scope, $filter, exps) {
 
-    $scope.exps = experiments.list.all();
+    $scope.exps = exps.list.all();
 
     // SEARCH BAR
     // =====================================================================

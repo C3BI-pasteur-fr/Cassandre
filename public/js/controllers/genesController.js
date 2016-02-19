@@ -40,9 +40,9 @@ angular.module("cassandre").controller("GenesController", [ "$scope", "$filter",
             this.filter = "";
         },
         select: function () {
-            var geneList = $filter("filter")($scope.genes.all, this.filter);
+            var geneList = Object.keys($filter("geneFilter")($scope.genes.all, this.filter));
 
-            if (geneList.length !== 0) {
+            if (geneList.length > 0) {
                 $scope.genes.sideMenu[this.filter] = {
                     all: geneList,
                     selected: []

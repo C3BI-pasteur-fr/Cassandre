@@ -1,0 +1,54 @@
+<div class="container">
+    <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-menu">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#">
+            Cassandre
+        </a>
+    </div>
+    <div id="navbar-menu" class="collapse navbar-collapse">
+        <ul class="nav navbar-nav">
+            <li ng-class="{ active: activeSection === 'experimentsSection' }" title="Search for experiments in the database">
+                <a role="button" ng-click="activate('experimentsSection')">
+                    <span class="glyphicon glyphicon-search"></span>
+                    Search Experiments
+                </a>
+            </li>
+            <li ng-class="{ active: activeSection === 'genesSection' }" title="Search for genes in the database">
+                <a role="button" ng-click="activate('genesSection')">
+                    <span class="glyphicon glyphicon-search"></span>
+                    Search Genes
+                </a>
+            </li>
+            <li ng-class="{ active: activeSection === 'datasetsSection' }" title="Manage the datasets">
+                <a role="button" ng-click="activate('datasetsSection')">
+                    <span class="glyphicon glyphicon-list"></span>
+                    Datasets
+                </a>
+            </li>
+            <li ng-class="{ active: activeSection === 'annotationsSection' }" title="Manage the genes annotations">
+                <a role="button" ng-click="activate('annotationsSection')">
+                    <span class="glyphicon glyphicon-th-list"></span>
+                    Annotations
+                </a>
+            </li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+            <li title="Go to the documentation of Cassandre">
+                <a href="https://github.com/C3BI-pasteur-fr/Cassandre/wiki" target="_blank">
+                    <span class="glyphicon glyphicon-book"></span>
+                    Documentation
+                </a>
+            </li>
+            <li title="Send an email to the developer">
+                <a href="mailto:simon.malesys@pasteur.fr">
+                    <span class="glyphicon glyphicon-envelope"></span>
+                    Contact
+                </a>
+            </li>
+        </ul>
+    </div>
+</div>
