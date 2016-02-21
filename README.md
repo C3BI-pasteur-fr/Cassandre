@@ -1,8 +1,7 @@
 Cassandre
 =========
 
-
-Project of personal database system integrating a "user-friendly" interface to manage and explore multiple sets of large-scale experimental results. 
+Cassandre is a project of personal database system integrating a "user-friendly" interface to manage and explore multiple sets of large-scale experimental results in biology.
 
 This project is funded and developed at the [Institut Pasteur](http://www.pasteur.fr/fr) of Paris.
 
@@ -22,5 +21,7 @@ Project objectives:
 A prototype of user interface for quantitative data exploration was developed by the coordinator of the project. However, this prototype is specialized for a given type of experimental data obtained on the yeast S. cerevisiae and hardwired to a specialized database system.
 
 The ultimate goal of our project, which goes beyond the current proposal and depends on its completion, is enabling the identification of patterns and links in experimental data that would lead to new testable hypotheses and discoveries.
+
+#### Web site
 
 The official page of the project can be found on [the Institut Pasteur web site.](https://research.pasteur.fr/fr/project/gim_cassandre/)
