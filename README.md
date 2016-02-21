@@ -15,13 +15,13 @@ We develop such a tool for the exploration of large-scale data. This new “wind
 
 Project objectives: 
 
-1. To develop the kernel of a database managing system for large-scale datasets. 
+1. To develop the kernel of a database managing system for large-scale data sets. 
 2. To create and implement plugins that makes use of the best practices for data exploration, in which the scientists will be able to visualize, explore and correlate results of various experiments and integrate such results with previous knowledge (Gene Ontology annotations and publications).
  
 A prototype of user interface for quantitative data exploration was developed by the coordinator of the project. However, this prototype is specialized for a given type of experimental data obtained on the yeast S. cerevisiae and hardwired to a specialized database system.
 
 The ultimate goal of our project, which goes beyond the current proposal and depends on its completion, is enabling the identification of patterns and links in experimental data that would lead to new testable hypotheses and discoveries.
 
-#### Web site
+#### Website
 
-The official page of the project can be found on [the Institut Pasteur web site.](https://research.pasteur.fr/fr/project/gim_cassandre/)
+The official page of the project can be found on [the Institut Pasteur website.](https://research.pasteur.fr/fr/project/gim_cassandre/)
