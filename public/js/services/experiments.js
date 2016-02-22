@@ -30,7 +30,7 @@
 angular.module("cassandre").factory("experiments", ["expHttp", function (expHttp) {
 
     var exps = {
-        all: [],                 // All the experiments found in datasets
+        all: {},                 // All the experiments found in datasets
         selected: [],            // All the experiments selected in the side menu lists
         sideMenu: {}             // The selected lists of experiments in the aside section
     };
@@ -42,15 +42,42 @@ angular.module("cassandre").factory("experiments", ["expHttp", function (expHttp
             }
         },
         select: {
-            one: function (list, exp) {
-                exps.selected.push(exp);
-                exps.sideMenu[list].selected.push(exp);
+            one: function (exp) {
+                if (exps.selected.indexOf(exp) === -1) {
+                    exps.selected.push(exp);
+
+                    for (var list in exps.sideMenu) {
+                        if (exps.sideMenu[list].all.indexOf(exp) > -1) {
+                            exps.sideMenu[list].selected.push(exp);
+                        }
+                    }
+                }
+            },
+            many: function (expList) {
+                var select = this;
+                expList.forEach(function (exp) {
+                    select.one(exp);
+                });
             }
         },
         deselect: {
-            one: function (list, exp) {
-                exps.selected.splice(exps.selected.indexOf(exp), 1);
-                exps.sideMenu[list].selected.splice(exps.sideMenu[list].selected.indexOf(exp), 1);
+            one: function (exp) {
+                if (exps.selected.indexOf(exp) > -1) {
+                    exps.selected.splice(exps.selected.indexOf(exp), 1);
+
+                    for (var list in exps.sideMenu) {
+                        if (exps.sideMenu[list].selected.indexOf(exp) > -1) {
+                            var index = exps.sideMenu[list].selected.indexOf(exp);
+                            exps.sideMenu[list].selected.splice(index, 1);
+                        }
+                    }
+                }
+            },
+            many: function (expList) {
+                var deselect = this;
+                expList.forEach(function (exp) {
+                    deselect.one(exp);
+                });
             }
         },
         remove: {
@@ -75,12 +102,12 @@ angular.module("cassandre").factory("experiments", ["expHttp", function (expHttp
         get: {
             all: function () {
                 expHttp.get(function (expList) {
-                    exps.all = expList;
+                    exps.all = expList.toJSON();
                 });
             },
             selected: function (sets) {
                 expHttp.get({ sets: sets }, function (expList) {
-                    exps.all = expList;
+                    exps.all = expList.toJSON();
                 });
             }
         }

@@ -56,11 +56,10 @@ module.exports = function (app, db) {
 
     // Database collections
     var datasets = db.collection('datasets');
-    var experiments = db.collection('experiments');
     var data = db.collection('data');
-    var genes = db.collection('genes');
 
     var db = {
+        experiments: db.collection('experiments'),
         genes: db.collection('genes')
     };
 
@@ -183,7 +182,7 @@ module.exports = function (app, db) {
     function (req, res, next) {
 
         var geneList = Object.keys(req.cassandre.dataset);
-        var bulk = genes.initializeUnorderedBulkOp();
+        var bulk = db.genes.initializeUnorderedBulkOp();
 
         geneList.forEach(function (gene) {
             bulk.find({ ID: gene })
@@ -206,10 +205,10 @@ module.exports = function (app, db) {
 
         var firstID = Object.keys(req.cassandre.dataset)[0];
         var expList = Object.keys(req.cassandre.dataset[firstID]);
-        var bulk = experiments.initializeUnorderedBulkOp();
+        var bulk = db.experiments.initializeUnorderedBulkOp();
 
         expList.forEach(function (exp) {
-            var meta = req.cassandre.metadata ? req.cassandre.metadata[exp] : null;
+            var meta = req.cassandre.metadata ? req.cassandre.metadata[exp] : {};
             var updates = {
                 $addToSet: {
                     datasets: req.body.name
@@ -306,7 +305,7 @@ module.exports = function (app, db) {
     function (req, res, next) {
         var oldName = decodeURIComponent(req.query.name);
 
-        genes.updateMany({
+        db.genes.updateMany({
             datasets: oldName
         }, {
             $set: {
@@ -331,7 +330,7 @@ module.exports = function (app, db) {
         updates.$rename = {};
         updates.$rename["metadata." + oldName] = req.body.name;
 
-        experiments.updateMany(query, updates, function (err) {
+        db.experiments.updateMany(query, updates, function (err) {
             if (err) return next(err);
             return next();
         });
@@ -381,7 +380,7 @@ module.exports = function (app, db) {
     function (req, res, next) {
 
         var setName = decodeURIComponent(req.query.name);
-        var bulk = genes.initializeOrderedBulkOp();
+        var bulk = db.genes.initializeOrderedBulkOp();
 
         var query = {
             forUpdate: { datasets: setName },
@@ -412,7 +411,7 @@ module.exports = function (app, db) {
     function (req, res, next) {
 
         var setName = decodeURIComponent(req.query.name);
-        var bulk = experiments.initializeOrderedBulkOp();
+        var bulk = db.experiments.initializeOrderedBulkOp();
 
         var query = {
             forUpdate: { datasets: setName },
@@ -469,6 +468,7 @@ module.exports = function (app, db) {
 
     // List all the experiments (columns) for given datasets
     .get(function (req, res, next) {
+        var experiments = {};
         var query = {};
 
         if (req.query.sets) {
@@ -477,16 +477,23 @@ module.exports = function (app, db) {
             };
         }
 
-        experiments
+        db.experiments
         .find(query)
         .project({ "_id": 0 })
         .sort({ "ID": 1 })
-        .toArray(function (err, list) {
+        .forEach(function (exp) {
+
+            // Put all the experiments into a single object
+            experiments[exp.ID] = {
+                datasets: exp.datasets,
+                metadata: exp.metadata
+            };
+
+        }, function (err) {
             if (err) {
                 return res.status(500).send('Error with the database : ' + err.message);
             }
-
-            return res.status(200).send(list);
+            return res.status(200).send(experiments);
         });
     });
 
@@ -537,7 +544,7 @@ module.exports = function (app, db) {
             }
 
             var geneList = Object.keys(annotations);
-            var bulk = genes.initializeUnorderedBulkOp();
+            var bulk = db.genes.initializeUnorderedBulkOp();
 
             geneList.forEach(function (gene) {
                 var updates = {};
@@ -586,7 +593,7 @@ module.exports = function (app, db) {
     // in any dataset and have no annotation.
     .delete(function (req, res) {
 
-        var bulk = genes.initializeOrderedBulkOp();
+        var bulk = db.genes.initializeOrderedBulkOp();
 
         var query = {
             forUpdate: {},

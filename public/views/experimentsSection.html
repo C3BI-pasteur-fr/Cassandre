@@ -52,9 +52,9 @@
 
 <div class="row">
     <div class="col-lg-offset-2 col-lg-8">
-        <ul class="list-group" ng-show="searchBar.filter">
-            <li class="list-group-item" ng-repeat="exp in exps.all | filter:searchBar.filter | limitTo:searchBar.limit" track by exp.ID>
-                <span ng-bind="exp.ID" title="{{ typeahead.format.metadata(exp.metadata) }}"></span>
+        <ul class="list-group">
+            <li class="list-group-item" ng-repeat="(ID, exp) in exps.all | expFilter:searchBar.filter:searchBar.limit">
+                <span ng-bind="ID" title="{{ typeahead.format.metadata(exp.metadata) }}"></span>
                 <span class="pull-right">
                     <em class="text-muted"
                         ng-bind="typeahead.format.datasets(exp.datasets)"

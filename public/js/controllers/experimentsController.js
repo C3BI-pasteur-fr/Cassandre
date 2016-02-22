@@ -40,7 +40,7 @@ angular.module("cassandre").controller("ExperimentsController", [ "$scope", "$fi
             this.filter = "";
         },
         select: function () {
-            var expsList = $filter("filter")($scope.exps.all, this.filter);
+            var expsList = Object.keys($filter("expFilter")($scope.exps.all, this.filter));
 
             if (expsList.length !== 0) {
                 $scope.exps.sideMenu[this.filter] = {

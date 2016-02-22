@@ -51,18 +51,29 @@ angular.module("cassandre").controller("SideMenuController", ["$scope", "experim
 
         // Select or deselect elements in the list
         select: {
-            one: function (list, exp) {
+            one: function (exp) {
                 if ($scope.exps.list.selected.indexOf(exp) === -1) {
-                    exps.select.one(list, exp);
+                    exps.select.one(exp);
                 }
                 else {
-                    exps.deselect.one(list, exp);
+                    exps.deselect.one(exp);
+                }
+            },
+            all: function (listName) {
+                var list = $scope.exps.list.sideMenu[listName];
+
+                if (list.all.length === list.selected.length) {
+                    exps.deselect.many(list.all);
+                }
+                else {
+                    exps.select.many(list.all);
                 }
             }
         },
 
         // Format the metadata for the display in the title tag
-        format: function (metadata) {
+        metadataOf: function (exp) {
+            var metadata = this.list.all[exp].metadata;
             var datasets = Object.keys(metadata);
             var text = "";
 
@@ -117,7 +128,7 @@ angular.module("cassandre").controller("SideMenuController", ["$scope", "experim
         // Format the annotation for the display in the title tag
         annotationOf: function (gene) {
             var annotation = this.list.all[gene].annotation;
-            
+
             if (!annotation) {
                 return "No annotation";
             }

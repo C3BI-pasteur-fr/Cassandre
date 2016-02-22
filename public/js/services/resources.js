@@ -62,7 +62,6 @@ angular.module("cassandre")
     return $resource("/api/exp", {}, {
         get: {
             method: "GET",
-            isArray: true,
             params: {
                 "sets[]": "@sets"
             }

@@ -1,7 +1,7 @@
 <!-- Experiments -->
 <!------------------------------------------------------------------------->
 
-<div class="asideBlock" ng-repeat="(title, list) in exps.list.sideMenu track by title">
+<div class="asideBlock" ng-repeat="(title, list) in exps.list.sideMenu">
     <h4 class="asideSectionTitle" ng-if="$first">Experiments</h4>
     <h5 class="asideBlockTitle"
         ng-click="display(title, 'Exps')"
@@ -17,14 +17,14 @@
     </h5>
     <ul class="asideList" ng-show="displayedList === title + 'Exps'">
         <li>
-            <button class="asideListButton" type="button" ng-click="exps.select.all(list)">Select all</button>
+            <button class="asideListButton" type="button" ng-click="exps.select.all(title)">Select all</button>
         </li>
         <li class="asideListItem"
-            ng-repeat="exp in list.all track by exp.ID"
-            ng-class="{ 'bg-primary': exps.list.selected.indexOf(exp.ID) > -1 }"
-            ng-click="exps.select.one(title, exp.ID)"
-            ng-bind="exp.ID"
-            title="{{ exps.format(exp.metadata) }}"></li>
+            ng-repeat="exp in list.all"
+            ng-class="{ 'bg-primary': exps.list.selected.indexOf(exp) > -1 }"
+            ng-click="exps.select.one(exp)"
+            ng-bind="exp"
+            title="{{ exps.metadataOf(exp) }}"></li>
     </ul>
 </div>
 

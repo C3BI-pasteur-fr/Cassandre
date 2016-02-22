@@ -22,44 +22,44 @@
 // ============================================================================
 
 /*
- * The filter of the genes section.
+ * The filter of the experiments section.
  *
  */
 
-angular.module("cassandre").filter("geneFilter", function () {
-    return function(genes, search, limit) {
-
-        if (!genes) return {};
+angular.module("cassandre").filter("expFilter", function () {
+    return function (experiments, search, limit) {
+        
+        if (!experiments) return {};
         if (!search) return {};
-
-        var filteredGenes = {};
+        
+        var filteredExps = {};
         var counter = 0;
         var criteria = search.toLowerCase();
-
-        for (var ID in genes) {
-            var gene = genes[ID];
+        
+        for (var ID in experiments) {
+            var exp = experiments[ID];
 
             if (limit && counter === limit) break;
 
-            // Match a gene name
+            // Match an experiment name
             if (ID.toLowerCase().indexOf(criteria) > -1) {
                 counter++;
-                filteredGenes[ID] = gene;
+                filteredExps[ID] = exp;
                 continue;
             }
 
-            // Match a value in the annotation
-            for (var field in gene.annotation) {
-                var value = gene.annotation[field];
+            // Match a dataset name
+            for (var i = 0; i < exp.datasets.length; i++) {
+                var dataset = exp.datasets[i];
 
-                if (value.toString().toLowerCase().indexOf(criteria) > -1) {
+                if (dataset.toLowerCase().indexOf(criteria) > -1) {
                     counter++;
-                    filteredGenes[ID] = gene;
+                    filteredExps[ID] = exp;
                     break;
                 }
             }
         }
-
-        return filteredGenes;
+        
+        return filteredExps;
     }
 });
