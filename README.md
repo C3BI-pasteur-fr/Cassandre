@@ -22,6 +22,10 @@ A prototype of user interface for quantitative data exploration was developed by
 
 The ultimate goal of our project, which goes beyond the current proposal and depends on its completion, is enabling the identification of patterns and links in experimental data that would lead to new testable hypotheses and discoveries.
 
+#### Documentation
+
+More information about the application and the license can be found in the [wiki.](https://github.com/C3BI-pasteur-fr/Cassandre/wiki)
+
 #### Website
 
-The official page of the project can be found on [the Institut Pasteur website.](https://research.pasteur.fr/fr/project/gim_cassandre/)
+The official page of the project can be found on the [Institut Pasteur website.](https://research.pasteur.fr/fr/project/gim_cassandre/)
