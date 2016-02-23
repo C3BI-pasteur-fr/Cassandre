@@ -97,24 +97,24 @@ angular.module("cassandre").controller("DatasetsController", [
     $scope.display = {
         experiments: function (dataset) {
             $scope.data.rows = [];
-            
+
             for (var ID in $scope.exps.all) {
                 if ($scope.exps.all[ID].datasets.indexOf(dataset) > -1) {
-                    
+
                     var metadata = $scope.exps.all[ID].metadata[dataset];
                     var row = { "ID": ID };
 
                     for (var field in metadata) {
                         row[field] = metadata[field];
                     }
-                    
+
                     $scope.data.rows.push(row);
                 }
             }
         },
         genes: function (dataset) {
             $scope.data.rows = [];
-            
+
             for (var ID in $scope.genes.all) {
                 if ($scope.genes.all[ID].datasets.indexOf(dataset) > -1) {
                     var row = { "ID": ID };

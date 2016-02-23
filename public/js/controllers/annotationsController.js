@@ -71,21 +71,21 @@ angular.module("cassandre").controller("AnnotationsController", [
 
     // Get all annotations
     $scope.showAnnotations = function () {
+        if ($scope.genes.annotationsFields.length === 0) {
+            alert("No annotations found in the database.")
+        }
+        
         $scope.data.rows = [];
 
         // Turn the object into an array of objects
-        $scope.genes.all.forEach(function (gene) {
-            var row = {};
+        for (var ID in $scope.genes.all) {
+            var row = { "ID": ID };
 
-            if (Object.keys(gene.annotation).length > 0) {
-                row['ID'] = gene.ID;
-                Object.assign(row, gene.annotation);
-                $scope.data.rows.push(row);
-            }
-        });
+            $scope.genes.annotationsFields.forEach(function (field) {
+                row[field] = $scope.genes.all[ID].annotation[field];
+            });
 
-        if ($scope.data.rows.length === 0) {
-            alert("No annotations found in the database.")
+            $scope.data.rows.push(row);
         }
     };
 
