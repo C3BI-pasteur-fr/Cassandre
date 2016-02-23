@@ -55,6 +55,17 @@ angular.module("cassandre").factory("genes", ["genesHttp", "annotationsHttp", fu
         list: {
             all: function () {
                 return genes;
+            },
+            dataset: function (dataset) {
+                var list = {};
+
+                for (var ID in genes.all) {
+                    if (genes.all[ID].datasets.indexOf(dataset) > -1) {
+                        list[ID] = genes.all[ID];
+                    }
+                }
+
+                return list;
             }
         },
         select: {

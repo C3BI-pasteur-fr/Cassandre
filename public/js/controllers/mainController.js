@@ -43,7 +43,7 @@ angular.module("cassandre").controller("MainController", [
     $scope.genes = genes.list.all();
 
     // Control switch for the displayed section
-    $scope.activeSection = "genesSection";
+    $scope.activeSection = "datasetsSection";
     $scope.activate = function (section) {
         $scope.activeSection = section;
     };
@@ -69,7 +69,7 @@ angular.module("cassandre").controller("MainController", [
         "Limit to 20 lines": 20,
         "Limit to 50 lines": 50,
         "Limit to 100 lines": 100,
-        "No Limit": undefined
+        "Limit to 300 lines": 300
     };
 
     $scope.filters = {

@@ -83,12 +83,12 @@ angular.module("cassandre").factory("datasets", ["datasetsHttp", "experiments", 
         select: {
             all: function () {
                 var displayedSets = datasets.all
-                .filter(function (set) {
-                    return !set.hidden;
-                })
-                .map(function (set) {
-                    return set.name;
-                });
+                    .filter(function (set) {
+                        return !set.hidden;
+                    })
+                    .map(function (set) {
+                        return set.name;
+                    });
 
                 if (angular.equals(datasets.selected, displayedSets)) {
                     deselectAll();

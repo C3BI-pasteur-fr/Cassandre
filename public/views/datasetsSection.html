@@ -6,6 +6,9 @@
 <div class="row">
     <h2 class="col-lg-offset-5 text-muted" ng-show="sets.all.length === 0">No Data</h2>
 
+<!-- Show all button -->
+<!------------------------------------------------------------------------->
+
     <div class="col-lg-1">
         <label ng-show="sets.all.length !== 0">Show All</label>
         <div class="btn-group" role="group" ng-show="sets.all.length !== 0">
@@ -18,6 +21,9 @@
         </div>
     </div>
 
+<!-- Datasets -->
+<!------------------------------------------------------------------------->
+
     <div class="col-lg-7">
         <table id="datasetsList" class="table" ng-show="sets.all.length !== 0">
             <thead>
@@ -26,6 +32,7 @@
                     <th></th>
                     <th title="Name of the dataset">Name</th>
                     <th title="Date of insertion in the database">Posted Date</th>
+                    <th title="Shortcuts to display content of the dataset">Display</th>
                     <th title="Update the dataset information">Update</th>
                     <th title="Delete this dataset">Remove</th>
                 </tr>
@@ -34,7 +41,7 @@
                     <th role="button" ng-click="selectAll()" title="Select all rows">
                         <input type="checkbox" ng-checked="sets.selected.length === sets.all.length">
                     </th>
-                    <th colspan=4>
+                    <th colspan=5>
                         <input class="form-control"
                             id="datasetsFilter"
                             type="text"
@@ -57,8 +64,13 @@
                     <td class="buttonCell" role="button" ng-click="select(set.name)">
                         <input type="checkbox" ng-checked="sets.selected.indexOf(set.name) > -1">
                     </td>
-                    <td class="buttonCell" ng-bind="set.name" title="{{ set.description }}" role="button" ng-click="select(set.name)"></td>
+                    <td class="buttonCell" ng-bind="set.name" title="{{ set.description }}" role="button" ng-click="select(set.name)" title="display the genes of the datasets and their annotations if any"></td>
                     <td class="buttonCell" ng-bind="formatDate(set.postedDate)" title="{{ set.description }}" role="button" ng-click="select(set.name)"></td>
+                    <td>
+                        <button class="btn btn-sm btn-info" type="button" ng-click="display.experiments(set.name)" title="Display the experiments of the dataset and their metadata if any.">Experiments</button>
+                        <button class="btn btn-sm btn-primary" type="button" ng-click="display.genes(set.name)" title="Display the genes of the dataset and their annotations if any.">Genes</button>
+                        <button class="btn btn-sm btn-success" type="button" ng-click="display.data(set.name)" title="Display the content of the dataset.">Data</button>
+                    </td>
                     <td class="buttonCellEdit"
                         title="Update the dataset information"
                         role="button"
@@ -74,6 +86,9 @@
             </tbody>
         </table>
     </div>
+    
+<!-- Statitics panel -->
+<!------------------------------------------------------------------------->
 
     <div class="col-lg-offset-1 col-lg-2">
         <div class="panel panel-info" ng-show="sets.all.length !== 0">
@@ -98,6 +113,9 @@
         </div>
     </div>
 </div>
+
+<!-- Edit set modal -->
+<!------------------------------------------------------------------------->
 
 <div class="modal" id="datasetEdition">
     <div class="modal-dialog">
@@ -137,6 +155,9 @@
         </div>
     </div>
 </div>
+
+<!-- Add a new dataset -->
+<!------------------------------------------------------------------------->
 
 <h3 class="page-header">
     Add a new set

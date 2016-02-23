@@ -27,8 +27,8 @@
  */
 
 angular.module("cassandre").controller("DatasetsController", [
-    "$scope", "$filter", "datasets", "experiments", "stats", "allowedFileTypes", "xlsxToJson", "tsvToJson",
-    function ($scope, $filter, datasets, experiments, stats, allowedFileTypes, xlsxToJson, tsvToJson) {
+    "$scope", "$filter", "datasets", "experiments", "genes", "data", "stats", "allowedFileTypes", "xlsxToJson", "tsvToJson",
+    function ($scope, $filter, datasets, exps, genes, data, stats, allowedFileTypes, xlsxToJson, tsvToJson) {
 
     // ----- Database informations ---------------------------------------- //
 
@@ -37,10 +37,12 @@ angular.module("cassandre").controller("DatasetsController", [
 
     // ----- Data sets --------------------------------------------------- //
 
-    $scope.sets = datasets.list.all();  // The whole data sets lists and markers
-    $scope.filter = "";                 // The menu filter
-    $scope.showHidden = false;          // Marker for the "Show all" buttons
-    $scope.changes = {                  // When changing a data set informations
+    $scope.sets = datasets.list.all();      // The whole data sets lists and markers
+    $scope.exps = exps.list.all();          // All the experiments information
+    $scope.genes = genes.list.all();        // All the genes information
+    $scope.filter = "";                     // The menu filter
+    $scope.showHidden = false;              // Marker for the "Show all" buttons
+    $scope.changes = {                      // When changing a data set informations
         datasetName: "",
         newName: "",
         description : ""
@@ -77,7 +79,7 @@ angular.module("cassandre").controller("DatasetsController", [
     $scope.update = function () {
         datasets.update($scope.changes);
     };
-    
+
     // Remove a data set
     $scope.remove = function (name) {
         if (confirm("Do you really want to remove this dataset permanently?")) {
@@ -89,6 +91,49 @@ angular.module("cassandre").controller("DatasetsController", [
     $scope.formatDate = function (date) {
         return date.replace(/T/, ' ')      // Replace T with a space
                    .replace(/\..+/, '');   // Delete the dot and everything after
+    };
+    
+    // Shortcuts to display some of the datasets content
+    $scope.display = {
+        experiments: function (dataset) {
+            $scope.data.rows = [];
+            
+            for (var ID in $scope.exps.all) {
+                if ($scope.exps.all[ID].datasets.indexOf(dataset) > -1) {
+                    
+                    var metadata = $scope.exps.all[ID].metadata[dataset];
+                    var row = { "ID": ID };
+
+                    for (var field in metadata) {
+                        row[field] = metadata[field];
+                    }
+                    
+                    $scope.data.rows.push(row);
+                }
+            }
+        },
+        genes: function (dataset) {
+            $scope.data.rows = [];
+            
+            for (var ID in $scope.genes.all) {
+                if ($scope.genes.all[ID].datasets.indexOf(dataset) > -1) {
+                    var row = { "ID": ID };
+
+                    $scope.genes.annotationsFields.forEach(function (field) {
+                        row[field] = $scope.genes.all[ID].annotation[field];
+                    });
+
+                    $scope.data.rows.push(row);
+                }
+            }
+        },
+        data: function (dataset) {
+            $scope.data.cells = data.get({
+                sets: encodeURIComponent(dataset)
+            }, function (data) {
+                $scope.cellsToRows(data, "exp", "gene", "value");
+            });
+        }
     };
 
     // ----- Add a new set ---------------------------------------------- //
