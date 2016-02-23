@@ -72,7 +72,8 @@ angular.module("cassandre").controller("AnnotationsController", [
     // Get all annotations
     $scope.showAnnotations = function () {
         if ($scope.genes.annotationsFields.length === 0) {
-            alert("No annotations found in the database.")
+            alert("No annotations found in the database.");
+            return;
         }
         
         $scope.data.rows = [];
