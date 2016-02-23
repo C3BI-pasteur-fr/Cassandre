@@ -118,6 +118,33 @@ th, td {
     background-color: #C71C22;
 }
 
+.infoBlock {
+    position: relative;
+}
+
+.infoBlock .infoBlockText {
+    position: absolute;
+    top: auto;
+    bottom: auto;
+    left: 100%;
+    min-height: 30px;
+    height: auto;
+    min-width: 200px;
+    width: auto;
+    padding: 5px 7px;
+    background-color: #2FA4E7;
+    border-radius: 6px;
+    text-align: center;
+    white-space: pre;
+    color: #FFF;
+    visibility: hidden;
+    z-index: 1;
+}
+
+.infoBlock:hover .infoBlockText {
+    visibility: visible;
+}
+
 /*********** D3 ************/
 
 .chart {

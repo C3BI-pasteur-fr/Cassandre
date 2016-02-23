@@ -56,6 +56,7 @@ angular.module("cassandre").controller("GenesController", [ "$scope", "$filter",
     // HELPERS
     // =====================================================================
 
+    // Check if the gene has annotations
     $scope.hasAnnotations = function (gene) {
         if (Object.keys(gene.annotation).length > 0) {
             return true;
@@ -63,5 +64,20 @@ angular.module("cassandre").controller("GenesController", [ "$scope", "$filter",
         else {
             return false;
         }
+    };
+
+    // Format the list of datasets properly
+    $scope.datasetsOf = function (gene) {
+        if (gene.datasets.length === 0) {
+            return "Does not appear in any dataset.";
+        }
+
+        var text = "This gene appears in:\n";
+
+        gene.datasets.forEach(function (set, index, datasets) {
+            text = text.concat(set, "\n");
+        });
+
+        return text;
     };
 }]);

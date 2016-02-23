@@ -65,8 +65,9 @@
         <tbody>
             <tr ng-repeat="(ID, gene) in genes.all | geneFilter:searchBar.filter:searchBar.limit">
                 <td ng-bind="ID"></td>
-                <td>
+                <td class="infoBlock">
                     <span class="badge" ng-bind="gene.datasets.length"></span>
+                    <span class="infoBlockText" ng-bind="datasetsOf(gene)"></span>
                 </td>
                 <td ng-show="hasAnnotations(gene)" ng-repeat="field in genes.annotationsFields track by $index" ng-bind="gene.annotation[field]"></td>
                 <td ng-show="!hasAnnotations(gene)" colspan="{{ genes.annotationsFields.length }}">
