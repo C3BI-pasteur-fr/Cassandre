@@ -23,33 +23,16 @@
 
 var express = require('express');
 var bodyParser = require('body-parser');
-var MongoClient = require('mongodb').MongoClient;
-var format = require('util').format;
+
+var Database = require('./database');
 var config = require('./config');
 var router = require('./router');
 
-var host = config('db.host', 'localhost');
-var port = config('db.port', 27017);
-var database = config('db.dbName', 'cassandre');
-
-var url = format('mongodb://%s:%d/%s', host, port, database);
-
-MongoClient.connect(url, function (err, db) {
-    if (err) {
-        throw err;
-    }
-
-    console.log('Connected to the ' + database + ' database on port ' + port);
-
-    // DATABASE
-    // =========================================================================
-
-    // Indexes
-    db.collection("datasets").createIndex({ name: 1 }, { unique: true, background: true });
-    db.collection("genes").createIndex({ ID: 1 }, { unique: true, background: true });
+Database.connect(function (err, db) {
+    if (err) throw err;
 
     // SERVER
-    // =========================================================================
+    // ========================================================================
 
     var app = express();
 
@@ -62,29 +45,29 @@ MongoClient.connect(url, function (err, db) {
     app.use(bodyParser.urlencoded({ extended: false }));
     app.use(bodyParser.json());
 
+    // Database reference
+    app.locals.db = db;
+    app.locals.datasets = db.collection('datasets');
+    app.locals.experiments = db.collection('experiments');
+    app.locals.genes = db.collection('genes');
+    app.locals.data = db.collection('data');
+
     // Start
     app.listen(serverPort, serverHost, function () {
         console.log('Server listening to ' + serverHost + ' on port ' + serverPort);
-        router(app, db);
+        router(app);
     });
 
     // EXIT HANDLERS
-    // =========================================================================
+    // ========================================================================
 
     var gracefulExit = function (signal, code) {
         db.close(function (err) {
-            if (err) {
-                throw err;
-            }
-
+            if (err) throw err;
             console.log("Application terminated on " + signal);
             process.exit(code);
         });
-    }
-
-    db.on('close', function () {
-        console.log('Closing connection with the ' + database + ' database');
-    });
+    };
 
     process.on('SIGINT', function () {
         gracefulExit('SIGINT', 130);

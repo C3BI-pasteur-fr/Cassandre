@@ -21,17 +21,19 @@
 // ============================================================================
 // ============================================================================
 
-var fs = require('fs');
-var express = require('express');
-var bodyParser = require('body-parser');
 var multer = require('multer');
-var parseFile = require('./lib/parseFile');
-var rowsToCells = require('./lib/rowsToCells');
 
-module.exports = function (app, db) {
+var statsHandler = require('./routes/statsHandler');
+var datasetsHandler = require('./routes/datasetsHandler');
+var experimentsHandler = require('./routes/experimentsHandler');
+var genesHandler = require('./routes/genesHandler');
+var annotationsHandler = require('./routes/annotationsHandler');
+var dataHandler = require('./routes/dataHandler');
+
+module.exports = function (app) {
 
 // CONGIGURATION
-// =========================================================================
+// ============================================================================
 
     // Multer middleware to handle file uploads
     var storage = multer.diskStorage({
@@ -47,607 +49,55 @@ module.exports = function (app, db) {
         // limits
     });
 
-    var datasetsHandler = upload.fields([
+    var datasetFileHandler = upload.fields([
         { name: 'dataset', maxCount: 1 },
         { name: 'metadata', maxCount: 1 }
     ]);
 
-    var annotHandler = upload.single('annotations');
-
-    // Database collections
-    var datasets = db.collection('datasets');
-    var data = db.collection('data');
-
-    var db = {
-        experiments: db.collection('experiments'),
-        genes: db.collection('genes')
-    };
+    var annotFileHandler = upload.single('annotations');
 
 // ROUTES
-// =========================================================================
+// ============================================================================
 
     app.route('/api/stats')
 
-    // Get the numbers of datasets, experiments and genes in the database
-    .get(function (req, res) {
+    .get(statsHandler)
 
-        // Aggregation pipeline
-        var pipeline = [{
-            $group: {
-                _id: null,
-                datasets: { $addToSet: '$set'},
-                exps: { $addToSet: '$exp'},
-                genes: { $addToSet: '$gene'}
-            }
-        }, {
-            $project: {
-                _id: false,
-                datasets: { $size: '$datasets'},
-                exps: { $size: '$exps'},
-                genes : { $size: '$genes'}
-            }
-        }];
-
-        // Add another stage before the others to filter unrequested datasets
-        if (req.query.datasets) {
-            pipeline.unshift({
-                $match: {
-                    set: { $in: [].concat(req.query.datasets) }
-                }
-            });
-        }
-
-        data.aggregate(pipeline, function (err, results) {
-            if (err) {
-                return res.status(500).send('Error with the database : ' + err.message);
-            }
-
-            return res.status(200).send(results[0]);
-        });
-    })
-
-// =========================================================================
+// ============================================================================
 
     app.route('/api/datasets')
 
-    // Get the list of datasets
-    .get(function (req, res) {
-        datasets.find().toArray(function (err, list) {
-            if (err) {
-                return res.status(500).send('Error with the database : ' + err.message);
-            }
-            return res.status(200).send(list);
-        });
-    })
+    .get(datasetsHandler.GET)
 
-    // Insert the data file into the database
-    .post(datasetsHandler, function (req, res, next) {
-        req.cassandre = {};     // Object to pass data between middlewares
-        return next();
-    },
+    .put(datasetsHandler.PUT)
 
-    // Read The metadata file if exists
-    function (req, res, next) {
-        if (!req.files.metadata) {
-            return next();
-        }
+    .delete(datasetsHandler.DELETE)
 
-        parseFile(req.files.metadata[0], function (err, metadata) {
-            if (err) {
-                return next({ status: 400, error: err});
-            }
+    .post(datasetFileHandler, datasetsHandler.POST);
 
-            req.cassandre.metadata = metadata;
-
-            return next();
-        });
-    },
-
-    // Read the dataset
-    function (req, res, next) {
-        parseFile(req.files.dataset[0], function (err, dataset) {
-            if (err) {
-                return next({ status: 400, error: err});
-            }
-
-            req.cassandre.dataset = dataset;
-
-            return next();
-        });
-    },
-
-    //// Check the compatibility between metadata and dataset //////
-
-    // Insert the dataset information
-    function (req, res, next) {
-        datasets.insertOne({
-            'name': req.body.name,
-            'description': req.body.description,
-            'hidden': false,
-            'postedDate': new Date()
-        }, function (err) {
-            if (err) {
-                if (err.code === 11000) {
-                    err.message = "A dataset with this name already exists.";
-                    return next({status: 400, error: err});
-                }
-                return next({status: 500, error: err});
-            }
-
-            next();
-        });
-    },
-
-    // Upsert the genes
-    function (req, res, next) {
-
-        var geneList = Object.keys(req.cassandre.dataset);
-        var bulk = db.genes.initializeUnorderedBulkOp();
-
-        geneList.forEach(function (gene) {
-            bulk.find({ ID: gene })
-                .upsert()
-                .updateOne({
-                    $addToSet: { datasets: req.body.name },
-                    $setOnInsert: { annotation: {} }
-                }
-            );
-        });
-
-        bulk.execute(function (err) {
-            if (err) return next({status: 500, error: err});
-            return next();
-        });
-    },
-
-    // Upsert the experiments
-    function (req, res, next) {
-
-        var firstID = Object.keys(req.cassandre.dataset)[0];
-        var expList = Object.keys(req.cassandre.dataset[firstID]);
-        var bulk = db.experiments.initializeUnorderedBulkOp();
-
-        expList.forEach(function (exp) {
-            var meta = req.cassandre.metadata ? req.cassandre.metadata[exp] : {};
-            var updates = {
-                $addToSet: {
-                    datasets: req.body.name
-                },
-                $set: {
-                    metadata: {}
-                }
-            };
-
-            updates.$set.metadata[req.body.name] = meta;
-
-            bulk.find({ ID: exp })
-                .upsert()
-                .updateOne(updates);
-        });
-
-        bulk.execute(function (err) {
-            if (err) return next({status: 500, error: err});
-            return next();
-        });
-    },
-
-    // Insert the dataset, turn every row into cells before insertion
-    function (req, res, next) {
-        var rows = req.cassandre.dataset
-        var setName = req.body.name;
-
-        data.insertMany(rowsToCells(rows, setName), function (err) {
-            if (err) return next({status: 500, error: err});
-            res.status(201).send({ name: req.body.name });
-            return next();
-        });
-    },
-
-    // Error handler
-    function (err, req, res, next) {
-        if (err.status && err.error) {
-            res.status(err.status).send(err.error.message);
-        }
-        else {
-            res.status(500).send(err.message);
-        }
-
-        console.log(err);
-        next();
-    },
-
-    // Remove the files from the system, errors or not
-    function (req, res, next) {
-        fs.unlinkSync(req.files.dataset[0].path);
-
-        if (req.files.metadata) {
-            fs.unlinkSync(req.files.metadata[0].path);
-        }
-    })
-
-    // Update datasets informations
-    .put(function (req, res, next) {
-
-        var oldName = decodeURIComponent(req.query.name);
-        var query = { name: oldName };
-        var updates = { $set: {} };
-
-        if (req.body.name) {
-            updates.$set.name = req.body.name;
-        }
-
-        if (req.body.description) {
-            updates.$set.description = req.body.description;
-        }
-
-        if (typeof(req.body.hidden) === 'boolean') {
-            updates.$set.hidden = req.body.hidden;
-        }
-
-        datasets.update(query, updates, function (err) {
-            if (err) {
-                if (err.code === 11000) {
-                    err.message = "A dataset with this name already exists.";
-                    return next({status: 400, error: err});
-                }
-                return next(err);
-            }
-
-            if (req.body.name && oldName !== req.body.name) {
-                return next();
-            }
-
-            return res.sendStatus(204);
-        });
-    },
-
-    // If needed, update the genes collection
-    function (req, res, next) {
-        var oldName = decodeURIComponent(req.query.name);
-
-        db.genes.updateMany({
-            datasets: oldName
-        }, {
-            $set: {
-                "datasets.$": req.body.name
-            }
-        }, function (err) {
-            if (err) return next(err);
-            return next();
-        });
-    },
-
-    // Then the experiments collection
-    function (req, res, next) {
-        var oldName = decodeURIComponent(req.query.name);
-        var query = { datasets: oldName };
-        var updates = {};
-
-        updates.$set = {
-            "datasets.$": req.body.name
-        };
-
-        updates.$rename = {};
-        updates.$rename["metadata." + oldName] = req.body.name;
-
-        db.experiments.updateMany(query, updates, function (err) {
-            if (err) return next(err);
-            return next();
-        });
-    },
-
-    // And finally the data collection
-    function (req, res, next) {
-        var oldName = decodeURIComponent(req.query.name);
-
-        data.updateMany({
-            set: oldName
-        }, {
-            $set: {
-                set: req.body.name
-            }
-        }, function (err) {
-            if (err) return next(err);
-            return res.sendStatus(204);
-        });
-    },
-
-    // Error handler
-    function (err, req, res, next) {
-        if (err.status && err.error) {
-            res.status(err.status).send(err.error.message);
-        }
-        else {
-            res.status(500).send(err.message);
-        }
-    })
-
-    // Remove the given dataset from the database
-    .delete(function (req, res, next) {
-        var setName = decodeURIComponent(req.query.name);
-
-        datasets.remove({
-            name: setName
-        }, function (err) {
-            if (err) return next(err);
-            return next();
-        });
-    },
-
-    // Remove the dataset in the genes collection.
-    // Also remove the genes that no longer appear
-    // in any dataset and have no annotation.
-    function (req, res, next) {
-
-        var setName = decodeURIComponent(req.query.name);
-        var bulk = db.genes.initializeOrderedBulkOp();
-
-        var query = {
-            forUpdate: { datasets: setName },
-            forRemove: {
-                datasets: { $size: 0 },
-                annotation: {}
-            }
-        };
-
-        var updates = {
-            $pull: {
-                datasets: setName
-            }
-        };
-
-        bulk.find(query.forUpdate).update(updates);
-        bulk.find(query.forRemove).delete();
-
-        bulk.execute(function (err) {
-            if (err) return next(err);
-            return next();
-        });
-    },
-
-    // Remove the dataset in the experiments collection.
-    // Also remove the genes that no longer appear
-    // in any dataset.
-    function (req, res, next) {
-
-        var setName = decodeURIComponent(req.query.name);
-        var bulk = db.experiments.initializeOrderedBulkOp();
-
-        var query = {
-            forUpdate: { datasets: setName },
-            forRemove: {
-                datasets: { $size: 0 }
-            }
-        };
-
-        var updates = {
-            $pull: {
-                datasets: setName
-            },
-            $unset: {
-                metadata: {}
-            }
-        };
-
-        updates.$unset.metadata[setName] = "";
-
-        bulk.find(query.forUpdate).update(updates);
-        bulk.find(query.forRemove).delete();
-
-        bulk.execute(function (err) {
-            if (err) return next(err);
-            return next();
-        });
-    },
-
-    // Remove all the data corresponding to the dataset
-    function (req, res, next) {
-        var setName = decodeURIComponent(req.query.name);
-
-        data.deleteMany({
-            set: setName
-        }, function (err) {
-            if (err) return next(err);
-            return res.sendStatus(204);
-        });
-    },
-
-    // Error handler
-    function (err, req, res, next) {
-        if (err.status && err.error) {
-            res.status(err.status).send(err.error.message);
-        }
-        else {
-            res.status(500).send(err.message);
-        }
-    });
-
-// =========================================================================
+// ============================================================================
 
     app.route('/api/exp/')
 
-    // List all the experiments (columns) for given datasets
-    .get(function (req, res, next) {
-        var experiments = {};
-        var query = {};
+    .get(experimentsHandler.GET);
 
-        if (req.query.sets) {
-            query.datasets = {
-                '$in' : decodeURIComponent(req.query.sets).split(',')
-            };
-        }
-
-        db.experiments
-        .find(query)
-        .project({ "_id": 0 })
-        .sort({ "ID": 1 })
-        .forEach(function (exp) {
-
-            // Put all the experiments into a single object
-            experiments[exp.ID] = {
-                datasets: exp.datasets,
-                metadata: exp.metadata
-            };
-
-        }, function (err) {
-            if (err) {
-                return res.status(500).send('Error with the database : ' + err.message);
-            }
-            return res.status(200).send(experiments);
-        });
-    });
-
-// =========================================================================
+// ============================================================================
 
     app.route('/api/genes/')
 
-    // Return all the genes of the given datasets
-    .get(function (req, res, next) {
-        var genes = {};
-        var query = {};
+    .get(genesHandler.GET);
 
-        if (req.query.sets) {
-            query.datasets = {
-                '$in' : decodeURIComponent(req.query.sets).split(',')
-            };
-        }
-
-        db.genes
-        .find(query)
-        .project({ "_id": 0 })
-        .sort({ "ID": 1 })
-        .forEach(function (gene) {
-
-            // Put all the genes into a single object
-            genes[gene.ID] = {
-                datasets: gene.datasets,
-                annotation: gene.annotation
-            };
-
-        }, function (err) {
-            if (err) {
-                return res.status(500).send('Error with the database : ' + err.message);
-            }
-            return res.status(200).send(genes);
-        });
-    });
-
-// =========================================================================
+// ============================================================================
 
     app.route('/api/genes/annotations')
 
-    // Insert the genes annotations file into the database
-    .post(annotHandler, function (req, res, next) {
-        parseFile(req.file, function (err, annotations) {
-            if (err) {
-                return next({ status: 400, message: err.message})
-            }
+    .post(annotFileHandler, annotationsHandler.POST)
 
-            var geneList = Object.keys(annotations);
-            var bulk = db.genes.initializeUnorderedBulkOp();
+    .delete(annotationsHandler.DELETE);
 
-            geneList.forEach(function (gene) {
-                var updates = {};
-
-                for (var field in annotations[gene]) {
-                    updates['annotation.' + field] = annotations[gene][field];
-                }
-
-                bulk.find({ ID: gene })
-                    .upsert()
-                    .updateOne({
-                        $set: updates,
-                        $setOnInsert: { 'datasets': [] },
-                    }
-                );
-            });
-
-            bulk.execute(function (err) {
-                if (err) return next({ status: 500, message: err.message});
-                res.sendStatus(201);
-                return next();
-            });
-        });
-    },
-
-    // Error handler
-    function (err, req, res, next) {
-        if (err.status) {
-            res.status(err.status).send(err.message);
-        }
-        else {
-            res.status(500).send(err.message);
-        }
-
-        console.log(err);
-        next();
-    },
-
-    // Remove the files from the system, errors or not
-    function (req, res, next) {
-        fs.unlinkSync(req.file.path);
-    })
-
-    // Remove the genes annotations from the database.
-    // Also remove the genes that no longer appear
-    // in any dataset and have no annotation.
-    .delete(function (req, res) {
-
-        var bulk = db.genes.initializeOrderedBulkOp();
-
-        var query = {
-            forUpdate: {},
-            forRemove: {
-                datasets: { $size: 0 },
-                annotation: {}
-            }
-        };
-
-        var updates = {
-            $set: {
-                annotation: {}
-            }
-        };
-
-        bulk.find(query.forUpdate).update(updates);
-        bulk.find(query.forRemove).delete();
-
-        bulk.execute(function (err) {
-            if (err) return res.status(500).send(err.message);
-            return res.sendStatus(204);
-        });
-    });
-
-// =========================================================================
+// ============================================================================
 
     app.route('/api/data/:sets')
 
-    // Get the values for given datasets, possibly filtered by lines and/or columns
-    .get(function (req, res) {
-        var query = {
-            'set': {
-                '$in' : decodeURIComponent(req.params.sets).split(',')
-            }
-        };
-
-        if (req.query.genes){
-            var genes = typeof req.query.genes == 'string' ? [req.query.genes] : req.query.genes;
-            query['gene'] = { '$in': genes };
-        }
-
-        if (req.query.exps){
-            var exps = typeof req.query.exps == 'string' ? [req.query.exps] : req.query.exps;
-            query['exp'] = { '$in': exps };
-        }
-
-        data
-        .find(query)
-        .sort({ "gene": 1 })
-        .toArray(function (err, list) {
-            if (err) {
-                return res.status(500).send('Error with the database : ' + err.message);
-            }
-            return res.status(200).send(list);
-        });
-    });
+    .get(dataHandler.GET);
 };

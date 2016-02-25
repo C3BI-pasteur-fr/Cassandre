@@ -184,6 +184,9 @@ angular.module("cassandre").factory("datasets", ["datasetsHttp", "experiments", 
                 name: changes.newName,
                 description: changes.description
             }, function () {
+                
+                genes.get.all();
+                experiments.get.all();
 
                 // Update the list
                 datasets.all.forEach(function (set) {

@@ -75,7 +75,7 @@ angular.module("cassandre").controller("AnnotationsController", [
             alert("No annotations found in the database.");
             return;
         }
-        
+
         $scope.data.rows = [];
 
         // Turn the object into an array of objects
