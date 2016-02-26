@@ -14,14 +14,12 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
 
 // ============================================================================
 // ============================================================================
-
-var multer = require('multer');
 
 var statsHandler = require('./routes/statsHandler');
 var datasetsHandler = require('./routes/datasetsHandler');
@@ -31,30 +29,6 @@ var annotationsHandler = require('./routes/annotationsHandler');
 var dataHandler = require('./routes/dataHandler');
 
 module.exports = function (app) {
-
-// CONGIGURATION
-// ============================================================================
-
-    // Multer middleware to handle file uploads
-    var storage = multer.diskStorage({
-        destination: './uploads/',
-        filename: function (req, file, callback) {
-            return callback(null, file.originalname + '-' + (new Date()).toISOString());
-        }
-    });
-
-    var upload = multer({
-        storage: storage
-        // fileFilter
-        // limits
-    });
-
-    var datasetFileHandler = upload.fields([
-        { name: 'dataset', maxCount: 1 },
-        { name: 'metadata', maxCount: 1 }
-    ]);
-
-    var annotFileHandler = upload.single('annotations');
 
 // ROUTES
 // ============================================================================
@@ -73,7 +47,7 @@ module.exports = function (app) {
 
     .delete(datasetsHandler.DELETE)
 
-    .post(datasetFileHandler, datasetsHandler.POST);
+    .post(datasetsHandler.POST);
 
 // ============================================================================
 
@@ -91,7 +65,7 @@ module.exports = function (app) {
 
     app.route('/api/genes/annotations')
 
-    .post(annotFileHandler, annotationsHandler.POST)
+    .post(annotationsHandler.POST)
 
     .delete(annotationsHandler.DELETE);
 

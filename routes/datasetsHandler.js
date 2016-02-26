@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
 
@@ -45,6 +45,14 @@ exports.GET = function (req, res) {
 
 // Insert the data file into the database
 exports.POST = [
+
+    // Handle the file
+    function (req, res, next) {
+        req.app.locals.datasetHandler(req, res , function (err) {
+            if (err) return next(err);
+            return next();
+        });
+    },
 
     // Create an object to safely pass data between middlewares
     function (req, res, next) {

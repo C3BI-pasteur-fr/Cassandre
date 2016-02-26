@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
 
@@ -23,6 +23,7 @@
 
 var express = require('express');
 var bodyParser = require('body-parser');
+var multer = require('multer');
 
 var Database = require('./database');
 var config = require('./config');
@@ -36,9 +37,25 @@ Database.connect(function (err, db) {
 
     var app = express();
 
-    // Configuration
+    // Server configuration
     var serverPort = config('web.port', 8080);
     var serverHost = config('web.host', 'localhost');
+
+    // File handlers configuration
+    var storage = multer.diskStorage({
+        destination: './uploads/',
+        filename: function (req, file, callback) {
+            return callback(null, file.originalname + '-' + (new Date()).toISOString());
+        }
+    });
+
+    var upload = multer({ storage: storage });
+
+    var annotationsHandler = upload.single('annotations');
+    var datasetHandler = upload.fields([
+        { name: 'dataset', maxCount: 1 },
+        { name: 'metadata', maxCount: 1 }
+    ])
 
     // Middlewares
     app.use(express.static('public'));
@@ -51,6 +68,10 @@ Database.connect(function (err, db) {
     app.locals.experiments = db.collection('experiments');
     app.locals.genes = db.collection('genes');
     app.locals.data = db.collection('data');
+
+    // File handlers
+    app.locals.datasetHandler = datasetHandler;
+    app.locals.annotationsHandler = annotationsHandler;
 
     // Start
     app.listen(serverPort, serverHost, function () {

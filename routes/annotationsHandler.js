@@ -14,7 +14,7 @@
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ * along with this program. If not, see <http://www.gnu.org/licenses/>.
  *
  */
 
@@ -28,6 +28,14 @@ var parseFile = require('../lib/parseFile');
 
 // Insert the genes annotations file into the database
 exports.POST = [
+
+    // Handle the file
+    function (req, res, next) {
+        req.app.locals.annotationsHandler(req, res , function (err) {
+            if (err) return next(err);
+            return next();
+        });
+    },
 
     // Insert the annotations into the genes collection
     function (req, res, next) {
