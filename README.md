@@ -24,8 +24,12 @@ The ultimate goal of our project, which goes beyond the current proposal and dep
 
 #### Documentation
 
-More information about the application and the license can be found in the [wiki.](https://github.com/C3BI-pasteur-fr/Cassandre/wiki)
+More information about the application can be found in the [wiki.](https://github.com/C3BI-pasteur-fr/Cassandre/wiki)
 
 #### Website
 
 The official page of the project can be found on the [Institut Pasteur website.](https://research.pasteur.fr/fr/project/gim_cassandre/)
+
+#### License
+
+Cassandre use the [GPL V3 license.](https://github.com/C3BI-pasteur-fr/Cassandre/wiki/license)
