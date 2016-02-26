@@ -52,7 +52,7 @@
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="set in sets.all | filter:filter | orderBy:postedDate:true"
+                <tr ng-repeat="set in sets.all | filter:filter | orderBy:postedDate:true track by set.name"
                     ng-class="{ info: sets.selected.indexOf(set.name) > -1 }"
                     ng-hide="set.hidden && !showHidden">
                     <td class="buttonCellHide invisibleCell">

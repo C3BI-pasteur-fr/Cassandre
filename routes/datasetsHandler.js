@@ -33,7 +33,10 @@ exports.GET = function (req, res) {
     // Get the collection
     var datasets = req.app.locals.datasets;
 
-    datasets.find().toArray(function (err, list) {
+    datasets
+    .find()
+    .project({ "_id": 0 })
+    .toArray(function (err, list) {
         if (err) {
             return res.status(500).send('Error with the database : ' + err.message);
         }

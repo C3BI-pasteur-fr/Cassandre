@@ -131,21 +131,21 @@
                             <tr>
                                 <th class="buttonCell"
                                     role="button"
-                                    ng-repeat="(header, value) in data.rows[0]"
+                                    ng-repeat="(header, value) in data.rows[0] track by header"
                                     ng-class="{ orderColumn : predicate === header, reverse : reverse === true }"
                                     ng-click="order(header, !reverse)"
                                     ng-bind="header">
                                 </th>
                             </tr>
                             <tr ng-show="filters.active">
-                                <th ng-repeat="(header, value) in data.rows[0]">
+                                <th ng-repeat="(header, value) in data.rows[0] track by header">
                                     <input class="form-control" type="text" ng-model="filters.list[header]" title="Filter this column">
                                 </th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr ng-repeat="row in data.rows.slice(0, limit) | filter:filters.list">
-                                <td ng-repeat="(header, value) in row"
+                            <tr ng-repeat="row in data.rows.slice(0, limit) | filter:filters.list track by $index">
+                                <td ng-repeat="(header, value) in row track by header"
                                     ng-class="{ numericCell: typeof(value) === 'number' }"
                                     ng-bind="value">
                                 </td>

@@ -63,7 +63,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr ng-repeat="(ID, gene) in genes.all | geneFilter:searchBar.filter:searchBar.limit">
+            <tr ng-repeat="(ID, gene) in genes.all | geneFilter:searchBar.filter:searchBar.limit track by ID">
                 <td ng-bind="ID"></td>
                 <td class="infoBlock">
                     <span class="badge" ng-bind="gene.datasets.length"></span>

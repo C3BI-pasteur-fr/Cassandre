@@ -63,7 +63,6 @@ Database.connect(function (err, db) {
     app.use(bodyParser.json());
 
     // Database reference
-    app.locals.db = db;
     app.locals.datasets = db.collection('datasets');
     app.locals.experiments = db.collection('experiments');
     app.locals.genes = db.collection('genes');

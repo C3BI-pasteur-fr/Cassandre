@@ -1,7 +1,7 @@
 <!-- Experiments -->
 <!------------------------------------------------------------------------->
 
-<div class="asideBlock" ng-repeat="(title, list) in exps.list.sideMenu">
+<div class="asideBlock" ng-repeat="(title, list) in exps.list.sideMenu track by title">
     <h4 class="asideSectionTitle" ng-if="$first">Experiments</h4>
     <h5 class="asideBlockTitle"
         ng-click="display(title, 'Exps')"
@@ -20,7 +20,7 @@
             <button class="asideListButton" type="button" ng-click="exps.select.all(title)">Select all</button>
         </li>
         <li class="asideListItem"
-            ng-repeat="exp in list.all"
+            ng-repeat="exp in list.all track by $index"
             ng-class="{ 'bg-primary': exps.list.selected.indexOf(exp) > -1 }"
             ng-click="exps.select.one(exp)"
             ng-bind="exp"
@@ -31,7 +31,7 @@
 <!-- Genes -->
 <!------------------------------------------------------------------------->
 
-<div class="asideBlock" ng-repeat="(title, list) in genes.list.sideMenu">
+<div class="asideBlock" ng-repeat="(title, list) in genes.list.sideMenu track by title">
     <h4 class="asideSectionTitle" ng-if="$first">Genes</h4>
     <h5 class="asideBlockTitle"
         ng-click="display(title, 'Genes')"
@@ -50,7 +50,7 @@
             <button class="asideListButton" type="button" ng-click="genes.select.all(title)">Select all</button>
         </li>
         <li class="asideListItem"
-            ng-repeat="gene in list.all"
+            ng-repeat="gene in list.all track by $index"
             ng-class="{ 'bg-primary': genes.list.selected.indexOf(gene) > -1 }"
             ng-click="genes.select.one(gene)"
             ng-bind="gene"

@@ -53,7 +53,7 @@
 <div class="row">
     <div class="col-lg-offset-2 col-lg-8">
         <ul class="list-group">
-            <li class="list-group-item" ng-repeat="(ID, exp) in exps.all | expFilter:searchBar.filter:searchBar.limit">
+            <li class="list-group-item" ng-repeat="(ID, exp) in exps.all | expFilter:searchBar.filter:searchBar.limit track by ID">
                 <span ng-bind="ID" title="{{ typeahead.format.metadata(exp.metadata) }}"></span>
                 <span class="pull-right">
                     <em class="text-muted"
