@@ -32,4 +32,4 @@ The official page of the project can be found on the [Institut Pasteur website.]
 
 #### License
 
-Cassandre use the [GPL V3 license.](https://github.com/C3BI-pasteur-fr/Cassandre/wiki/license)
+Cassandre use the [GNU General Public License 3.0](https://github.com/C3BI-pasteur-fr/Cassandre/wiki/license)
