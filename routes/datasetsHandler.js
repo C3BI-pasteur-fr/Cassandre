@@ -24,6 +24,7 @@
 var fs = require('fs');
 var parseFile = require('../lib/parseFile');
 var rowsToCells = require('../lib/rowsToCells');
+var rollback = require('./datasetsRollbacks');
 
 // ============================================================================
 
@@ -51,7 +52,7 @@ exports.POST = [
 
     // Handle the file
     function (req, res, next) {
-        req.app.locals.datasetHandler(req, res , function (err) {
+        req.app.locals.datasetFileHandler(req, res , function (err) {
             if (err) return next(err);
             return next();
         });
@@ -196,6 +197,8 @@ exports.POST = [
 
     // Error handler
     function (err, req, res, next) {
+        console.log(err);
+
         if (err.status && err.error) {
             res.status(err.status).send(err.error.message);
         }
@@ -203,8 +206,9 @@ exports.POST = [
             res.status(500).send(err.message);
         }
 
-        console.log(err);
-        next();
+        rollback.INSERT(req.app.locals.db, req.body.name, function () {
+            next();
+        });
     },
 
     // Remove the files from the system, errors or not

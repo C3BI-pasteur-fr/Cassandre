@@ -31,7 +31,7 @@ exports.POST = [
 
     // Handle the file
     function (req, res, next) {
-        req.app.locals.annotationsHandler(req, res , function (err) {
+        req.app.locals.annotationsFileHandler(req, res , function (err) {
             if (err) return next(err);
             return next();
         });

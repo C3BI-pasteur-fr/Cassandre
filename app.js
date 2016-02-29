@@ -51,8 +51,8 @@ Database.connect(function (err, db) {
 
     var upload = multer({ storage: storage });
 
-    var annotationsHandler = upload.single('annotations');
-    var datasetHandler = upload.fields([
+    var annotationsFileHandler = upload.single('annotations');
+    var datasetFileHandler = upload.fields([
         { name: 'dataset', maxCount: 1 },
         { name: 'metadata', maxCount: 1 }
     ])
@@ -63,14 +63,15 @@ Database.connect(function (err, db) {
     app.use(bodyParser.json());
 
     // Database reference
+    app.locals.db = db;
     app.locals.datasets = db.collection('datasets');
     app.locals.experiments = db.collection('experiments');
     app.locals.genes = db.collection('genes');
     app.locals.data = db.collection('data');
 
     // File handlers
-    app.locals.datasetHandler = datasetHandler;
-    app.locals.annotationsHandler = annotationsHandler;
+    app.locals.datasetFileHandler = datasetFileHandler;
+    app.locals.annotationsFileHandler = annotationsFileHandler;
 
     // Start
     app.listen(serverPort, serverHost, function () {
