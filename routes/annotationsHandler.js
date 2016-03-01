@@ -23,6 +23,7 @@
 
 var fs = require('fs');
 var parseFile = require('../lib/parseFile');
+var rollback = require('./annotationsRollbacks');
 
 // ============================================================================
 
@@ -86,7 +87,10 @@ exports.POST = [
             res.status(500).send(err.message);
         }
 
-        next();
+        rollback.INSERT(req.app.locals.db, function (err) {
+            if (err) return next(err);
+            return next();
+        });
     },
 
     // Remove the files from the system, errors or not
@@ -115,9 +119,7 @@ exports.DELETE = function (req, res) {
     };
 
     var updates = {
-        $set: {
-            annotation: {}
-        }
+        $set: { annotation: {} }
     };
 
     bulk.find(query.forUpdate).update(updates);

@@ -89,10 +89,7 @@ exports.INSERT = function (db, datasetName, callback) {
     ],
 
     function (err, results) {
-        if (err) {
-            throw err;
-        }
-
+        if (err) return callback();
         return callback();
     });
 };
@@ -142,10 +139,7 @@ exports.UPDATE = function (db, newName, oldName, callback) {
     ],
 
     function (err, results) {
-        if (err) {
-            throw err;
-        }
-
+        if (err) return callback();
         return callback();
     });
 };

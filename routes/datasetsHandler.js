@@ -201,7 +201,8 @@ exports.POST = [
             res.status(500).send(err.message);
         }
 
-        rollback.INSERT(req.app.locals.db, req.body.name, function () {
+        rollback.INSERT(req.app.locals.db, req.body.name, function (err) {
+            if (err) return next(err);
             return next();
         });
     },
@@ -335,7 +336,8 @@ exports.PUT = [
         var newName = req.body.name;
         var oldName = decodeURIComponent(req.query.name);
 
-        rollback.UPDATE(req.app.locals.db, newName, oldName, function () {
+        rollback.UPDATE(req.app.locals.db, newName, oldName, function (err) {
+            if (err) return next(err);
             return next();
         });
     }
