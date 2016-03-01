@@ -149,13 +149,13 @@ exports.POST = [
         var bulk = experiments.initializeUnorderedBulkOp();
 
         expList.forEach(function (exp) {
-            var meta = req.cassandre.metadata[exp] ? req.cassandre.metadata[exp] : {};
+            var meta = req.cassandre.metadata ? (req.cassandre.metadata[exp] || {}) : {};
             var updates = {
                 $addToSet: { datasets: req.body.name },
-                $set: { metadata: {} }
+                $set: {}
             };
 
-            updates.$set.metadata[req.body.name] = meta;
+            updates.$set['metadata.' + req.body.name] = meta;
 
             bulk.find({ ID: exp })
                 .upsert()
