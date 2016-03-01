@@ -149,14 +149,10 @@ exports.POST = [
         var bulk = experiments.initializeUnorderedBulkOp();
 
         expList.forEach(function (exp) {
-            var meta = req.cassandre.metadata ? req.cassandre.metadata[exp] : {};
+            var meta = req.cassandre.metadata[exp] ? req.cassandre.metadata[exp] : {};
             var updates = {
-                $addToSet: {
-                    datasets: req.body.name
-                },
-                $set: {
-                    metadata: {}
-                }
+                $addToSet: { datasets: req.body.name },
+                $set: { metadata: {} }
             };
 
             updates.$set.metadata[req.body.name] = meta;
@@ -292,7 +288,7 @@ exports.PUT = [
         };
 
         updates.$rename = {};
-        updates.$rename["metadata." + oldName] = req.body.name;
+        updates.$rename["metadata." + oldName] = "metadata." + req.body.name;
 
         experiments.updateMany(query, updates, function (err) {
             if (err) return next(err);
