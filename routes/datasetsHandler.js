@@ -244,7 +244,7 @@ exports.PUT = [
             updates.$set.hidden = req.body.hidden;
         }
 
-        datasets.update(query, updates, function (err) {
+        datasets.updateOne(query, updates, function (err) {
             if (err) next(err);
 
             if (req.body.name && oldName !== req.body.name) {
@@ -261,14 +261,11 @@ exports.PUT = [
         // Get the collection
         var genes = req.app.locals.genes;
         var oldName = decodeURIComponent(req.query.name);
+        
+        var query = { datasets: oldName };
+        var updates = { $set: { "datasets.$": req.body.name } };
 
-        genes.updateMany({
-            datasets: oldName
-        }, {
-            $set: {
-                "datasets.$": req.body.name
-            }
-        }, function (err) {
+        genes.updateMany(query, updates, function (err) {
             if (err) return next(err);
             return next();
         });
@@ -279,14 +276,10 @@ exports.PUT = [
 
         // Get the collection
         var experiments = req.app.locals.experiments;
-
         var oldName = decodeURIComponent(req.query.name);
-        var query = { datasets: oldName };
-        var updates = {};
 
-        updates.$set = {
-            "datasets.$": req.body.name
-        };
+        var query = { datasets: oldName };
+        var updates = { $set: { "datasets.$": req.body.name } };
 
         updates.$rename = {};
         updates.$rename["metadata." + oldName] = "metadata." + req.body.name;
@@ -299,18 +292,15 @@ exports.PUT = [
 
     // And finally the data collection
     function (req, res, next) {
-        var oldName = decodeURIComponent(req.query.name);
 
         // Get the collection
         var data = req.app.locals.data;
+        var oldName = decodeURIComponent(req.query.name);
 
-        data.updateMany({
-            set: oldName
-        }, {
-            $set: {
-                set: req.body.name
-            }
-        }, function (err) {
+        var query = { set: oldName };
+        var updates = { $set: { set: req.body.name } };
+
+        data.updateMany(query, updates, function (err) {
             if (err) return next(err);
             return res.sendStatus(204);
         });
@@ -353,12 +343,9 @@ exports.DELETE = [
 
         // Get the collection
         var datasets = req.app.locals.datasets;
-
         var setName = decodeURIComponent(req.query.name);
 
-        datasets.remove({
-            name: setName
-        }, function (err) {
+        datasets.deleteOne({ name: setName }, function (err) {
             if (err) return next(err);
             return next();
         });
@@ -371,8 +358,8 @@ exports.DELETE = [
 
         // Get the collection
         var genes = req.app.locals.genes;
-
         var setName = decodeURIComponent(req.query.name);
+
         var bulk = genes.initializeOrderedBulkOp();
 
         var query = {
@@ -384,9 +371,7 @@ exports.DELETE = [
         };
 
         var updates = {
-            $pull: {
-                datasets: setName
-            }
+            $pull: { datasets: setName }
         };
 
         bulk.find(query.forUpdate).update(updates);
@@ -417,12 +402,8 @@ exports.DELETE = [
         };
 
         var updates = {
-            $pull: {
-                datasets: setName
-            },
-            $unset: {
-                metadata: {}
-            }
+            $pull: { datasets: setName },
+            $unset: { metadata: {} }
         };
 
         updates.$unset.metadata[setName] = "";
@@ -444,9 +425,7 @@ exports.DELETE = [
 
         var setName = decodeURIComponent(req.query.name);
 
-        data.deleteMany({
-            set: setName
-        }, function (err) {
+        data.deleteMany({ set: setName }, function (err) {
             if (err) return next(err);
             return res.sendStatus(204);
         });

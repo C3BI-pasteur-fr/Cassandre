@@ -36,7 +36,7 @@ exports.INSERT = function (db, datasetName, callback) {
     async.series([
 
         function (callback) {
-            datasets.remove({ name: datasetName }, callback);
+            datasets.deleteOne({ name: datasetName }, callback);
         },
 
         function (callback) {

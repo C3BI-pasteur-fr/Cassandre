@@ -28,9 +28,7 @@ exports.GET = function (req, res) {
     var data = req.app.locals.data;
 
     var query = {
-        'set': {
-            '$in' : decodeURIComponent(req.params.sets).split(',')
-        }
+        'set': { '$in' : decodeURIComponent(req.params.sets).split(',') }
     };
 
     if (req.query.genes){
