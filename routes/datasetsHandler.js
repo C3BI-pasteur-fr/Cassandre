@@ -108,15 +108,8 @@ exports.POST = [
             'hidden': false,
             'postedDate': new Date()
         }, function (err) {
-            if (err) {
-                if (err.code === 11000) {
-                    err.message = "A dataset with this name already exists.";
-                    return next({status: 400, error: err});
-                }
-                return next({status: 500, error: err});
-            }
-
-            next();
+            if (err) return next(err);
+            return next();
         });
     },
 
@@ -199,6 +192,12 @@ exports.POST = [
     function (err, req, res, next) {
         console.log(err);
 
+        // No Rollback in this case
+        if (err.code === 11000) {
+            res.status(400).send("A dataset with this name already exists.");
+            return next();
+        }
+
         if (err.status && err.error) {
             res.status(err.status).send(err.error.message);
         }
@@ -207,7 +206,7 @@ exports.POST = [
         }
 
         rollback.INSERT(req.app.locals.db, req.body.name, function () {
-            next();
+            return next();
         });
     },
 
@@ -249,13 +248,7 @@ exports.PUT = [
         }
 
         datasets.update(query, updates, function (err) {
-            if (err) {
-                if (err.code === 11000) {
-                    err.message = "A dataset with this name already exists.";
-                    return next({status: 400, error: err});
-                }
-                return next(err);
-            }
+            if (err) next(err);
 
             if (req.body.name && oldName !== req.body.name) {
                 return next();
@@ -329,6 +322,12 @@ exports.PUT = [
     // Error handler
     function (err, req, res, next) {
         console.log(err);
+
+        // No Rollback in this case
+        if (err.code === 11000) {
+            res.status(400).send("A dataset with this name already exists.");
+            return next();
+        }
 
         if (err.status && err.error) {
             res.status(err.status).send(err.error.message);
