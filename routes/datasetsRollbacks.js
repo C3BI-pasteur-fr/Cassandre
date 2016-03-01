@@ -51,9 +51,7 @@ exports.INSERT = function (db, datasetName, callback) {
             };
 
             var updates = {
-                $pull: {
-                    datasets: datasetName
-                }
+                $pull: { datasets: datasetName }
             };
 
             bulk.find(query.forUpdate).update(updates);
@@ -73,12 +71,8 @@ exports.INSERT = function (db, datasetName, callback) {
             };
 
             var updates = {
-                $pull: {
-                    datasets: datasetName
-                },
-                $unset: {
-                    metadata: {}
-                }
+                $pull: { datasets: datasetName },
+                $unset: { metadata: {} }
             };
 
             updates.$unset.metadata[datasetName] = "";
@@ -105,8 +99,55 @@ exports.INSERT = function (db, datasetName, callback) {
 
 // ============================================================================
 
-exports.UPDATE = function () {
+exports.UPDATE = function (db, newName, oldName, callback) {
 
+    // Collections
+    var datasets = db.collection('datasets');
+    var experiments = db.collection('experiments');
+    var genes = db.collection('genes');
+    var data = db.collection('data');
+
+    async.series([
+        
+        function (callback) {
+            var query = { name: newName };
+            var updates = { $set: { name: oldName } };
+
+            datasets.updateOne(query, updates, callback);
+        },
+
+        function (callback) {
+            var query = { datasets: newName };
+            var updates = { $set: { "datasets.$": oldName } };
+
+            genes.updateMany(query, updates, callback);
+        },
+
+        function (callback) {
+            var query = { datasets: newName };
+            var updates = { $set: { "datasets.$": oldName } };
+
+            updates.$rename = {};
+            updates.$rename["metadata." + newName] = "metadata." + oldName;
+
+            experiments.updateMany(query, updates, callback);
+        },
+
+        function (callback) {
+            var query = { set: newName };
+            var updates = { $set: { set: oldName } };
+
+            data.updateMany(query, updates, callback);
+        }
+    ],
+
+    function (err, results) {
+        if (err) {
+            throw err;
+        }
+
+        return callback();
+    });
 };
 
 // ============================================================================

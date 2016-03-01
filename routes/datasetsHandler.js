@@ -331,6 +331,13 @@ exports.PUT = [
         else {
             res.status(500).send(err.message);
         }
+
+        var newName = req.body.name;
+        var oldName = decodeURIComponent(req.query.name);
+
+        rollback.UPDATE(req.app.locals.db, newName, oldName, function () {
+            return next();
+        });
     }
 ];
 
