@@ -59,7 +59,7 @@ angular.module("cassandre").controller("MainController", [
             exps: $scope.exps.selected,
             genes: $scope.genes.selected
         }, function (data) {
-            $scope.cellsToRows(data, "exp", "gene", "value");
+            $scope.cellsToRows(data);
         });
     };
 
@@ -95,39 +95,47 @@ angular.module("cassandre").controller("MainController", [
     };
 
     // Format data into rows to ease the display in the view
-    $scope.cellsToRows = function(data, colName, rowName, valueName) {
+    $scope.cellsToRows = function(cells) {
         $scope.data.rows = [];
         var headers = [];
         var rows = {};
 
-        // List the headers
-        data.forEach(function (cell) {
-            if (headers.indexOf(cell[colName]) === -1) {
-                headers.push(cell[colName]);
+        // Build the headers
+        // The column name is attached with the dataset name to avoid conflicts
+        cells.forEach(function (cell) {
+            var header = cell.exp.concat(" - ", cell.set);
+
+            if (headers.indexOf(header) === -1) {
+                headers.push(header);
             }
         });
+        
+        // Sort to have the same headers side to side in the display
+        headers.sort();
 
         // Build the rows
-        data.forEach(function (cell) {
+        cells.forEach(function (cell) {
+            var header = cell.exp.concat(" - ", cell.set);
 
             // Add the row if not yet present
-            if (!rows[cell[rowName]]) {
-                rows[cell[rowName]] = {};
+            if (!rows[cell.gene]) {
+                rows[cell.gene] = {};
                 headers.forEach(function (header) {
-                    rows[cell[rowName]][header] = null;
+                    rows[cell.gene][header] = null;
                 });
             }
 
             // Add the value at the right place
-            rows[cell[rowName]][cell[colName]] = cell[valueName];
+            rows[cell.gene][header] = cell.value;
         });
 
+        console.log(rows);
         // Then format rows in an array of objects with headers as keys
-        for (var rowName in rows) {
-            var newRow = { "ID": rowName };
+        for (var gene in rows) {
+            var newRow = { "ID": gene };
 
-            for (var header in rows[rowName]) {
-                newRow[header] = rows[rowName][header];
+            for (var header in rows[gene]) {
+                newRow[header] = rows[gene][header];
             };
 
             $scope.data.rows.push(newRow);

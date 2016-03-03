@@ -131,7 +131,7 @@ angular.module("cassandre").controller("DatasetsController", [
             $scope.data.cells = data.get({
                 sets: encodeURIComponent(dataset)
             }, function (data) {
-                $scope.cellsToRows(data, "exp", "gene", "value");
+                $scope.cellsToRows(data);
             });
         }
     };
