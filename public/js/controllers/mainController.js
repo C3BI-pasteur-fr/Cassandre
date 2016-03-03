@@ -138,9 +138,8 @@ angular.module("cassandre").controller("MainController", [
     $scope.order = function (header, reverse) {
         $scope.predicate = header;
         $scope.reverse = reverse;
-        $scope.data.rows = $filter("orderBy")($scope.data.rows, "'" + header + "'", $scope.reverse);
+        $scope.data.rows = $filter("orderBy")($scope.data.rows, "'" + header.replace(/['"]/g, "\\$&") + "'", reverse);
     };
-
 
     // Display an histogram
     $scope.histogram = function () {
