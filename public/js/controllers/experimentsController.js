@@ -40,13 +40,21 @@ angular.module("cassandre").controller("ExperimentsController", [ "$scope", "$fi
             this.filter = "";
         },
         select: function () {
+            var listName = this.filter;
             var expsList = Object.keys($filter("expFilter")($scope.exps.all, this.filter));
 
             if (expsList.length !== 0) {
-                $scope.exps.sideMenu[this.filter] = {
+                $scope.exps.sideMenu[listName] = {
                     all: expsList,
                     selected: []
                 };
+
+                // Select experiments that are already selected in other lists
+                expsList.forEach(function (exp) {
+                    if ($scope.exps.selected.indexOf(exp) > -1) {
+                        $scope.exps.sideMenu[listName].selected.push(exp);
+                    }
+                });
             }
 
             this.reset();

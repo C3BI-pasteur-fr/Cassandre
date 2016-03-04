@@ -40,13 +40,21 @@ angular.module("cassandre").controller("GenesController", [ "$scope", "$filter",
             this.filter = "";
         },
         select: function () {
+            var listName = this.filter;
             var geneList = Object.keys($filter("geneFilter")($scope.genes.all, this.filter));
 
             if (geneList.length > 0) {
-                $scope.genes.sideMenu[this.filter] = {
+                $scope.genes.sideMenu[listName] = {
                     all: geneList,
                     selected: []
                 };
+
+                // Select genes that are already selected in other lists
+                geneList.forEach(function (gene) {
+                    if ($scope.genes.selected.indexOf(gene) > -1) {
+                        $scope.genes.sideMenu[listName].selected.push(gene);
+                    }
+                });
             }
 
             this.reset();
