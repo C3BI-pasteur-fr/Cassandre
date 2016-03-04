@@ -76,7 +76,6 @@ exports.POST = [
             }
 
             req.cassandre.metadata = metadata;
-
             return next();
         });
     },
@@ -261,7 +260,7 @@ exports.PUT = [
         // Get the collection
         var genes = req.app.locals.genes;
         var oldName = decodeURIComponent(req.query.name);
-        
+
         var query = { datasets: oldName };
         var updates = { $set: { "datasets.$": req.body.name } };
 

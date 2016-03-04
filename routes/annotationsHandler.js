@@ -38,41 +38,48 @@ exports.POST = [
         });
     },
 
+    // Parse the file
+    function (req, res, next) {
+        parseFile(req.file, function (err, annotations) {
+            if (err) {
+                return next({ status: 400, message: err.message})
+            }
+
+            req.annotations = annotations;
+            return next();
+        });
+    },
+
     // Insert the annotations into the genes collection
     function (req, res, next) {
 
         // Get the collection
         var genes = req.app.locals.genes;
 
-        parseFile(req.file, function (err, annotations) {
-            if (err) {
-                return next({ status: 400, message: err.message})
+        var annotations = req.annotations;
+        var geneList = Object.keys(annotations);
+        var bulk = genes.initializeUnorderedBulkOp();
+
+        geneList.forEach(function (gene) {
+            var updates = {};
+
+            for (var field in annotations[gene]) {
+                updates['annotation.' + field] = annotations[gene][field];
             }
 
-            var geneList = Object.keys(annotations);
-            var bulk = genes.initializeUnorderedBulkOp();
-
-            geneList.forEach(function (gene) {
-                var updates = {};
-
-                for (var field in annotations[gene]) {
-                    updates['annotation.' + field] = annotations[gene][field];
+            bulk.find({ ID: gene })
+                .upsert()
+                .updateOne({
+                    $set: updates,
+                    $setOnInsert: { 'datasets': [] },
                 }
+            );
+        });
 
-                bulk.find({ ID: gene })
-                    .upsert()
-                    .updateOne({
-                        $set: updates,
-                        $setOnInsert: { 'datasets': [] },
-                    }
-                );
-            });
-
-            bulk.execute(function (err) {
-                if (err) return next({ status: 500, message: err.message});
-                res.sendStatus(201);
-                return next();
-            });
+        bulk.execute(function (err) {
+            if (err) return next({ status: 500, message: err.message});
+            res.sendStatus(201);
+            return next();
         });
     },
 
