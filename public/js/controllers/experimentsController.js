@@ -68,7 +68,7 @@ angular.module("cassandre").controller("ExperimentsController", [ "$scope", "$fi
                 datasets.forEach(function (set) {
                     text = text.concat("Dataset ", set, " : \n");
 
-                    if (metadata[set]) {
+                    if (Object.keys(metadata[set]).length > 0) {
                         for (var field in metadata[set]) {
                             text = text.concat("-- ", field, " : ", metadata[set][field], "\n");
                         }

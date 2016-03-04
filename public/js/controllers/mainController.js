@@ -129,7 +129,6 @@ angular.module("cassandre").controller("MainController", [
             rows[cell.gene][header] = cell.value;
         });
 
-        console.log(rows);
         // Then format rows in an array of objects with headers as keys
         for (var gene in rows) {
             var newRow = { "ID": gene };
