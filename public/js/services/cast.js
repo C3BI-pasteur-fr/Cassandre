@@ -32,8 +32,8 @@
 angular.module("cassandre").factory("cast", function castFactory() {
 
     // Regular expressions for the different numbers, allowing exponents
-    var integer = /^[+-]?\d+(?:e[+-]?\d+)?$/;
-    var decimal = /^[+-]?\d+\.\d+(?:e[+-]?\d+)?$/;
+    var integer = /^[+-]?\d+(?:[eE][+-]?\d+)?$/;
+    var decimal = /^[+-]?\d+\.\d+(?:[eE][+-]?\d+)?$/;
 
     /*
      *  ----- Explanation --------------------------------------------------
@@ -61,7 +61,7 @@ angular.module("cassandre").factory("cast", function castFactory() {
     return function (string) {
 
         if (integer.test(string) || decimal.test(string)) {
-            return parseFloat(string);
+            return parseFloat(string.toLowerCase());
         }
 
         if (string.toLowerCase() === "true") {
