@@ -55,7 +55,7 @@ Database.connect(function (err, db) {
     var datasetFileHandler = upload.fields([
         { name: 'dataset', maxCount: 1 },
         { name: 'metadata', maxCount: 1 }
-    ])
+    ]);
 
     // Middlewares
     app.use(express.static('public'));

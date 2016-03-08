@@ -37,8 +37,8 @@ angular.module("cassandre").controller("SideMenuController", ["$scope", "experim
 
     // Handle the side menu display as an accordion
     // Add the section name to avoid conflicts with list names
-    $scope.display = function (list, section) {
-        var name = list + section;
+    $scope.display = function (section, list) {
+        var name = section + list;
         $scope.displayedList = $scope.displayedList !== name ? name : "";
     };
 
@@ -48,6 +48,11 @@ angular.module("cassandre").controller("SideMenuController", ["$scope", "experim
     $scope.exps = {
         list: exps.list.all(),
         removeList: exps.remove.list,
+
+        // Check if there is lists of experiments in the menu
+        ifLists: function () {
+            return Object.keys(this.list.sideMenu).length > 0;
+        },
 
         // Select or deselect elements in the list
         select: {
@@ -103,6 +108,34 @@ angular.module("cassandre").controller("SideMenuController", ["$scope", "experim
         list: genes.list.all(),
         removeList: genes.remove.list,
 
+        // Check if there is lists of genes in the menu
+        ifLists: function () {
+            return Object.keys(this.list.sideMenu).length > 0;
+        },
+
+        // Options of the gene lists
+        options: {
+            label: "",
+            selectLabel: function (label) {
+                this.label = label;
+            },
+            getLabel: function (gene) {
+                if (this.label === "") return "";
+
+                var label = "";
+
+                // Get the current label
+                if (this.label === "datasets") {
+                    label = $scope.genes.list.all[gene].datasets.join(", ");
+                }
+                else {
+                    label = $scope.genes.list.all[gene].annotation[this.label] || "";
+                }
+
+                return label;
+            }
+        },
+
         // Select or deselect elements in the list
         select: {
             one: function (gene) {
@@ -128,18 +161,31 @@ angular.module("cassandre").controller("SideMenuController", ["$scope", "experim
         // Format the annotation for the display in the title tag
         annotationOf: function (gene) {
             var annotation = this.list.all[gene].annotation;
+            var datasets = this.list.all[gene].datasets.join(", ");
 
-            if (!annotation) {
-                return "No annotation";
+            var text = "-- Datasets :\n";
+
+            // Format the dataset list
+            if (datasets === "") {
+                text = text.concat("This gene doesn't appear in any dataset.", "\n\n");
+            }
+            else {
+                text = text.concat(datasets, "\n\n");
             }
 
-            var text = "";
+            text = text.concat("-- Annotations :\n");
 
-            for (var field in annotation) {
-                text = text.concat(field, " : ", annotation[field], "\n");
+            // Format the annotations of this gene
+            if (Object.keys(annotation).length === 0) {
+                text = text.concat("No annotation found for this gene.");
+            }
+            else {
+                for (var field in annotation) {
+                    text = text.concat(field, " : ", annotation[field], "\n");
+                }
             }
 
             return text;
-        }
+        },
     };
 }]);

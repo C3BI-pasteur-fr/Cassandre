@@ -21,7 +21,35 @@ th, td {
     vertical-align: middle;
 }
 
-.asideBlockTitle {
+.labelOptions {
+    color: #595959;
+    background: #FFF;
+    border: 1px solid #2C3E50;
+    border-radius: 4px;
+    padding: 6px 12px;
+}
+
+.asideTitle {
+    background-color: transparent;
+    border-bottom: 1px solid #F0F0F0;
+    color: #FFF;
+    height: 30px;
+    padding: 0;
+    margin: 16px 15px 15px 15px;
+}
+
+.asideOptions {
+    border-bottom: 1px solid #F0F0F0;
+    padding: 16px 15px 15px 15px;
+    height: 70px;
+}
+
+.asideOptions label{
+    color: #FFF;
+    margin-right: 30px;
+}
+
+.asideListTitle {
     background-color: transparent;
     color: #FFF;
     cursor: pointer;
@@ -30,7 +58,7 @@ th, td {
     margin: 0;
 }
 
-.asideBlockTitle:hover {
+.asideListTitle:hover {
     background-color: #022F5A;
 }
 
@@ -41,7 +69,7 @@ th, td {
 }
 
 .asideList li {
-    padding: 10px 10px 10px 25px;
+    padding: 10px 15px 10px 25px;
 }
 
 .asideListButton {
@@ -56,6 +84,19 @@ th, td {
     color: #2C3E50;
 }
 
+.asideOptionsButton {
+    background: transparent;
+    border: 1px solid #F0F0F0;
+    border-radius: 3px;
+    float: right;
+    padding-top: 3px;
+}
+
+.asideOptionsButton:hover {
+    background: #F0F0F0;
+    color: #2C3E50;
+}
+
 .asideListItem {
     cursor: pointer;
 }
@@ -64,13 +105,14 @@ th, td {
     background-color: #6595BC;
 }
 
-.asideSectionTitle {
-    background-color: transparent;
-    border-bottom: 1px solid #A8A8A8;
-    color: #FFF;
-    height: 30px;
-    padding: 0;
-    margin: 16px 15px 15px 15px;
+.geneListLabel {
+    color: #DDDDDD;
+    font-style: italic;
+    padding-left: 10px;
+    overflow: hidden;
+    text-align: right;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .invisibleCell {
@@ -95,7 +137,7 @@ th, td {
 }
 
 .invisible {
-    visibility: hidden; 
+    visibility: hidden;
 }
 
 .orderColumn {
