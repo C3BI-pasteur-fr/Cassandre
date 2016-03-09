@@ -36,11 +36,11 @@ angular.module("cassandre").factory("cast", function castFactory() {
     var decimal = /^[+-]?\d+\.\d+(?:[eE][+-]?\d+)?$/;
 
     /*
-     *  ----- Explanation --------------------------------------------------
+     *  ----- Explanation -----------------------------------------------------
      *
      *  ^       assert position at start of a line
      *  [+-]?   match + or - one or zero time
-     *  \d+     match a digit [0-9]
+     *  \d+     match a digit [0-9] at least one time
      *  \.      matches the . literally (decimal only)
      *
      *  Decimal only :
@@ -48,14 +48,14 @@ angular.module("cassandre").factory("cast", function castFactory() {
      *  (?:e[+-]?\d+)? Non-capturing group :
      *
      *      ?:      mark it as non-capturing
-     *      e       matches the character e literally (case sensitive)
+     *      [eE]    matches e or E  only one time
      *      [+-]?   match + or - one or zero time
-     *      \d+     match a digit [0-9]
+     *      \d+     match a digit [0-9] at least one time
      *      ?       match this group one or zero time
      *
      *  $       assert position at end of a line
      *
-     *  --------------------------------------------------------------------
+     *  -----------------------------------------------------------------------
      */
 
     return function (string) {
