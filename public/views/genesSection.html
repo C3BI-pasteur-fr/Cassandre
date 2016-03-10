@@ -46,11 +46,14 @@
         </div>
     </form>
 </div>
+<hr>
+<hr>
+<strong>Searched terms : {{ searchBar.filter | geneFilter:searchBar.filter }}</strong>
 
 <!-- Display table -->
 <!------------------------------------------------------------------------->
 
-<div class="row">
+<!--<div class="row">
     <table class="table table-hover" ng-show="searchBar.filter">
         <thead>
             <tr>
@@ -77,3 +80,4 @@
         </tbody>
     </table>
 </div>
+-->

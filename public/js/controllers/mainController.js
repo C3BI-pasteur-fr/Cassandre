@@ -43,7 +43,7 @@ angular.module("cassandre").controller("MainController", [
     $scope.genes = genes.list.all();
 
     // Control switch for the displayed section
-    $scope.activeSection = "datasetsSection";
+    $scope.activeSection = "genesSection";
     $scope.activate = function (section) {
         $scope.activeSection = section;
     };

@@ -27,15 +27,57 @@
  */
 
 angular.module("cassandre").filter("geneFilter", function () {
-    return function(genes, search, limit) {
+    return function(genes, request, limit) {
 
         if (!genes) return {};
-        if (!search) return {};
+        if (!request) return {};
 
         var filteredGenes = {};
         var counter = 0;
-        var criteria = search.toLowerCase();
+        var search = {
+            global: [],
+            columns: {}
+        };
 
+        // ----- Split the request ------------------ //
+
+        var terms = request.match(/"[^"]*"|\S+/g);
+
+        /*
+         * Regex :
+         *
+         *  | is the logical OR, separating two alternatives:
+         *
+         *      "([^"]*)" matches any string between "". This allows the user
+         *                to search for strings containing spaces.
+         *
+         *      (\S+) matches any string separated by any group of characters
+         *            composed by space characters \s \r \n \t \f.
+         *
+         *
+         *  g modifier : global. Catch all matches, not just the first one.
+         *
+         */
+
+        // ---------------------------------------- //
+
+        // Parse the terms
+        terms.forEach(function (term) {
+            term = term.replace(/"/g, '');
+
+            if (term.indexOf(":") > -1) {
+                var index = term.indexOf(":");
+                var column = term.substring(0, index).trim();
+                var value = term.substring(index + 1).trim();
+
+                search.columns[column] = value;
+            }
+            else {
+                search.global.push(term.trim());
+            }
+        });
+
+        // Filter the lines
         for (var ID in genes) {
             var gene = genes[ID];
 
@@ -60,6 +102,6 @@ angular.module("cassandre").filter("geneFilter", function () {
             }
         }
 
-        return filteredGenes;
+        //return filteredGenes;
     }
 });

@@ -31,7 +31,7 @@ angular.module("cassandre").controller("GenesController", [ "$scope", "$filter",
     $scope.genes = genes.list.all();
 
     // SEARCH BAR
-    // =====================================================================
+    // ========================================================================
 
     $scope.searchBar = {
         filter: "",
@@ -62,7 +62,7 @@ angular.module("cassandre").controller("GenesController", [ "$scope", "$filter",
     };
 
     // HELPERS
-    // =====================================================================
+    // ========================================================================
 
     // Check if the gene has annotations
     $scope.hasAnnotations = function (gene) {
