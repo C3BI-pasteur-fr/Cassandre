@@ -34,74 +34,54 @@ angular.module("cassandre").filter("geneFilter", function () {
 
         var filteredGenes = {};
         var counter = 0;
-        var search = {
-            global: [],
-            columns: {}
-        };
 
-        // ----- Split the request ------------------ //
+        // Parse the request
+        var terms = request
+            .match(/"[^"]*"|\S+/g)
+            .map(function (term) {
+                return term
+                    .replace(/"/g, '')
+                    .toLowerCase()
+                    .trim();
+            });
 
-        var terms = request.match(/"[^"]*"|\S+/g);
-
-        /*
-         * Regex :
-         *
-         *  | is the logical OR, separating two alternatives:
-         *
-         *      "([^"]*)" matches any string between "". This allows the user
-         *                to search for strings containing spaces.
-         *
-         *      (\S+) matches any string separated by any group of characters
-         *            composed by space characters \s \r \n \t \f.
-         *
-         *
-         *  g modifier : global. Catch all matches, not just the first one.
-         *
-         */
-
-        // ---------------------------------------- //
-
-        // Parse the terms
-        terms.forEach(function (term) {
-            term = term.replace(/"/g, '');
-
-            if (term.indexOf(":") > -1) {
-                var index = term.indexOf(":");
-                var column = term.substring(0, index).trim();
-                var value = term.substring(index + 1).trim();
-
-                search.columns[column] = value;
-            }
-            else {
-                search.global.push(term.trim());
-            }
-        });
-
-        // Filter the lines
-        for (var ID in genes) {
-            var gene = genes[ID];
-
-            if (limit && counter === limit) break;
+        // Function to test if a line match a term
+        function match(term, ID, gene) {
 
             // Match a gene name
-            if (ID.toLowerCase().indexOf(criteria) > -1) {
-                counter++;
-                filteredGenes[ID] = gene;
-                continue;
+            if (ID.toLowerCase().indexOf(term) > -1) {
+                return true;
             }
 
             // Match a value in the annotation
             for (var field in gene.annotation) {
-                var value = gene.annotation[field];
+                var value = gene
+                    .annotation[field]
+                    .toString()
+                    .toLowerCase();
 
-                if (value.toString().toLowerCase().indexOf(criteria) > -1) {
-                    counter++;
-                    filteredGenes[ID] = gene;
-                    break;
+                if (value.indexOf(term) > -1) {
+                    return true;
                 }
+            }
+
+            return false;
+        }
+
+        // Filter the lines
+        for (var ID in genes) {
+            if (limit && counter === limit) break;
+
+            var test = terms.every(function (term) {
+                return match(term, ID, genes[ID]);
+            });
+
+            if (test) {
+                counter ++;
+                filteredGenes[ID] = gene;
             }
         }
 
-        //return filteredGenes;
+        return filteredGenes;
     }
 });
