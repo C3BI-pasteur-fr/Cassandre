@@ -78,7 +78,7 @@ angular.module("cassandre").filter("geneFilter", function () {
 
             if (test) {
                 counter ++;
-                filteredGenes[ID] = gene;
+                filteredGenes[ID] = genes[ID];
             }
         }
 
