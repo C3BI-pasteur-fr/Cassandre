@@ -6,6 +6,7 @@
         <meta charset="utf-8">
         <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
         <link rel="stylesheet" href="css/style.css">
+        <script src="https://cdn.plot.ly/plotly-latest.min.js"></script>
         <script src="js/lib/jquery-2.1.4.min.js"></script>
         <script src="bootstrap/js/bootstrap.min.js"></script>
         <script src="js/lib/angular.min.js"></script>
@@ -61,7 +62,7 @@
                     <ng-include src="'views/genesSection.html'"></ng-include>
                 </section>
 
-                <div class="chart" ng-show="data.values.length > 0"></div>
+                <div id="graphDiv" ng-show="data.graphs.length > 0"></div>
             
                 <div id="results" ng-show="data.rows.length > 0">
                     <h2 class="page-header">

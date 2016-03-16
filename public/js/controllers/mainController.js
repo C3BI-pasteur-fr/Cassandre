@@ -33,7 +33,8 @@ angular.module("cassandre").controller("MainController", [
     $scope.data = {
         cells: [],                      // Data from database
         rows: [],                       // Data formatted in rows
-        values: []
+        values: [],
+        graphs: []                      // List of the graphs div IDs
     };
 
     $scope.isLoading = false;           // Marker to know when data are loading
@@ -109,7 +110,7 @@ angular.module("cassandre").controller("MainController", [
                 headers.push(header);
             }
         });
-        
+
         // Sort to have the same headers side to side in the display
         headers.sort();
 
@@ -149,71 +150,132 @@ angular.module("cassandre").controller("MainController", [
     };
 
     // Display an histogram
-    $scope.histogram = function () {
-        $scope.data.cells = data.get({
-            sets: encodeURIComponent($scope.datasets.selected),
-            exps: $scope.exps.selected,
-            genes: $scope.genes.selected
-        }, function (cells) {
+    $scope.histogram = {
+        genes: function () {
+            if ($scope.genes.selected.length === 0) {
+                return;
+            }
 
-            // Get all the current values
-            $scope.data.values = cells.map(function (cell) {
-                return cell.value;
+            $scope.data.cells = data.get({
+                sets: encodeURIComponent($scope.datasets.selected),
+                genes: $scope.genes.selected
+            }, function (cells) {
+                var graphDiv = angular.element("#graphDiv");
+                graphDiv.empty();
+
+                var layout = {
+                    xaxis: { title: "Values" },
+                    yaxis: { title: "Frequencies" },
+                    bargap: 0.1,
+                    autosize: false
+                };
+
+                var config = {
+                    displaylogo: false,
+                    showTips: true,
+                    editable: true,
+                    scrollZoom: true,
+                    modeBarButtonsToRemove: [
+                        "sendDataToCloud"
+                    ],
+                };
+
+                // Build each graph for each line
+                $scope.genes.selected.forEach(function (gene) {
+                    var graphID = "graph" + gene;
+                    
+                    var geneGraph = document.createElement("div");
+                    geneGraph.setAttribute("id", graphID);
+                    $scope.data.graphs.push(graphID);
+                    graphDiv.append(geneGraph);
+
+                    var values = cells
+                    .filter(function (cell) {
+                        return cell.gene === gene;
+                    })
+                    .map(function (cell) {
+                        if (typeof cell.value === "number") {
+                            return cell.value;
+                        }
+                        return 0;
+                    });
+
+                    var trace = {
+                        x: values,
+                        name: gene,
+                        type: "histogram",
+                        opacity: 0.7,
+                    };
+
+                    layout.title = gene;
+
+                    Plotly.newPlot(geneGraph, [trace], layout, config);
+                });
             });
+        },
 
-            // A formatter for counts.
-            var formatCount = d3.format(",.0f");
+        exps: function () {
+            if ($scope.exps.selected.length === 0) {
+                return;
+            }
 
-            var margin = {top: 10, right: 30, bottom: 30, left: 30},
-                width = 960 - margin.left - margin.right,
-                height = 500 - margin.top - margin.bottom;
+            $scope.data.cells = data.get({
+                sets: encodeURIComponent($scope.datasets.selected),
+                exps: $scope.exps.selected
+            }, function (cells) {
 
-            var x = d3.scale.linear()
-                .domain([0, 2])
-                .range([0, width]);
-
-            // Generate a histogram using twenty uniformly-spaced bins.
-            var data = d3.layout.histogram()
-                .bins(x.ticks(20))
-                ($scope.data.values)
-
-            var y = d3.scale.linear()
-                .domain([0, d3.max(data, function(d) { return d.y; })])
-                .range([height, 0]);
-
-            var xAxis = d3.svg.axis()
-                .scale(x)
-                .orient("bottom");
-
-            var svg = d3.select(".chart")
-                .append("svg")
-                .attr("width", width + margin.left + margin.right)
-                .attr("height", height + margin.top + margin.bottom)
-                .append("g")
-                .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-
-            var bar = svg.selectAll(".bar")
-                .data(data)
-                .enter().append("g")
-                .attr("class", "bar")
-                .attr("transform", function(d) { return "translate(" + x(d.x) + "," + y(d.y) + ")"; });
-
-            bar.append("rect")
-                .attr("x", 1)
-                .attr("width", x(data[0].dx) - 1)
-                .attr("height", function(d) { return height - y(d.y); });
-
-            bar.append("text")
-                .attr("dy", ".75em")
-                .attr("y", 6)
-                .attr("x", x(data[0].dx) / 2)
-                .attr("text-anchor", "middle")
-                .text(function(d) { return formatCount(d.y); });
-
-            svg.append("g")
-                .attr("class", "x axis")
-                .attr("transform", "translate(0," + height + ")")
-                .call(xAxis);
-        });
+                var graphDiv = angular.element("#graphDiv");
+                graphDiv.empty();
+    
+                var layout = {
+                    xaxis: { title: "Values" },
+                    yaxis: { title: "Frequencies" },
+                    bargap: 0.1,
+                    autosize: false
+                };
+    
+                var config = {
+                    displaylogo: false,
+                    showTips: true,
+                    editable: true,
+                    scrollZoom: true,
+                    modeBarButtonsToRemove: [
+                        "sendDataToCloud"
+                    ],
+                };
+    
+                // Build each graph for each line
+                $scope.exps.selected.forEach(function (exp) {
+                    var graphID = "graph" + exp;
+                    
+                    var expGraph = document.createElement("div");
+                    expGraph.setAttribute("id", graphID);
+                    $scope.data.graphs.push(graphID);
+                    graphDiv.append(expGraph);
+    
+                    var values = cells
+                    .filter(function (cell) {
+                        return cell.exp === exp;
+                    })
+                    .map(function (cell) {
+                        if (typeof cell.value === "number") {
+                            return cell.value;
+                        }
+                        return 0;
+                    });
+    
+                    var trace = {
+                        x: values,
+                        name: exp,
+                        type: "histogram",
+                        opacity: 0.7,
+                    };
+    
+                    layout.title = exp;
+    
+                    Plotly.newPlot(expGraph, [trace], layout, config);
+                });
+            });
+        }
     }
 }]);

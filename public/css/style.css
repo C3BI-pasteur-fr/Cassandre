@@ -187,28 +187,14 @@ th, td {
     visibility: visible;
 }
 
-/*********** D3 ************/
-
-.chart {
+#graphDiv {
     border: 1px solid;
+    margin: 10px;
 }
 
-.bar rect {
-  fill: steelblue;
-  shape-rendering: crispEdges;
+#graphDiv div{
+    display: inline-block;
 }
-
-.bar text {
-  fill: #fff;
-}
-
-.axis path, .axis line {
-  fill: none;
-  stroke: #000;
-  shape-rendering: crispEdges;
-}
-
-/***************************/
 
 #datasetsFilter {
     width: 100%;

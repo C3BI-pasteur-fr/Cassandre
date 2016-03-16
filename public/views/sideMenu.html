@@ -1,8 +1,24 @@
+<!-- Buttons -->
+<!------------------------------------------------------------------------->
+
+<div id="buttonBlock" ng-show="exps.ifLists() || genes.ifLists()">
+    <div class="asideHeader">
+        <h4 class="asideTitle">Visualisation</h4>
+    </div>
+    <div class="asideBody">
+        <ul class="asideList">
+            <li><button class="asideListButton" ng-click="histogram.genes()">Genes histogram</button></li>
+            <li><button class="asideListButton" ng-click="histogram.exps()">Experiments histogram</button></li>
+            <li><button class="asideListButton" ng-click="getData()">Raw results</button></li>
+        </ul>
+    </div>
+</div>
+
 <!-- Experiments -->
 <!------------------------------------------------------------------------->
 
-<div id="expBlock">
-    <div class="asideHeader" ng-show="exps.ifLists()">
+<div id="expBlock" ng-show="exps.ifLists()">
+    <div class="asideHeader">
         <h4 class="asideTitle">Experiments</h4>
     </div>
     <div class="asideBody" ng-repeat="(title, list) in exps.list.sideMenu track by title">
@@ -36,8 +52,8 @@
 <!-- Genes -->
 <!------------------------------------------------------------------------->
 
-<div id="geneBlock">
-    <div class="asideHeader" ng-show="genes.ifLists()">
+<div id="geneBlock" ng-show="genes.ifLists()">
+    <div class="asideHeader">
         <h4 class="asideTitle">
             Genes
             <button class="asideOptionsButton"

@@ -92,7 +92,7 @@ angular.module("cassandre").controller("DatasetsController", [
         return date.replace(/T/, ' ')      // Replace T with a space
                    .replace(/\..+/, '');   // Delete the dot and everything after
     };
-    
+
     // Shortcuts to display some of the datasets content
     $scope.display = {
         experiments: function (dataset) {
