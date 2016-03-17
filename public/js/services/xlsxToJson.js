@@ -74,7 +74,7 @@ angular.module("cassandre").factory("xlsxToJson", ["cast", function xlsxToJsonFa
                     }
 
                     // Add the cell text value to the row and handle empty cells
-                    row[sheet[header].w] = sheet[cell] ? cast(sheet[cell].w) : "";
+                    row[sheet[header].w] = sheet[cell] ? cast(sheet[cell].w.trim()) : "";
                 }
 
                 table.push(row);
