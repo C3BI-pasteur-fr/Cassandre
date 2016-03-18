@@ -30,30 +30,32 @@ angular.module("cassandre", ["ngResource"])
 
 // ----- Config phase --------------------------------------------------- //
 
-/*
- * Add "data" to the url regex of the angular white list.
- * This is necessary to pass angular security mesures against XSS attacks,
- * and allow us to use a dataURI to download the table of the result section.
- *
- */
-
 .config(function ($compileProvider) {
+
+    /*
+     * Add "data" to the url regex of the angular white list.
+     * This is necessary to pass angular security mesures against XSS attacks,
+     * and allow us to use a dataURI to download the table of the result section.
+     *
+     */
+
     $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|tel|file|data):/);
 })
 
 // ----- Run Phase ------------------------------------------------------ //
 
-/*
- * Initialize the data sets and select them all by default if they're not hidden.
- * The resource is used directly because the initialization of the selected
- * data sets has to occur only at the start.
- *
- * Then get all the experiments and genes.
- *
- */
-
-.run(function (datasets, datasetsHttp, experiments, genes, stats) {
+.run(function ($rootScope, datasets, datasetsHttp, experiments, genes, stats, config) {
     var init = datasets.list.all();
+    $rootScope.config = {};
+
+    /*
+     * Initialize the data sets and select them all by default if they're not hidden.
+     * The resource is used directly because the initialization of the selected
+     * data sets has to occur only at the start.
+     *
+     * Then get all the experiments and genes.
+     *
+     */
 
     datasetsHttp.get(function (sets) {
         init.all = sets;
@@ -62,6 +64,11 @@ angular.module("cassandre", ["ngResource"])
         stats.get.selected(init.selected);
         experiments.get.selected(init.selected);
         genes.get.all();
+    });
+
+    // Get the interface configuration
+    config.get(function (config) {
+        Object.assign($rootScope.config, config.toJSON());
     });
 });
 

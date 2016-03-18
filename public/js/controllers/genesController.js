@@ -22,11 +22,11 @@
 // ============================================================================
 
 /*
- * Angular controller for the "Search Genes" section.
+ * Angular controller for the "Search rows" section.
  *
  */
 
-angular.module("cassandre").controller("GenesController", [ "$scope", "$filter", "genes", function ($scope, $filter, genes) {
+angular.module("cassandre").controller("GenesController", ["$scope", "$filter", "genes", function ($scope, $filter, genes) {
 
     $scope.genes = genes.list.all();
 
@@ -49,7 +49,7 @@ angular.module("cassandre").controller("GenesController", [ "$scope", "$filter",
                     selected: []
                 };
 
-                // Select genes that are already selected in other lists
+                // Select rows that are already selected in other lists
                 geneList.forEach(function (gene) {
                     if ($scope.genes.selected.indexOf(gene) > -1) {
                         $scope.genes.sideMenu[listName].selected.push(gene);
@@ -64,7 +64,7 @@ angular.module("cassandre").controller("GenesController", [ "$scope", "$filter",
     // HELPERS
     // ========================================================================
 
-    // Check if the gene has annotations
+    // Check if the row has annotations
     $scope.hasAnnotations = function (gene) {
         if (Object.keys(gene.annotation).length > 0) {
             return true;
@@ -80,7 +80,7 @@ angular.module("cassandre").controller("GenesController", [ "$scope", "$filter",
             return "Does not appear in any dataset.";
         }
 
-        var text = "This gene appears in:\n";
+        var text = "This "+ $scope.config.rowsName.singular +" appears in:\n";
 
         gene.datasets.forEach(function (set, index, datasets) {
             text = text.concat(set, "\n");

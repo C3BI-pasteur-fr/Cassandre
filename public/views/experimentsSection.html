@@ -1,5 +1,5 @@
 <h3 class="page-header">
-    Search Experiments
+    Search {{ config.columnsName.plural }}
 </h3>
 
 <!-- Search Bar -->
@@ -16,8 +16,8 @@
                 type="search"
                 ng-model="searchBar.filter"
                 ng-model-options="{ allowInvalid: true }"
-                placeholder="Type the name of an experiment, a dataset..."
-                title="Search for experiments in the database"
+                placeholder="Type the name of an {{ config.columnsName.singular }}, a dataset..."
+                title="Search for {{ config.columnsName.plural }} in the database"
                 required>
 
             <span class="input-group-btn">
@@ -47,7 +47,7 @@
                 <span class="pull-right">
                     <em class="text-muted"
                         ng-bind="typeahead.format.datasets(exp.datasets)"
-                        title="List of datasets where this experiment is found"></em>
+                        title="List of datasets where this {{ config.columnsName.singular }} is found"></em>
                 </span>
             </li>
         </ul>

@@ -21,6 +21,7 @@
 // ============================================================================
 // ============================================================================
 
+var configHandler = require('./routes/configHandler');
 var statsHandler = require('./routes/statsHandler');
 var datasetsHandler = require('./routes/datasetsHandler');
 var experimentsHandler = require('./routes/experimentsHandler');
@@ -33,9 +34,17 @@ module.exports = function (app) {
 // ROUTES
 // ============================================================================
 
+    app.route('/api/config')
+    
+    .get(configHandler.GET)
+
+    .put(configHandler.PUT);
+
+// ============================================================================
+
     app.route('/api/stats')
 
-    .get(statsHandler)
+    .get(statsHandler);
 
 // ============================================================================
 

@@ -122,4 +122,15 @@ angular.module("cassandre")
             }
         }
     });
+}])
+
+.factory("config", ["$resource", function configResource ($resource) {
+    return $resource("/api/config", {}, {
+        get: {
+            method: "GET"
+        },
+        update: {
+            method: "PUT"
+        }
+    });
 }]);

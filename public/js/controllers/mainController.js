@@ -27,8 +27,8 @@
  */
 
 angular.module("cassandre").controller("MainController", [
-    "$scope", "$filter", "jsonToTsv", "datasets", "experiments", "genes", "data",
-    function ($scope, $filter, jsonToTsv, datasets, experiments, genes, data) {
+    "$rootScope", "$scope", "$filter", "jsonToTsv", "datasets", "experiments", "genes", "data", "config",
+    function ($rootScope, $scope, $filter, jsonToTsv, datasets, experiments, genes, data, config) {
 
     $scope.data = {
         cells: [],                      // Data from database
@@ -43,11 +43,29 @@ angular.module("cassandre").controller("MainController", [
     $scope.exps = experiments.list.all();
     $scope.genes = genes.list.all();
 
+    // NAVBAR
+    // ========================================================================
+
     // Control switch for the displayed section
     $scope.activeSection = "genesSection";
     $scope.activate = function (section) {
         $scope.activeSection = section;
     };
+
+    // Interface configuration
+    $scope.config = $rootScope.config;
+
+    // Update the interface configuration
+    $scope.updateConfig = function () {
+        config.update({}, $scope.config, function () {
+            alert("Configuration successfully updated");
+        }, function (err) {
+            alert("Error :" + err.data);
+        });
+    };
+
+    // RESULTS
+    // ========================================================================
 
     // Used for ordering the results and mark the columns
     $scope.predicate = "";
@@ -149,6 +167,9 @@ angular.module("cassandre").controller("MainController", [
         $scope.data.rows = $filter("orderBy")($scope.data.rows, "'" + header.replace(/['"]/g, "\\$&") + "'", reverse);
     };
 
+    // MENU
+    // ========================================================================
+
     // Display an histogram
     $scope.histogram = {
         genes: function () {
@@ -183,7 +204,7 @@ angular.module("cassandre").controller("MainController", [
                 // Build each graph for each line
                 $scope.genes.selected.forEach(function (gene) {
                     var graphID = "graph" + gene;
-                    
+
                     var geneGraph = document.createElement("div");
                     geneGraph.setAttribute("id", graphID);
                     $scope.data.graphs.push(graphID);
@@ -226,14 +247,14 @@ angular.module("cassandre").controller("MainController", [
 
                 var graphDiv = angular.element("#graphDiv");
                 graphDiv.empty();
-    
+
                 var layout = {
                     xaxis: { title: "Values" },
                     yaxis: { title: "Frequencies" },
                     bargap: 0.1,
                     autosize: false
                 };
-    
+
                 var config = {
                     displaylogo: false,
                     showTips: true,
@@ -243,16 +264,16 @@ angular.module("cassandre").controller("MainController", [
                         "sendDataToCloud"
                     ],
                 };
-    
+
                 // Build each graph for each line
                 $scope.exps.selected.forEach(function (exp) {
                     var graphID = "graph" + exp;
-                    
+
                     var expGraph = document.createElement("div");
                     expGraph.setAttribute("id", graphID);
                     $scope.data.graphs.push(graphID);
                     graphDiv.append(expGraph);
-    
+
                     var values = cells
                     .filter(function (cell) {
                         return cell.exp === exp;
@@ -263,16 +284,16 @@ angular.module("cassandre").controller("MainController", [
                         }
                         return 0;
                     });
-    
+
                     var trace = {
                         x: values,
                         name: exp,
                         type: "histogram",
                         opacity: 0.7,
                     };
-    
+
                     layout.title = exp;
-    
+
                     Plotly.newPlot(expGraph, [trace], layout, config);
                 });
             });

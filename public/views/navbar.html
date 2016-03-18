@@ -11,16 +11,16 @@
     </div>
     <div id="navbar-menu" class="collapse navbar-collapse">
         <ul class="nav navbar-nav">
-            <li ng-class="{ active: activeSection === 'experimentsSection' }" title="Search for experiments in the database">
+            <li ng-class="{ active: activeSection === 'experimentsSection' }" title="Search for {{ config.columnsName.plural }} in the database">
                 <a role="button" ng-click="activate('experimentsSection')">
                     <span class="glyphicon glyphicon-search"></span>
-                    Search Experiments
+                    Search {{ config.columnsName.plural }}
                 </a>
             </li>
-            <li ng-class="{ active: activeSection === 'genesSection' }" title="Search for genes in the database">
+            <li ng-class="{ active: activeSection === 'genesSection' }" title="Search for {{ config.rowsName.plural }} in the database">
                 <a role="button" ng-click="activate('genesSection')">
                     <span class="glyphicon glyphicon-search"></span>
-                    Search Genes
+                    Search {{ config.rowsName.plural }}
                 </a>
             </li>
             <li ng-class="{ active: activeSection === 'datasetsSection' }" title="Manage the datasets">
@@ -29,10 +29,10 @@
                     Datasets
                 </a>
             </li>
-            <li ng-class="{ active: activeSection === 'annotationsSection' }" title="Manage the genes annotations">
+            <li ng-class="{ active: activeSection === 'annotationsSection' }" title="Manage the {{ config.rowsName.plural }} {{ config.metadataName.plural }}">
                 <a role="button" ng-click="activate('annotationsSection')">
                     <span class="glyphicon glyphicon-th-list"></span>
-                    Annotations
+                    {{ config.metadataName.plural }}
                 </a>
             </li>
         </ul>
@@ -47,6 +47,12 @@
                 <a href="mailto:simon.malesys@pasteur.fr">
                     <span class="glyphicon glyphicon-envelope"></span>
                     Contact
+                </a>
+            </li>
+            <li title="Configure the interface">
+                <a role="button" data-toggle="modal" data-target="#configModal">
+                    <span class="glyphicon glyphicon-cog"></span>
+                    Configuration
                 </a>
             </li>
         </ul>

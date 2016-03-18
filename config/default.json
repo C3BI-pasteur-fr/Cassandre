@@ -7,5 +7,19 @@
     "host": "localhost",
     "port": 27017,
     "dbName": "cassandre"
+  },
+  "interface": {
+    "rowsName": {
+      "singular": "Row",
+      "plural": "Rows"
+    },
+    "columnsName": {
+      "singular": "Column",
+      "plural": "Columns"
+    },
+    "metadataName": {
+      "singular": "Metadata",
+      "plural": "Metadata"
+    }
   }
 }

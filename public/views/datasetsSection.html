@@ -64,11 +64,11 @@
                     <td class="buttonCell" role="button" ng-click="select(set.name)">
                         <input type="checkbox" ng-checked="sets.selected.indexOf(set.name) > -1">
                     </td>
-                    <td class="buttonCell" ng-bind="set.name" title="{{ set.description }}" role="button" ng-click="select(set.name)" title="display the genes of the datasets and their annotations if any"></td>
+                    <td class="buttonCell" ng-bind="set.name" title="{{ set.description }}" role="button" ng-click="select(set.name)" title="display the {{ config.rowsName.plural }} of the datasets and their annotations if any"></td>
                     <td class="buttonCell" ng-bind="formatDate(set.postedDate)" title="{{ set.description }}" role="button" ng-click="select(set.name)"></td>
                     <td>
-                        <button class="btn btn-sm btn-info" type="button" ng-click="display.experiments(set.name)" title="Display the experiments of the dataset and their metadata if any.">Experiments</button>
-                        <button class="btn btn-sm btn-primary" type="button" ng-click="display.genes(set.name)" title="Display the genes of the dataset and their annotations if any.">Genes</button>
+                        <button class="btn btn-sm btn-info" type="button" ng-click="display.experiments(set.name)" title="Display the {{ config.columnsName.plural }} of the dataset and their metadata if any.">{{ config.columnsName.plural }}</button>
+                        <button class="btn btn-sm btn-primary" type="button" ng-click="display.genes(set.name)" title="Display the {{ config.rowsName.plural }} of the dataset and their annotations if any.">{{ config.rowsName.plural }}</button>
                         <button class="btn btn-sm btn-success" type="button" ng-click="display.data(set.name)" title="Display the content of the dataset.">Data</button>
                     </td>
                     <td class="buttonCellEdit"
@@ -86,7 +86,7 @@
             </tbody>
         </table>
     </div>
-    
+
 <!-- Statitics panel -->
 <!------------------------------------------------------------------------->
 
@@ -102,11 +102,11 @@
                     </li>
                     <li>
                         <span ng-bind="stats.selected.exps"></span> on
-                        <span ng-bind="stats.all.exps"></span> Experiments
+                        <span ng-bind="stats.all.exps"></span>{{ config.columnsName.plural }}
                     </li>
                     <li>
                         <span ng-bind="stats.selected.genes"></span> on
-                        <span ng-bind="stats.all.genes"></span> Genes
+                        <span ng-bind="stats.all.genes"></span>{{ config.rowsName.plural }}
                     </li>
                 </ul>
             </div>
@@ -209,11 +209,11 @@
         </div>
 
         <div class="col-lg-offset-1 col-lg-3">
-            <label for="metadata">Experiments Metadata (optionnal)</label>
+            <label for="metadata">{{ config.columnsName.plural }} Metadata (optionnal)</label>
             <input id="metadata"
                    type="file"
                    ng-file-model="metadata.file"
-                   title="Add metadata describing the experiments">
+                   title="Add metadata describing the {{ config.columnsName.plural }}">
             <p class="help-block">Allowed formats :
                 <strong ng-bind="formats"></strong>
             </p>

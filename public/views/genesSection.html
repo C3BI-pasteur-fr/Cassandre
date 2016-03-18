@@ -1,5 +1,5 @@
 <h3 class="page-header">
-    Search Genes
+    Search {{ config.rowsName.plural }}
 </h3>
 
 <div class="row">
@@ -17,8 +17,8 @@
                 type="search"
                 ng-model="searchBar.filter"
                 ng-model-options="{ allowInvalid: true, debounce: 150 }"
-                placeholder="Type a gene name, an annotation keyword..."
-                title="Search for genes in the database"
+                placeholder="Enter a {{ config.rowsName.singular }} name, an {{ config.metadataName.singular }} keyword..."
+                title="Search for {{ config.rowsName.plural }} in the database"
                 required>
 
             <span class="input-group-btn">
@@ -46,7 +46,7 @@
             <tr>
                 <th rowspan=2>ID</th>
                 <th rowspan=2>Datasets</th>
-                <th colspan="{{ genes.annotationsFields.length }}">Annotations</th>
+                <th colspan="{{ genes.annotationsFields.length }}">{{ config.metadataName.plural }}</th>
             </tr>
             <tr ng-show="genes.annotationsFields.length > 0">
                 <th ng-repeat="field in genes.annotationsFields track by $index" ng-bind="field"></th>
@@ -61,7 +61,7 @@
                 </td>
                 <td ng-show="hasAnnotations(gene)" ng-repeat="field in genes.annotationsFields track by $index" ng-bind="gene.annotation[field]"></td>
                 <td ng-show="!hasAnnotations(gene)" colspan="{{ genes.annotationsFields.length }}">
-                    <em class="text-muted">No annotation</em>
+                    <em class="text-muted">No {{ config.metadataName.singular }}</em>
                 </td>
             </tr>
         </tbody>
