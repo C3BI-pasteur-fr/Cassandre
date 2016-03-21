@@ -10,16 +10,16 @@
   },
   "interface": {
     "rowsName": {
-      "singular": "Row",
-      "plural": "Rows"
+      "singular": "row",
+      "plural": "rows"
     },
     "columnsName": {
-      "singular": "Column",
-      "plural": "Columns"
+      "singular": "column",
+      "plural": "columns"
     },
     "metadataName": {
-      "singular": "Metadata",
-      "plural": "Metadata"
+      "singular": "metadata",
+      "plural": "metadata"
     }
   }
 }

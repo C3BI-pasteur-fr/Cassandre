@@ -22,11 +22,11 @@
 // ============================================================================
 
 /*
- * Angular controller for the "Search Experiments" section.
+ * Angular controller for the "Search columns" section.
  *
  */
 
-angular.module("cassandre").controller("ExperimentsController", [ "$scope", "$filter", "experiments", function ($scope, $filter, exps) {
+angular.module("cassandre").controller("ExperimentsController", ["$scope", "$filter", "experiments", function ($scope, $filter, exps) {
 
     $scope.exps = exps.list.all();
 
@@ -49,7 +49,7 @@ angular.module("cassandre").controller("ExperimentsController", [ "$scope", "$fi
                     selected: []
                 };
 
-                // Select experiments that are already selected in other lists
+                // Select columns that are already selected in other lists
                 expsList.forEach(function (exp) {
                     if ($scope.exps.selected.indexOf(exp) > -1) {
                         $scope.exps.sideMenu[listName].selected.push(exp);

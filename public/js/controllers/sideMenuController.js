@@ -23,7 +23,7 @@
 
 /*
  * Angular controller for the side menu that contains the lists of
- * selected experiments.
+ * selected columns.
  *
  */
 
@@ -42,14 +42,14 @@ angular.module("cassandre").controller("SideMenuController", ["$scope", "experim
         $scope.displayedList = $scope.displayedList !== name ? name : "";
     };
 
-    // EXPERIMENTS
+    // COLUMNS
     // =====================================================================
 
     $scope.exps = {
         list: exps.list.all(),
         removeList: exps.remove.list,
 
-        // Check if there is lists of experiments in the menu
+        // Check if there is lists of columns in the menu
         ifLists: function () {
             return Object.keys(this.list.sideMenu).length > 0;
         },
@@ -101,19 +101,19 @@ angular.module("cassandre").controller("SideMenuController", ["$scope", "experim
         }
     };
 
-    // GENES
+    // ROWS
     // =====================================================================
 
     $scope.genes = {
         list: genes.list.all(),
         removeList: genes.remove.list,
 
-        // Check if there is lists of genes in the menu
+        // Check if there is lists of rows in the menu
         ifLists: function () {
             return Object.keys(this.list.sideMenu).length > 0;
         },
 
-        // Options of the gene lists
+        // Options of the row lists
         options: {
             label: "",
             selectLabel: function (label) {
@@ -167,17 +167,17 @@ angular.module("cassandre").controller("SideMenuController", ["$scope", "experim
 
             // Format the dataset list
             if (datasets === "") {
-                text = text.concat("This gene doesn't appear in any dataset.", "\n\n");
+                text = text.concat("This" + $scope.config.rowsName.singular + "doesn't appear in any dataset.", "\n\n");
             }
             else {
                 text = text.concat(datasets, "\n\n");
             }
 
-            text = text.concat("-- Annotations :\n");
+            text = text.concat("-- " + $scope.config.metadataName.plural + " :\n");
 
-            // Format the annotations of this gene
+            // Format the annotations of this row
             if (Object.keys(annotation).length === 0) {
-                text = text.concat("No annotation found for this gene.");
+                text = text.concat("No " + $scope.config.metadataName.singular + " found for this " + $scope.config.rowsName.singular + ".");
             }
             else {
                 for (var field in annotation) {

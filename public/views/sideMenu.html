@@ -7,30 +7,30 @@
     </div>
     <div class="asideBody">
         <ul class="asideList">
-            <li><button class="asideListButton" ng-click="histogram.genes()">Genes histogram</button></li>
-            <li><button class="asideListButton" ng-click="histogram.exps()">Experiments histogram</button></li>
+            <li><button class="asideListButton" ng-click="histogram.genes()">{{ config.rowsName.plural }} histogram</button></li>
+            <li><button class="asideListButton" ng-click="histogram.exps()">{{ config.columnsName.plural }} histogram</button></li>
             <li><button class="asideListButton" ng-click="getData()">Raw results</button></li>
         </ul>
     </div>
 </div>
 
-<!-- Experiments -->
+<!-- Columns -->
 <!------------------------------------------------------------------------->
 
 <div id="expBlock" ng-show="exps.ifLists()">
     <div class="asideHeader">
-        <h4 class="asideTitle">Experiments</h4>
+        <h4 class="asideTitle">{{ config.columnsName.plural }}</h4>
     </div>
     <div class="asideBody" ng-repeat="(title, list) in exps.list.sideMenu track by title">
         <h5 class="asideListTitle"
             ng-click="display('exps', title)"
-            title="List of experiments that match the word {{ title }}">
+            title="List of {{ config.columnsName.plural }} that match the word {{ title }}">
             <span ng-show="displayedList !== ('exps' + title)">&#9656;</span>
             <span ng-show="displayedList === ('exps' + title)">&#9662;</span>
             <span ng-bind="title"></span>
             <div class="badges pull-right">
-                <span class="badge greenBadge" ng-bind="exps.list.sideMenu[title].selected.length" ng-show="exps.list.sideMenu[title].selected.length > 0" title="Number of selected experiments"></span>
-                <span class="badge" ng-bind="exps.list.sideMenu[title].all.length" title="Number of experiments"></span>
+                <span class="badge greenBadge" ng-bind="exps.list.sideMenu[title].selected.length" ng-show="exps.list.sideMenu[title].selected.length > 0" title="Number of selected {{ config.columnsName.plural }}"></span>
+                <span class="badge" ng-bind="exps.list.sideMenu[title].all.length" title="Number of {{ config.columnsName.plural }}"></span>
                 <span class="badge redBadge" ng-click="exps.removeList(title)" title="Remove this list">&#10006;</span>
             </div>
         </h5>
@@ -49,13 +49,13 @@
     </div>
 </div>
 
-<!-- Genes -->
+<!-- Rows -->
 <!------------------------------------------------------------------------->
 
 <div id="geneBlock" ng-show="genes.ifLists()">
     <div class="asideHeader">
         <h4 class="asideTitle">
-            Genes
+            {{ config.rowsName.plural }}
             <button class="asideOptionsButton"
                     type="button"
                     ng-click="display('genes', 'Options')"
@@ -64,7 +64,7 @@
         <form class="asideOptions form-inline" ng-show="displayedList === 'genesOptions'">
             <div class="form-group">
                 <label for="genesLabelList">Add a label</label>
-                <select id="genesLabelList" class="labelOptions" ng-model="genes.options.label" title="Add a label in the lists beside the genes to help their identification.">
+                <select id="genesLabelList" class="labelOptions" ng-model="genes.options.label" title="Add a label in the lists beside the {{ config.columnsName.plural }} to help their identification.">
                     <option value="">No label</option>
                     <option value="datasets">Datasets</option>
                     <option value="{{ field }}" ng-repeat="field in genes.list.annotationsFields track by $index" ng-bind="field"></option>
@@ -75,13 +75,13 @@
     <div class="asideBody" ng-repeat="(title, list) in genes.list.sideMenu track by title">
         <h5 class="asideListTitle"
             ng-click="display('genes', title)"
-            title="List of genes that match the word {{ title }}">
+            title="List of {{ config.columnsName.plural }} that match the word {{ title }}">
             <span ng-show="displayedList !== ('genes' + title)">&#9656;</span>
             <span ng-show="displayedList === ('genes' + title)">&#9662;</span>
             <span ng-bind="title"></span>
             <div class="badges pull-right">
-                <span class="badge greenBadge" ng-bind="genes.list.sideMenu[title].selected.length" ng-show="genes.list.sideMenu[title].selected.length > 0" title="Number of selected genes"></span>
-                <span class="badge" ng-bind="genes.list.sideMenu[title].all.length" title="Number of genes"></span>
+                <span class="badge greenBadge" ng-bind="genes.list.sideMenu[title].selected.length" ng-show="genes.list.sideMenu[title].selected.length > 0" title="Number of selected {{ config.columnsName.plural }}"></span>
+                <span class="badge" ng-bind="genes.list.sideMenu[title].all.length" title="Number of {{ config.columnsName.plural }}"></span>
                 <span class="badge redBadge" ng-click="genes.removeList(title)" title="Remove this list">&#10006;</span>
             </div>
         </h5>

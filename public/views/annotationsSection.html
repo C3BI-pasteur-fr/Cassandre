@@ -1,5 +1,5 @@
 <h3 class="page-header">
-    Add Annotations
+    Add {{ config.metadataName.plural }}
     <small ng-show="annotIsUploading">Uploading..</small>
 </h3>
 
@@ -16,6 +16,6 @@
         <input class="btn btn-default" type="submit" value="Upload" ng-disabled="annotIsUploading">
         <button class="btn btn-default" type="reset">Reset</button>
     </div>
-    <button class="btn btn-info" type="button" ng-click="showAnnotations()">Show Annotations</button>
-    <button class="btn btn-warning" type="button" ng-click="deleteAnnotations()">Delete Annotations</button>
+    <button class="btn btn-info" type="button" ng-click="showAnnotations()">Show {{ config.metadataName.plural }}</button>
+    <button class="btn btn-warning" type="button" ng-click="deleteAnnotations()">Delete {{ config.metadataName.plural }}</button>
 </form>
