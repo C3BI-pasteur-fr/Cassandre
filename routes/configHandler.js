@@ -21,6 +21,7 @@
 // ============================================================================
 // ============================================================================
 
+var fs = require('fs');
 var config = require('../config/default.json');
 
 // ============================================================================
@@ -33,15 +34,26 @@ exports.GET = function (req, res) {
 // ============================================================================
 
 // Update the interface configuration
-exports.PUT = function (req, res) {
-    console.log('Request :');
-    console.log(req.query);
+exports.PUT = [
 
-    console.log('Body of the request :');
-    console.log(req.body);
+    // Set the in-memory config and write the config file
+    function (req, res, next) {
+        config.interface = req.body;
 
-    console.log('Current config :');
-    console.log(config);
+        var path = __dirname + '/../config/default.json';
+        var configJson = JSON.stringify(config, null, 4);
 
-    return res.end();
-};
+        fs.writeFile(path, configJson, function (err) {
+            if (err) return next({ status: 500, body: err });
+            return res.sendStatus(204);
+        });
+    },
+
+    // Error handler
+    function (err, req, res, next) {
+        if (err.body) {
+            return res.status(err.status).send(err.body.message);
+        }
+        return res.status(500).send(err.message);
+    }
+];

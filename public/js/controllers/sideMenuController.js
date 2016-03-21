@@ -167,7 +167,7 @@ angular.module("cassandre").controller("SideMenuController", ["$scope", "experim
 
             // Format the dataset list
             if (datasets === "") {
-                text = text.concat("This" + $scope.config.rowsName.singular + "doesn't appear in any dataset.", "\n\n");
+                text = text.concat("This " + $scope.config.rowsName.singular + " doesn't appear in any dataset.", "\n\n");
             }
             else {
                 text = text.concat(datasets, "\n\n");

@@ -1,25 +1,25 @@
 {
-  "web": {
-    "host": "localhost",
-    "port": 8080
-  },
-  "db": {
-    "host": "localhost",
-    "port": 27017,
-    "dbName": "cassandre"
-  },
-  "interface": {
-    "rowsName": {
-      "singular": "row",
-      "plural": "rows"
+    "web": {
+        "host": "localhost",
+        "port": 8080
     },
-    "columnsName": {
-      "singular": "column",
-      "plural": "columns"
+    "db": {
+        "host": "localhost",
+        "port": 27017,
+        "dbName": "cassandre"
     },
-    "metadataName": {
-      "singular": "metadata",
-      "plural": "metadata"
+    "interface": {
+        "columnsName": {
+            "singular": "column",
+            "plural": "columns"
+        },
+        "metadataName": {
+            "singular": "metadata",
+            "plural": "metadata"
+        },
+        "rowsName": {
+            "singular": "row",
+            "plural": "rows"
+        }
     }
-  }
 }
