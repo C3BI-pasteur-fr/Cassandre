@@ -7,15 +7,16 @@
     <input id="annotFile"
         type="file"
         ng-file-model="annotations.file"
+        title="Choose your {{ config.metadataName.plural }} file"
         required>
     <p class="help-block">Allowed formats :
         <strong ng-bind="formats"></strong>
     </p>
     <div class="btn-group">
-        <button class="btn btn-default" type="button" ng-click="parseFile()">Preview</button>
-        <input class="btn btn-default" type="submit" value="Upload" ng-disabled="annotIsUploading">
-        <button class="btn btn-default" type="reset">Reset</button>
+        <button class="btn btn-default" type="button" ng-click="parseFile()" title="Display the content of the file">Preview</button>
+        <input class="btn btn-default" type="submit" value="Upload" ng-disabled="annotIsUploading" title="Add the {{ config.metadataName.plural }} in the database">
+        <button class="btn btn-default" type="reset" title="Reset this form">Reset</button>
     </div>
-    <button class="btn btn-info" type="button" ng-click="showAnnotations()">Show {{ config.metadataName.plural }}</button>
-    <button class="btn btn-warning" type="button" ng-click="deleteAnnotations()">Delete {{ config.metadataName.plural }}</button>
+    <button class="btn btn-info" type="button" ng-click="showAnnotations()" title="Display all the {{ config.metadataName.plural }} found in the database">Show {{ config.metadataName.plural }}</button>
+    <button class="btn btn-warning" type="button" ng-click="deleteAnnotations()" title="Remove all the {{ config.metadataName.plural }} from the database">Delete {{ config.metadataName.plural }}</button>
 </form>

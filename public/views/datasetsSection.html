@@ -6,7 +6,7 @@
 <div class="row">
     <h2 class="col-lg-offset-5 text-muted" ng-show="sets.all.length === 0">No Data</h2>
 
-<!-- Show all button -->
+<!-- "Show all" button -->
 <!------------------------------------------------------------------------->
 
     <div class="col-lg-1">
@@ -64,7 +64,7 @@
                     <td class="buttonCell" role="button" ng-click="select(set.name)">
                         <input type="checkbox" ng-checked="sets.selected.indexOf(set.name) > -1">
                     </td>
-                    <td class="buttonCell" ng-bind="set.name" title="{{ set.description }}" role="button" ng-click="select(set.name)" title="display the {{ config.rowsName.plural }} of the datasets and their {{ config.metadataName.plural }} if any"></td>
+                    <td class="buttonCell" ng-bind="set.name" title="{{ set.description }}" role="button" ng-click="select(set.name)"></td>
                     <td class="buttonCell" ng-bind="formatDate(set.postedDate)" title="{{ set.description }}" role="button" ng-click="select(set.name)"></td>
                     <td>
                         <button class="btn btn-sm btn-info" type="button" ng-click="display.experiments(set.name)" title="Display the {{ config.columnsName.plural }} of the dataset and their metadata if any.">{{ config.columnsName.plural }}</button>
