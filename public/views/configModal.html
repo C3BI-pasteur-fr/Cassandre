@@ -1,0 +1,95 @@
+<div id="configModal" class="modal" role="dialog">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Interface configuration</h4>
+            </div>
+            <div class="modal-body">
+                <p>Cassandre uses the first line of your files (the column names)
+                and the content of the first column (the row names) to store your data
+                and allow you to explore it properly.</p>
+                
+                <p>Here you can put a description about what rows and columns are in your data:
+                genes identifiers, experiment names, strain names..</p>
+                
+                <p>The interface will display those informations everywhere it is needed.
+                You can change those parameters at any time.</p>
+
+                <h4 class="page-header">Rows name</h4>
+                <div class="row">
+                    <div class="form-group col-lg-6">
+                        <label for="rowsNameSingular">Singular</label>
+                        <input id="rowsNameSingular"
+                            class="form-control"
+                            type="text"
+                            title="Enter the singular term to describe the rows"
+                            ng-model="config.rowsName.singular"
+                            required>
+                    </div>
+
+                    <div class="form-group col-lg-6">
+                        <label for="rowsNamePlural">Plural</label>
+                        <input id="rowsNamePlural"
+                            class="form-control"
+                            type="text"
+                            title="Enter the plural term to describe the rows"
+                            ng-model="config.rowsName.plural"
+                            required>
+                    </div>
+                </div>
+
+                <h4 class="page-header">Columns name</h4>
+                <div class="row">
+                    <div class="form-group col-lg-6">
+                        <label for="colsNameSingular">Singular</label>
+                        <input id="colsNameSingular"
+                            class="form-control"
+                            type="text"
+                            title="Enter the singular term to describe the columns"
+                            ng-model="config.columnsName.singular"
+                            required>
+                    </div>
+
+                    <div class="form-group col-lg-6">
+                        <label for="colsNamePlural">Plural</label>
+                        <input id="colsNamePlural"
+                            class="form-control"
+                            type="text"
+                            title="Enter the plural term to describe the columns"
+                            ng-model="config.columnsName.plural"
+                            required>
+                    </div>
+                </div>
+
+                <h4 class="page-header">Metadata name</h4>
+                <div class="row">
+                    <div class="form-group col-lg-6">
+                        <label for="metaNameSingular">Singular</label>
+                        <input id="metaNameSingular"
+                            class="form-control"
+                            type="text"
+                            title="Enter the singular term to describe the metadata"
+                            ng-model="config.metadataName.singular"
+                            required>
+                    </div>
+
+                    <div class="form-group col-lg-6">
+                        <label for="metaNamePlural">Plural</label>
+                        <input id="metaNamePlural"
+                            class="form-control"
+                            type="text"
+                            title="Enter the plural term to describe the metadata"
+                            ng-model="config.metadataName.plural"
+                            required>
+                    </div>
+                </div>
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" ng-click="updateConfig()">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>

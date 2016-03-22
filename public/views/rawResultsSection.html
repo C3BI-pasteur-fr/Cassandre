@@ -1,0 +1,87 @@
+<h2 class="page-header">
+    Results
+    <small ng-show="isLoading">Loading data..</small>
+    <small>
+        <span ng-bind="data.rows.slice(0, limit).length"></span>
+        lines displayed on
+        <span ng-bind="data.rows.length"></span>
+    </small>
+</h2>
+
+<form class="form-inline pull-right">
+    <select id="resultsLimit"
+            class="form-control"
+            ng-model="limit"
+            ng-options="limit for (limit, value) in limitOptions"
+            title="Choose the limit of displayed lines">
+    </select>
+
+    <div class="input-group">
+        <span class="input-group-addon">Filters</span>
+        <span class="input-group-btn">
+            <button class="btn btn-default" ng-class="{ 'btn-success': filters.active, active: filters.active }" type="button" ng-click="filters.active = true" title="Activate filters">ON</button>
+            <button class="btn btn-default" ng-class="{ 'btn-primary': !filters.active, active: !filters.active }" type="button" ng-click="filters.active = false" title="Deactivate filters">OFF</button>
+            <button class="btn btn-default" ng-click="filters.reset()" title="Reset all filters">Reset</button>
+        </span>
+    </div>
+
+    <div class="btn-group">
+        <a class="btn btn-default"
+            role="button"
+            download="CassandreData.txt"
+            ng-href="{{ download.href }}"
+            ng-click="download.setHref()"
+            title="Download the current results">
+            <span class="glyphicon glyphicon-download"></span>
+            Download
+        </a>
+
+        <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" title="Options for download">&#9776;</button>
+
+        <ul class="dropdown-menu">
+            <li class="dropdown-header">Empty cells value</li>
+            <li class="divider"></li>
+            <li ng-class="{ active: download.emptyCells === '' }" ng-click="download.emptyCells = ''">
+                <a>Nothing</a>
+            </li>
+            <li ng-class="{ active: download.emptyCells === 'null' }" ng-click="download.emptyCells = 'null'">
+                <a>"null"</a>
+            </li>
+            <li ng-class="{ active: download.emptyCells === 'NA' }" ng-click="download.emptyCells = 'NA'">
+                <a>"NA"</a>
+            </li>
+        </ul>
+    </div>
+
+    <button class="btn btn-default" type="button" ng-click="erase()" title="Erase this table">
+        <span class="glyphicon glyphicon-erase"></span>
+        Erase table
+    </button>
+</form>
+
+<table class="table table-hover">
+    <thead>
+        <tr>
+            <th class="buttonCell"
+                role="button"
+                ng-repeat="(header, value) in data.rows[0] track by header"
+                ng-class="{ orderColumn : predicate === header, reverse : reverse === true }"
+                ng-click="order(header, !reverse)"
+                ng-bind="header">
+            </th>
+        </tr>
+        <tr ng-show="filters.active">
+            <th ng-repeat="(header, value) in data.rows[0] track by header">
+                <input class="form-control" type="text" ng-model="filters.list[header]" title="Filter this column">
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr ng-repeat="row in data.rows.slice(0, limit) | filter:filters.list track by $index">
+            <td ng-repeat="(header, value) in row track by header"
+                ng-class="{ numericCell: typeof(value) === 'number' }"
+                ng-bind="value">
+            </td>
+        </tr>
+    </tbody>
+</table>
