@@ -187,13 +187,11 @@ th, td {
     visibility: visible;
 }
 
-#graphDiv {
-    border: 1px solid;
-    margin: 10px;
-}
-
-#graphDiv div{
+.graph {
+    background-color: #2C3E50;
     display: inline-block;
+    height: 450px;
+    width: 700px;
 }
 
 #datasetsFilter {

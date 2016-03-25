@@ -15,6 +15,7 @@
         <script src="js/lib/D3.min.js"></script>
         <script src="js/cassandre.js"></script>
         <script src="js/directives/ngFileModel.js"></script>
+        <script src="js/directives/graphBlock.js"></script>
         <script src="js/filters/geneFilter.js"></script>
         <script src="js/filters/expFilter.js"></script>
         <script src="js/services/allowedFileTypes.js"></script>
@@ -33,6 +34,7 @@
         <script src="js/controllers/genesController.js"></script>
         <script src="js/controllers/datasetsController.js"></script>
         <script src="js/controllers/annotationsController.js"></script>
+        <script src="js/controllers/visualController.js"></script>
     </head>
 
     <body ng-controller="MainController">
@@ -66,7 +68,10 @@
                     <ng-include src="'views/genesSection.html'"></ng-include>
                 </section>
 
-                <div id="graphDiv" ng-show="data.graphs.length > 0"></div>
+                <!--ng-show="data.graphs.length > 0"-->
+                <div id="visual" ng-controller="VisualController">
+                    <ng-include src="'views/visualSection.html'"></ng-include>
+                </div>
 
                 <div id="rawResults" ng-show="data.rows.length > 0">
                     <ng-include src="'views/rawResultsSection.html'"></ng-include>

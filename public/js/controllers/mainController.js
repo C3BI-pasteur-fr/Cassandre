@@ -181,8 +181,13 @@ angular.module("cassandre").controller("MainController", [
                 sets: encodeURIComponent($scope.datasets.selected),
                 genes: $scope.genes.selected
             }, function (cells) {
-                var graphDiv = angular.element("#graphDiv");
-                graphDiv.empty();
+                var graphDiv = angular.element("#visual");
+                var graphBlock = angular.element("<graph-block></graph-block>");
+                var blockID = $scope.genes.selected.join("");
+
+                $scope.data.graphs.push(blockID);
+                graphBlock.attr("id", blockID);
+                graphDiv.append(graphBlock);
 
                 var layout = {
                     xaxis: { title: "Values" },
@@ -208,7 +213,7 @@ angular.module("cassandre").controller("MainController", [
                     var geneGraph = document.createElement("div");
                     geneGraph.setAttribute("id", graphID);
                     $scope.data.graphs.push(graphID);
-                    graphDiv.append(geneGraph);
+                    graphBlock.append(geneGraph);
 
                     var values = cells
                     .filter(function (cell) {
@@ -245,7 +250,7 @@ angular.module("cassandre").controller("MainController", [
                 exps: $scope.exps.selected
             }, function (cells) {
 
-                var graphDiv = angular.element("#graphDiv");
+                var graphDiv = angular.element("#visual");
                 graphDiv.empty();
 
                 var layout = {
