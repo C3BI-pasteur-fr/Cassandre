@@ -64,7 +64,7 @@
         <form class="asideOptions form-inline" ng-show="displayedList === 'genesOptions'">
             <div class="form-group">
                 <label for="genesLabelList">Add a label</label>
-                <select id="genesLabelList" class="labelOptions" ng-model="genes.options.label" title="Add a label in the lists beside the {{ config.columnsName.plural }} to help their identification.">
+                <select id="genesLabelList" class="labelOptions" ng-model="genes.options.label" title="Add a label in the lists beside the {{ config.rowsName.plural }} to help their identification.">
                     <option value="">No label</option>
                     <option value="datasets">Datasets</option>
                     <option value="{{ field }}" ng-repeat="field in genes.list.annotationsFields track by $index" ng-bind="field"></option>
@@ -75,13 +75,13 @@
     <div class="asideBody" ng-repeat="(title, list) in genes.list.sideMenu track by title">
         <h5 class="asideListTitle"
             ng-click="display('genes', title)"
-            title="List of {{ config.columnsName.plural }} that match the word {{ title }}">
+            title="List of {{ config.rowsName.plural }} that match the word {{ title }}">
             <span ng-show="displayedList !== ('genes' + title)">&#9656;</span>
             <span ng-show="displayedList === ('genes' + title)">&#9662;</span>
             <span ng-bind="title"></span>
             <div class="badges pull-right">
-                <span class="badge greenBadge" ng-bind="genes.list.sideMenu[title].selected.length" ng-show="genes.list.sideMenu[title].selected.length > 0" title="Number of selected {{ config.columnsName.plural }}"></span>
-                <span class="badge" ng-bind="genes.list.sideMenu[title].all.length" title="Number of {{ config.columnsName.plural }}"></span>
+                <span class="badge greenBadge" ng-bind="genes.list.sideMenu[title].selected.length" ng-show="genes.list.sideMenu[title].selected.length > 0" title="Number of selected {{ config.rowsName.plural }}"></span>
+                <span class="badge" ng-bind="genes.list.sideMenu[title].all.length" title="Number of {{ config.rowsName.plural }}"></span>
                 <span class="badge redBadge" ng-click="genes.removeList(title)" title="Remove this list">&#10006;</span>
             </div>
         </h5>
