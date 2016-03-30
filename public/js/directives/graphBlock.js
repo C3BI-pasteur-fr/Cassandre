@@ -25,6 +25,56 @@ angular.module("cassandre").directive("graphBlock", function () {
     return {
         restrict: "E",
         templateUrl: "../../views/graphBlock.html",
-        scope: false
+        link: function (scope, element, attrs) {
+            var layout = {
+                xaxis: { title: "Values" },
+                yaxis: { title: "Frequencies" },
+                bargap: 0.1,
+                autosize: false
+            };
+
+            var config = {
+                displaylogo: false,
+                showTips: true,
+                editable: true,
+                scrollZoom: true,
+                modeBarButtonsToRemove: [
+                    "sendDataToCloud"
+                ],
+            };
+
+            // Build each graph for each line
+            scope.genes.selected.forEach(function (gene) {
+                var graphID = gene + "_of_" + attrs.id;
+
+                var geneGraph = angular.element("<div></div>")
+                    .attr("id", graphID)
+                    .attr("class", "graph");
+
+                element.append(geneGraph);
+
+                var values = scope.data.cells
+                .filter(function (cell) {
+                    return cell.gene === gene;
+                })
+                .map(function (cell) {
+                    if (typeof cell.value === "number") {
+                        return cell.value;
+                    }
+                    return 0;
+                });
+
+                var trace = {
+                    x: values,
+                    name: gene,
+                    type: "histogram",
+                    opacity: 0.7,
+                };
+
+                layout.title = gene;
+
+                Plotly.newPlot(graphID, [trace], layout, config);
+            });
+        }
     }
 });
