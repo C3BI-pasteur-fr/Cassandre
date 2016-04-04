@@ -178,14 +178,7 @@ angular.module("cassandre").controller("MainController", [
         //}
     };
 
-    $scope.displayed = "";
-    $scope.display = function (block) {
-
-    };
-
-    $scope.remove = function (block) {
-
-    };
+    $scope.displayedBlock = "";
 
     // Display an histogram
     $scope.histogram = {
@@ -198,9 +191,14 @@ angular.module("cassandre").controller("MainController", [
                 sets: encodeURIComponent($scope.datasets.selected),
                 genes: $scope.genes.selected
             }, function (cells) {
-                var graphDiv = angular.element("#visual");
-                var graphBlock = angular.element("<graph-block></graph-block>");
                 var blockID = $scope.genes.selected.join("");
+                var graphDiv = angular.element("#visual");
+                var graphBlock = angular.element("<graph-block></graph-block>")
+                    .attr("id", blockID)
+                    .attr("data-type", "{{ config.rowsName.plural }}")
+                    .attr("data-list", "genes.selected")
+                    .attr("data-cells", "data.cells")
+                    .attr("data-displayed-block", "displayedBlock");
 
                 $scope.graphBlocks[blockID] = {
                     type: $scope.config.rowsName.plural,
@@ -208,7 +206,6 @@ angular.module("cassandre").controller("MainController", [
                     graphs: []
                 };
 
-                graphBlock.attr("id", blockID);
                 graphDiv.append(graphBlock);
                 $compile(graphBlock)($scope);
             });
@@ -223,58 +220,23 @@ angular.module("cassandre").controller("MainController", [
                 sets: encodeURIComponent($scope.datasets.selected),
                 exps: $scope.exps.selected
             }, function (cells) {
-
+                var blockID = $scope.exps.selected.join("").replace(/\s/g, "");
                 var graphDiv = angular.element("#visual");
-                graphDiv.empty();
+                var graphBlock = angular.element("<graph-block></graph-block>")
+                    .attr("id", blockID)
+                    .attr("data-type", "{{ config.columnsName.plural }}")
+                    .attr("data-list", "exps.selected")
+                    .attr("data-cells", "data.cells")
+                    .attr("data-displayed-block", "displayedBlock");
 
-                var layout = {
-                    xaxis: { title: "Values" },
-                    yaxis: { title: "Frequencies" },
-                    bargap: 0.1,
-                    autosize: false
+                $scope.graphBlocks[blockID] = {
+                    type: $scope.config.columnsName.plural,
+                    list: $scope.exps.selected,
+                    graphs: []
                 };
 
-                var config = {
-                    displaylogo: false,
-                    showTips: true,
-                    editable: true,
-                    scrollZoom: true,
-                    modeBarButtonsToRemove: [
-                        "sendDataToCloud"
-                    ],
-                };
-
-                // Build each graph for each line
-                $scope.exps.selected.forEach(function (exp) {
-                    var graphID = "graph" + exp;
-
-                    var expGraph = document.createElement("div");
-                    expGraph.setAttribute("id", graphID);
-                    $scope.data.graphs.push(graphID);
-                    graphDiv.append(expGraph);
-
-                    var values = cells
-                    .filter(function (cell) {
-                        return cell.exp === exp;
-                    })
-                    .map(function (cell) {
-                        if (typeof cell.value === "number") {
-                            return cell.value;
-                        }
-                        return 0;
-                    });
-
-                    var trace = {
-                        x: values,
-                        name: exp,
-                        type: "histogram",
-                        opacity: 0.7,
-                    };
-
-                    layout.title = exp;
-
-                    Plotly.newPlot(expGraph, [trace], layout, config);
-                });
+                graphDiv.append(graphBlock);
+                $compile(graphBlock)($scope);
             });
         }
     }

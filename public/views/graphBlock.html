@@ -1,9 +1,15 @@
-<h4 class="page-header">
-    <span>&#9656;</span>
-    <span>&#9662;</span>
-    <span ng-bind="config.rowsName.plural"></span>
-    <small>2 graphs</small>
-    <small class="pull-right" ng-click="">
+<h4 class="page-header graphBlockHeader" ng-click="display()">
+    <span ng-show="displayedBlock !== id">&#9656;</span>
+    <span ng-show="displayedBlock === id">&#9662;</span>
+    <span ng-bind="type"></span>
+    <small>
+        <span ng-bind="graphsNumber"></span>
+        graphs:
+        <span ng-bind="list"></span>
+    </small>
+    <small class="pull-right" ng-click="remove()">
         <span class="glyphicon glyphicon-remove"></span>
     </small>
 </h4>
+
+<div class="graphZone" ng-show="displayedBlock === id"></div>

@@ -194,6 +194,10 @@ th, td {
     width: 700px;
 }
 
+.graphBlockHeader {
+    cursor: pointer;
+}
+
 #datasetsFilter {
     width: 100%;
 }

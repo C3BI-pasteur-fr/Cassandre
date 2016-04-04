@@ -22,17 +22,7 @@
 // ============================================================================
 
 angular.module("cassandre").controller("VisualController", ["$scope", function ($scope) {
-    $scope.graphBlocks = {
-        list: [],
-        graphs: []
-    };
 
+    // The displayed graphBlock
     $scope.displayed = "";
-    $scope.display = function (block) {
-
-    };
-
-    $scope.remove = function (block) {
-
-    };
 }]);
