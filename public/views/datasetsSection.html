@@ -169,8 +169,8 @@
         <div class="col-lg-3">
             <input id="dataset"
                 type="file"
-                ng-file-model="dataset.file"
-                ng-file-name="dataset.name"
+                file-ng-model="dataset.file"
+                file-name="dataset.name"
                 title="Choose your dataset"
                 required>
             <p class="help-block">Allowed formats :
@@ -212,7 +212,7 @@
             <label for="metadata">{{ config.columnsName.plural }} Metadata (optionnal)</label>
             <input id="metadata"
                    type="file"
-                   ng-file-model="metadata.file"
+                   file-ng-model="metadata.file"
                    title="Add metadata describing the {{ config.columnsName.plural }}">
             <p class="help-block">Allowed formats :
                 <strong ng-bind="formats"></strong>

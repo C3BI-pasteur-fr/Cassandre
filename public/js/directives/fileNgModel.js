@@ -28,26 +28,26 @@
  *
  * The attributes are :
  *
- *     ng-file-model: contains the File object
- *     ng-file-name: contains the name of the file (optional)
+ *     file-ng-model: contains the File object
+ *     file-name: contains the name of the file (optional)
  *
  */
 
-angular.module("cassandre").directive('ngFileModel', ['$parse', function ($parse) {
+angular.module("cassandre").directive('fileNgModel', ['$parse', function ($parse) {
     return {
         restrict: 'A',
         link: function (scope, element, attrs) {
-            var model = $parse(attrs.ngFileModel);
-            
-            if (attrs.ngFileName) {
-                var modelName = $parse(attrs.ngFileName);
+            var model = $parse(attrs.fileNgModel);
+
+            if (attrs.fileName) {
+                var modelName = $parse(attrs.fileName);
             }
 
             element.bind('change', function () {
                 scope.$apply(function () {
                     model.assign(scope, element[0].files[0]);
 
-                    if (attrs.ngFileName) {
+                    if (attrs.fileName) {
                         var name = element[0].files[0].name.replace(/\.[^.]+$/, "");
                         modelName.assign(scope, name);
                     }

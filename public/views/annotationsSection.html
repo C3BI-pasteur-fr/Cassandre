@@ -6,7 +6,7 @@
 <form id="annotUploadForm" name="annotUploadForm" class="form-inline" ng-submit="sendFile()">
     <input id="annotFile"
         type="file"
-        ng-file-model="annotations.file"
+        file-ng-model="annotations.file"
         title="Choose your {{ config.metadataName.plural }} file"
         required>
     <p class="help-block">Allowed formats :
