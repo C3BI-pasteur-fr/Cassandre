@@ -10,7 +10,7 @@
  *
  * Cassandre is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -26,23 +26,25 @@ angular.module("cassandre").directive("graphBlock", ["$rootScope", function ($ro
         restrict: "E",
         templateUrl: "../../views/graphBlock.html",
         scope: {
-            id: "@",
-            type: "@",
-            list: "=",
-            cells: "=",
-            displayedBlock: "="
+            id: "@",                    // The id of the div
+            type: "@",                  // The type of data, rows or columns
+            datasets: "=",              // The list of selected datasets
+            list: "=",                  // The list of selected rows or columns IDs
+            cells: "=",                 // The list of the cells
+            displayedBlock: "=",        // The id of the currently displayed block
+            remove: "&"                 // The remove function from the parent controller
         },
         link: function (scope, block, attrs) {
-            scope.graphsNumber = scope.list.length;
 
+            // The list of graph titles
+            scope.graphList = [];
+
+            // Function to display the blocks as an accordion
             scope.display = function () {
                 scope.displayedBlock = scope.displayedBlock === attrs.id ? "" : attrs.id;
             };
-            
-            scope.remove = function () {
-                angular.element("#" + attrs.id).remove();
-            };
 
+            // Set the common layout of the graphs
             var layout = {
                 xaxis: { title: "Values" },
                 yaxis: { title: "Frequencies" },
@@ -50,51 +52,71 @@ angular.module("cassandre").directive("graphBlock", ["$rootScope", function ($ro
                 autosize: false
             };
 
+            // Set the common config of the graphs
             var config = {
                 displaylogo: false,
                 showTips: true,
                 editable: true,
                 scrollZoom: true,
                 modeBarButtonsToRemove: [
-                    "sendDataToCloud"
+                    "sendDataToCloud",
+                    "autoScale2d"
                 ],
             };
 
             // Build each graph
-            scope.list.forEach(function (element) {
-                var graphID = element + "_of_" + attrs.id;
+            scope.datasets.forEach(function (dataset) {
+                scope.list.forEach(function (element) {
 
-                var graph = angular.element("<div></div>")
-                    .attr("id", graphID)
-                    .attr("class", "graph");
+                    var values = scope.cells
 
-                block.find(".graphZone").append(graph);
+                    // Get the right cells rows or the columns depending of the requested type
+                    .filter(function (cell) {
+                        if (cell.set === dataset) {
+                            if (scope.type === $rootScope.config.rowsName.plural) {
+                                return cell.gene === element;
+                            }
+                            else {
+                                return cell.exp === element;
+                            }
+                        }
+                    })
 
-                var values = scope.cells
-                .filter(function (cell) {
-                    if (scope.type === $rootScope.config.rowsName.plural) {
-                        return cell.gene === element;
+                    // Get the values and filter non-numeric ones
+                    .map(function (cell) {
+                        if (typeof cell.value === "number") {
+                            return cell.value;
+                        }
+                    });
+
+                    // Stop here if the current dataset doesn't contain this row or column
+                    if (values.length === 0) {
+                        return;
                     }
-                    else {
-                        return cell.exp === element;
-                    }
-                })
-                .map(function (cell) {
-                    if (typeof cell.value === "number") {
-                        return cell.value;
-                    }
+
+                    // Set the graph identifier
+                    var graphID = attrs.id + " - " + element + " - " + dataset;
+                    layout.title = element + " - " + dataset;
+
+                    // Build the graph div
+                    var graph = angular.element("<div></div>")
+                        .attr("id", graphID)
+                        .attr("class", "graph");
+
+                    block.find(".graphZone").append(graph);
+
+                    // Build the the graph itself
+                    var trace = {
+                        x: values,
+                        name: graphID,
+                        type: "histogram",
+                        opacity: 0.7,
+                    };
+
+                    Plotly.newPlot(graphID, [trace], layout, config);
+
+                    scope.graphList.push(layout.title);
                 });
-
-                var trace = {
-                    x: values,
-                    name: element,
-                    type: "histogram",
-                    opacity: 0.7,
-                };
-
-                layout.title = element;
-
-                Plotly.newPlot(graphID, [trace], layout, config);
             });
         }
     }

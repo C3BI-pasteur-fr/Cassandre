@@ -3,11 +3,11 @@
     <span ng-show="displayedBlock === id">&#9662;</span>
     <span ng-bind="type"></span>
     <small>
-        <span ng-bind="graphsNumber"></span>
+        <span ng-bind="graphList.length"></span>
         graphs:
-        <span ng-bind="list"></span>
+        <span ng-bind="graphList" ></span>
     </small>
-    <small class="pull-right" ng-click="remove()">
+    <small class="pull-right" ng-click="remove({ blockID: id})">
         <span class="glyphicon glyphicon-remove"></span>
     </small>
 </h4>

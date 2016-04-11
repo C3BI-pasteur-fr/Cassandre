@@ -32,9 +32,7 @@ angular.module("cassandre").controller("MainController", [
 
     $scope.data = {
         cells: [],                      // Data from database
-        rows: [],                       // Data formatted in rows
-        values: [],
-        graphs: []                      // List of the graphs div IDs
+        rows: []                        // Data formatted in rows
     };
 
     $scope.isLoading = false;           // Marker to know when data are loading
@@ -169,16 +167,13 @@ angular.module("cassandre").controller("MainController", [
 
     // MENU
     // ========================================================================
-    
-    $scope.graphBlocks = {
-        //ID: {
-        //    type: "",
-        //    list: [],
-        //    graphs: []
-        //}
-    };
 
+    $scope.graphBlocks = [];
     $scope.displayedBlock = "";
+    $scope.remove = function (blockID) {
+        angular.element("#" + blockID).remove();
+        $scope.graphBlocks.splice($scope.graphBlocks.indexOf(blockID), 1);
+    };
 
     // Display an histogram
     $scope.histogram = {
@@ -191,22 +186,21 @@ angular.module("cassandre").controller("MainController", [
                 sets: encodeURIComponent($scope.datasets.selected),
                 genes: $scope.genes.selected
             }, function (cells) {
-                var blockID = $scope.genes.selected.join("");
+                var blockID = ($scope.config.rowsName.plural +
+                               $scope.genes.selected.join("") +
+                               $scope.datasets.selected.join("")).replace(/\s/g, "");
                 var graphDiv = angular.element("#visual");
                 var graphBlock = angular.element("<graph-block></graph-block>")
                     .attr("id", blockID)
                     .attr("data-type", "{{ config.rowsName.plural }}")
+                    .attr("data-datasets", "datasets.selected")
                     .attr("data-list", "genes.selected")
                     .attr("data-cells", "data.cells")
-                    .attr("data-displayed-block", "displayedBlock");
-
-                $scope.graphBlocks[blockID] = {
-                    type: $scope.config.rowsName.plural,
-                    list: $scope.genes.selected,
-                    graphs: []
-                };
+                    .attr("data-displayed-block", "displayedBlock")
+                    .attr("data-remove", "remove(blockID)");
 
                 graphDiv.append(graphBlock);
+                $scope.graphBlocks.push(blockID);
                 $compile(graphBlock)($scope);
             });
         },
@@ -220,22 +214,20 @@ angular.module("cassandre").controller("MainController", [
                 sets: encodeURIComponent($scope.datasets.selected),
                 exps: $scope.exps.selected
             }, function (cells) {
-                var blockID = $scope.exps.selected.join("").replace(/\s/g, "");
+                var blockID = ($scope.config.columnsName.plural +
+                               $scope.genes.selected.join("") +
+                               $scope.datasets.selected.join("")).replace(/\s/g, "");
                 var graphDiv = angular.element("#visual");
                 var graphBlock = angular.element("<graph-block></graph-block>")
                     .attr("id", blockID)
                     .attr("data-type", "{{ config.columnsName.plural }}")
+                    .attr("data-datasets", "datasets.selected")
                     .attr("data-list", "exps.selected")
                     .attr("data-cells", "data.cells")
                     .attr("data-displayed-block", "displayedBlock");
 
-                $scope.graphBlocks[blockID] = {
-                    type: $scope.config.columnsName.plural,
-                    list: $scope.exps.selected,
-                    graphs: []
-                };
-
                 graphDiv.append(graphBlock);
+                $scope.graphBlocks.push(blockID);
                 $compile(graphBlock)($scope);
             });
         }
