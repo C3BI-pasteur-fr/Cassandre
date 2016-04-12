@@ -138,6 +138,14 @@ angular.module("cassandre").controller("DatasetsController", [
 
     // ----- Add a new set ---------------------------------------------- //
 
+    // Handle the display of this section
+    $scope.addNewSet = {
+        isShowed: false,
+        show: function () {
+            this.isShowed = !this.isShowed;
+        }
+    };
+
     // Data set file to upload
     $scope.dataset = {
         file: null,                 // The entire FileObject

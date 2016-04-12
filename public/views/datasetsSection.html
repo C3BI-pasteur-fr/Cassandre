@@ -85,6 +85,13 @@
                 </tr>
             </tbody>
         </table>
+
+        <button class="btn pull-right" ng-class="{'btn-success': !addNewSet.isShowed, 'btn-warning': addNewSet.isShowed}" ng-click="addNewSet.show()">
+            <span class="glyphicon glyphicon-plus-sign" ng-show="!addNewSet.isShowed"></span>
+            <span class="glyphicon glyphicon-minus-sign" ng-show="addNewSet.isShowed"></span>
+            <span ng-show="!addNewSet.isShowed">Add a new set</span>
+            <span ng-show="addNewSet.isShowed">Hide "Add a new set"</span>
+        </button>
     </div>
 
 <!-- Statitics panel -->
@@ -159,12 +166,12 @@
 <!-- Add a new dataset -->
 <!------------------------------------------------------------------------->
 
-<h3 class="page-header">
+<h3 class="page-header" ng-show="addNewSet.isShowed">
     Add a new set
     <small ng-show="sets.uploading">Uploading..</small>
 </h3>
 
-<div class="row">
+<div class="row" ng-show="addNewSet.isShowed">
     <form id="dataUploadForm" name="dataUploadForm" ng-submit="sendData()">
         <div class="col-lg-3">
             <input id="dataset"
