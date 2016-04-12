@@ -215,7 +215,7 @@ angular.module("cassandre").controller("MainController", [
                 exps: $scope.exps.selected
             }, function (cells) {
                 var blockID = ($scope.config.columnsName.plural +
-                               $scope.genes.selected.join("") +
+                               $scope.exps.selected.join("") +
                                $scope.datasets.selected.join("")).replace(/\s/g, "");
                 var graphDiv = angular.element("#visual");
                 var graphBlock = angular.element("<graph-block></graph-block>")
@@ -224,7 +224,8 @@ angular.module("cassandre").controller("MainController", [
                     .attr("data-datasets", "datasets.selected")
                     .attr("data-list", "exps.selected")
                     .attr("data-cells", "data.cells")
-                    .attr("data-displayed-block", "displayedBlock");
+                    .attr("data-displayed-block", "displayedBlock")
+                    .attr("data-remove", "remove(blockID)");
 
                 graphDiv.append(graphBlock);
                 $scope.graphBlocks.push(blockID);
