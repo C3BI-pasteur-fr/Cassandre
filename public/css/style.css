@@ -198,6 +198,10 @@ th, td {
     cursor: pointer;
 }
 
+#addNewSetButton {
+    width: 30%;
+}
+
 #datasetsFilter {
     width: 100%;
 }

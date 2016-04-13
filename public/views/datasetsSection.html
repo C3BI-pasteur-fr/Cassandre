@@ -4,14 +4,13 @@
 </h3>
 
 <div class="row">
-    <h2 class="col-lg-offset-5 text-muted" ng-show="sets.all.length === 0">No Data</h2>
 
 <!-- "Show all" button -->
 <!------------------------------------------------------------------------->
 
-    <div class="col-lg-1">
-        <label ng-show="sets.all.length !== 0">Show All</label>
-        <div class="btn-group" role="group" ng-show="sets.all.length !== 0">
+    <div class="col-lg-1" ng-show="sets.all.length !== 0">
+        <label>Show All</label>
+        <div class="btn-group" role="group">
             <button class="btn" type="button" title="Show only active datasets" ng-click="showHidden = false" ng-class="{ 'btn-success': !showHidden }">
                 OFF
             </button>
@@ -86,7 +85,7 @@
             </tbody>
         </table>
 
-        <button class="btn pull-right" ng-class="{'btn-success': !addNewSet.isShowed, 'btn-warning': addNewSet.isShowed}" ng-click="addNewSet.show()">
+        <button id="addNewSetButton" class="btn pull-right" ng-class="{'btn-success': !addNewSet.isShowed, 'btn-warning': addNewSet.isShowed}" ng-click="addNewSet.show()">
             <span class="glyphicon glyphicon-plus-sign" ng-show="!addNewSet.isShowed"></span>
             <span class="glyphicon glyphicon-minus-sign" ng-show="addNewSet.isShowed"></span>
             <span ng-show="!addNewSet.isShowed">Add a new set</span>
