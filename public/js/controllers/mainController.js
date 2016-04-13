@@ -186,9 +186,7 @@ angular.module("cassandre").controller("MainController", [
                 sets: encodeURIComponent($scope.datasets.selected),
                 genes: $scope.genes.selected
             }, function (cells) {
-                var blockID = ($scope.config.rowsName.plural +
-                               $scope.genes.selected.join("") +
-                               $scope.datasets.selected.join("")).replace(/\s/g, "");
+                var blockID = $scope.config.rowsName.plural + Date.now();
                 var graphDiv = angular.element("#visual");
                 var graphBlock = angular.element("<graph-block></graph-block>")
                     .attr("id", blockID)
@@ -214,9 +212,7 @@ angular.module("cassandre").controller("MainController", [
                 sets: encodeURIComponent($scope.datasets.selected),
                 exps: $scope.exps.selected
             }, function (cells) {
-                var blockID = ($scope.config.columnsName.plural +
-                               $scope.exps.selected.join("") +
-                               $scope.datasets.selected.join("")).replace(/\s/g, "");
+                var blockID = $scope.config.columnsName.plural + Date.now();
                 var graphDiv = angular.element("#visual");
                 var graphBlock = angular.element("<graph-block></graph-block>")
                     .attr("id", blockID)

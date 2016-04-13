@@ -95,7 +95,7 @@ angular.module("cassandre").directive("graphBlock", ["$rootScope", function ($ro
                     }
 
                     // Set the graph identifier
-                    var graphID = attrs.id + " - " + element + " - " + dataset;
+                    var graphID = attrs.id + Date.now();
                     layout.title = element + " - " + dataset;
 
                     // Build the graph div
@@ -108,7 +108,6 @@ angular.module("cassandre").directive("graphBlock", ["$rootScope", function ($ro
                     // Build the the graph itself
                     var trace = {
                         x: values,
-                        name: graphID,
                         type: "histogram",
                         opacity: 0.7,
                     };
