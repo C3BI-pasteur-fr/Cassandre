@@ -5,32 +5,32 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" href="#">
+        <a class="navbar-brand" href="#" tabindex=1>
             Cassandre
         </a>
     </div>
     <div id="navbar-menu" class="collapse navbar-collapse">
         <ul class="nav navbar-nav">
             <li ng-class="{ active: activeSection === 'experimentsSection' }" title="Search for {{ config.columnsName.plural }} in the database">
-                <a role="button" ng-click="activate('experimentsSection')">
+                <a role="button" ng-click="activate('experimentsSection')" tabindex=2>
                     <span class="glyphicon glyphicon-search"></span>
                     Search {{ config.columnsName.plural }}
                 </a>
             </li>
             <li ng-class="{ active: activeSection === 'genesSection' }" title="Search for {{ config.rowsName.plural }} in the database">
-                <a role="button" ng-click="activate('genesSection')">
+                <a role="button" ng-click="activate('genesSection')" tabindex=3>
                     <span class="glyphicon glyphicon-search"></span>
                     Search {{ config.rowsName.plural }}
                 </a>
             </li>
             <li ng-class="{ active: activeSection === 'datasetsSection' }" title="Manage the datasets">
-                <a role="button" ng-click="activate('datasetsSection')">
+                <a role="button" ng-click="activate('datasetsSection')" tabindex=4>
                     <span class="glyphicon glyphicon-list"></span>
                     Datasets
                 </a>
             </li>
             <li ng-class="{ active: activeSection === 'annotationsSection' }" title="Manage the {{ config.rowsName.plural }} {{ config.metadataName.plural }}">
-                <a role="button" ng-click="activate('annotationsSection')">
+                <a role="button" ng-click="activate('annotationsSection')" tabindex=5>
                     <span class="glyphicon glyphicon-th-list"></span>
                     {{ config.metadataName.plural }}
                 </a>
@@ -38,19 +38,19 @@
         </ul>
         <ul class="nav navbar-nav navbar-right">
             <li title="Go to the documentation of Cassandre">
-                <a href="https://github.com/C3BI-pasteur-fr/Cassandre/wiki" target="_blank">
+                <a href="https://github.com/C3BI-pasteur-fr/Cassandre/wiki" target="_blank" tabindex=6>
                     <span class="glyphicon glyphicon-book"></span>
                     Documentation
                 </a>
             </li>
             <li title="Send an email to the administrator">
-                <a ng-href="mailto:{{ config.adminMail }}">
+                <a ng-href="mailto:{{ config.adminMail }}" tabindex=7>
                     <span class="glyphicon glyphicon-envelope"></span>
                     Contact
                 </a>
             </li>
             <li title="Configure the interface">
-                <a role="button" data-toggle="modal" data-target="#configModal">
+                <a role="button" data-toggle="modal" data-target="#configModal" tabindex=8>
                     <span class="glyphicon glyphicon-cog"></span>
                     Configuration
                 </a>
