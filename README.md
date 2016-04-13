@@ -5,7 +5,7 @@ Cassandre is a project of personal database system integrating a "user-friendly"
 
 This project is funded and developed at the [Institut Pasteur](http://www.pasteur.fr/fr) of Paris.
 
-**Current state:** [PRE-ALPHA version](https://www.wordnik.com/words/pre-alpha%20version), as of February 2016
+**Current state:** [PRE-ALPHA version](https://www.wordnik.com/words/pre-alpha%20version), as of April 2016
 
 ### Description
 
