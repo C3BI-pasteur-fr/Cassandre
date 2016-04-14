@@ -44,14 +44,6 @@ angular.module("cassandre").directive("graphBlock", ["$rootScope", function ($ro
                 scope.displayedBlock = scope.displayedBlock === attrs.id ? "" : attrs.id;
             };
 
-            // Set the common layout of the graphs
-            var layout = {
-                xaxis: { title: "Values" },
-                yaxis: { title: "Frequencies" },
-                bargap: 0.1,
-                autosize: false
-            };
-
             // Set the common config of the graphs
             var config = {
                 displaylogo: false,
@@ -67,6 +59,15 @@ angular.module("cassandre").directive("graphBlock", ["$rootScope", function ($ro
             // Build each graph
             scope.datasets.forEach(function (dataset) {
                 scope.list.forEach(function (element) {
+
+                    // Set the layout of the graph
+                    var layout = {
+                        title: element + " - " + dataset,
+                        xaxis: { title: "Values" },
+                        yaxis: { title: "Frequencies" },
+                        bargap: 0.1,
+                        autosize: false
+                    };
 
                     var values = scope.cells
 
@@ -96,7 +97,6 @@ angular.module("cassandre").directive("graphBlock", ["$rootScope", function ($ro
 
                     // Set the graph identifier
                     var graphID = attrs.id + Date.now();
-                    layout.title = element + " - " + dataset;
 
                     // Build the graph div
                     var graph = angular.element("<div></div>")
@@ -109,7 +109,7 @@ angular.module("cassandre").directive("graphBlock", ["$rootScope", function ($ro
                     var trace = {
                         x: values,
                         type: "histogram",
-                        opacity: 0.7,
+                        opacity: 0.7
                     };
 
                     Plotly.newPlot(graphID, [trace], layout, config);
