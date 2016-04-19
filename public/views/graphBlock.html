@@ -4,9 +4,12 @@
     <span ng-bind="type"></span>
     <span ng-bind="graphtype"></span>
     <small>
-        <span ng-bind="graphList.length"></span>
-        graphs:
-        <span ng-bind="graphList" ></span>
+        <ng-pluralize count="graphList.length"
+                      when="{ '0': 'No graph',
+                              'one': '1 graph : ',
+                              'other': '{} graphs : ' }">
+        </ng-pluralize>
+        <span ng-bind="graphList"></span>
     </small>
     <small class="pull-right" ng-click="remove({ blockID: id})">
         <span class="glyphicon glyphicon-remove"></span>
