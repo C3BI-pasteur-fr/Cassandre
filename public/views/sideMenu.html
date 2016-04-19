@@ -1,15 +1,25 @@
 <!-- Buttons -->
 <!------------------------------------------------------------------------->
-
-<div id="buttonBlock" ng-show="exps.ifLists() || genes.ifLists()">
+<!--ng-show="exps.ifLists() || genes.ifLists()"-->
+<div id="buttonBlock">
     <div class="asideHeader">
         <h4 class="asideTitle">Visualisation</h4>
     </div>
     <div class="asideBody">
         <ul class="asideList">
-            <li><button class="asideListButton" ng-click="histogram.genes()" title="Display the values distribution of the current {{ config.rowsName.plural }} selection">{{ config.rowsName.plural }} histogram</button></li>
-            <li><button class="asideListButton" ng-click="histogram.exps()" title="Display the values distribution of the current {{ config.columnsName.plural }} selection">{{ config.columnsName.plural }} histogram</button></li>
-            <li><button class="asideListButton" ng-click="getData()" title="Display the raw results of the current selection">Raw results</button></li>
+            <li>
+                <span class="title" ng-bind="config.rowsName.plural"></span>
+                <span class="title" ng-bind="config.columnsName.plural"></span>
+            </li>
+            <li>
+                <button class="asideListButton halfwide" ng-click="genePlot.histogram()" title="Display the values distribution of the current {{ config.rowsName.plural }} selection.">Histogram</button>
+                <button class="asideListButton halfwide" ng-click="expPlot.histogram()" title="Display the values distribution of the current {{ config.columnsName.plural }} selection.">Histogram</button>
+            </li>
+            <li>
+                <button class="asideListButton halfwide" ng-click="genePlot.scatter()" title="Display a scatter plot of two selected {{ config.rowsName.plural }}.">Scatter plot</button>
+                <button class="asideListButton halfwide" ng-click="expPlot.scatter()" title="Display a scatter plot of two selected {{ config.columnsName.plural }}.">Scatter plot</button>
+            </li>
+            <li><button class="asideListButton wide" ng-click="getData()" title="Display the raw results of the current selection">Raw results</button></li>
         </ul>
     </div>
 </div>
@@ -36,7 +46,7 @@
         </h5>
         <ul class="asideList" ng-show="displayedList === ('exps' + title)">
             <li>
-                <button class="asideListButton" type="button" ng-click="exps.select.all(title)" title="Select or deselect every element in this list">Select all</button>
+                <button class="asideListButton wide" type="button" ng-click="exps.select.all(title)" title="Select or deselect every element in this list">Select all</button>
             </li>
             <li class="asideListItem"
                 ng-repeat="exp in list.all track by $index"
@@ -87,7 +97,7 @@
         </h5>
         <ul class="asideList" ng-show="displayedList === ('genes' + title)">
             <li>
-                <button class="asideListButton" type="button" ng-click="genes.select.all(title)" title="Select or deselect every element in this list">Select all</button>
+                <button class="asideListButton wide" type="button" ng-click="genes.select.all(title)" title="Select or deselect every element in this list">Select all</button>
             </li>
             <li class="asideListItem"
                 ng-repeat="gene in list.all track by $index"

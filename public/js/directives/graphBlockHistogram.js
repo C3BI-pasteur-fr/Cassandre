@@ -21,7 +21,7 @@
 // ============================================================================
 // ============================================================================
 
-angular.module("cassandre").directive("graphBlock", ["$rootScope", function ($rootScope) {
+angular.module("cassandre").directive("graphBlockHistogram", ["$rootScope", function ($rootScope) {
     return {
         restrict: "E",
         templateUrl: "../../views/graphBlock.html",
@@ -35,6 +35,7 @@ angular.module("cassandre").directive("graphBlock", ["$rootScope", function ($ro
             remove: "&"                 // The remove function from the parent controller
         },
         link: function (scope, block, attrs) {
+            scope.graphtype = "histograms";
 
             // The list of graph titles
             scope.graphList = [];
@@ -73,13 +74,15 @@ angular.module("cassandre").directive("graphBlock", ["$rootScope", function ($ro
 
                     // Get the right cells rows or the columns depending of the requested type
                     .filter(function (cell) {
-                        if (cell.set === dataset) {
-                            if (scope.type === $rootScope.config.rowsName.plural) {
-                                return cell.gene === element;
-                            }
-                            else {
-                                return cell.exp === element;
-                            }
+                        if (cell.set !== dataset) {
+                            return false;
+                        }
+
+                        if (scope.type === $rootScope.config.rowsName.plural) {
+                            return cell.gene === element;
+                        }
+                        else {
+                            return cell.exp === element;
                         }
                     })
 
@@ -91,9 +94,7 @@ angular.module("cassandre").directive("graphBlock", ["$rootScope", function ($ro
                     });
 
                     // Stop here if the current dataset doesn't contain this row or column
-                    if (values.length === 0) {
-                        return;
-                    }
+                    if (values.length === 0) return;
 
                     // Set the graph identifier
                     var graphID = attrs.id + Date.now();
@@ -108,6 +109,7 @@ angular.module("cassandre").directive("graphBlock", ["$rootScope", function ($ro
                     // Build the the graph itself
                     var trace = {
                         x: values,
+                        name: layout.title,
                         type: "histogram",
                         opacity: 0.7
                     };

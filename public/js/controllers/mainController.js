@@ -71,6 +71,11 @@ angular.module("cassandre").controller("MainController", [
 
     // Get the data for the selected genes and/or exp
     $scope.getData = function () {
+        if ($scope.genes.selected.length === 0 && $scope.exps.selected.length === 0) {
+            alert("No " + $scope.config.rowsName.singular + " or " + $scope.config.columnsName.singular + " selected.");
+            return;
+        }
+
         $scope.data.cells = data.get({
             sets: encodeURIComponent($scope.datasets.selected),
             exps: $scope.exps.selected,
@@ -175,10 +180,11 @@ angular.module("cassandre").controller("MainController", [
         $scope.graphBlocks.splice($scope.graphBlocks.indexOf(blockID), 1);
     };
 
-    // Display an histogram
-    $scope.histogram = {
-        genes: function () {
+    // Generate the gene charts
+    $scope.genePlot = {
+        histogram: function () {
             if ($scope.genes.selected.length === 0) {
+                alert("No " + $scope.config.rowsName.singular + " selected.");
                 return;
             }
 
@@ -188,7 +194,7 @@ angular.module("cassandre").controller("MainController", [
             }, function (cells) {
                 var blockID = $scope.config.rowsName.plural + Date.now();
                 var graphDiv = angular.element("#visual");
-                var graphBlock = angular.element("<graph-block></graph-block>")
+                var graphBlock = angular.element("<graph-block-histogram></graph-block-histogram>")
                     .attr("id", blockID)
                     .attr("data-type", "{{ config.rowsName.plural }}")
                     .attr("data-datasets", "datasets.selected")
@@ -202,9 +208,40 @@ angular.module("cassandre").controller("MainController", [
                 $compile(graphBlock)($scope);
             });
         },
+        scatter: function () {
+            if ($scope.genes.selected.length !== 2) {
+                alert("Scatter plots needs two " + $scope.config.rowsName.plural + " to be generated.\n" +
+                      "Currently selected: " + $scope.genes.selected.length + ".");
+                return;
+            }
 
-        exps: function () {
+            $scope.data.cells = data.get({
+                sets: encodeURIComponent($scope.datasets.selected),
+                genes: $scope.genes.selected
+            }, function (cells) {
+                var blockID = $scope.config.rowsName.plural + Date.now();
+                var graphDiv = angular.element("#visual");
+                var graphBlock = angular.element("<graph-block-scatter></graph-block-scatter>")
+                    .attr("id", blockID)
+                    .attr("data-type", "{{ config.rowsName.plural }}")
+                    .attr("data-datasets", "datasets.selected")
+                    .attr("data-list", "genes.selected")
+                    .attr("data-cells", "data.cells")
+                    .attr("data-displayed-block", "displayedBlock")
+                    .attr("data-remove", "remove(blockID)");
+
+                graphDiv.append(graphBlock);
+                $scope.graphBlocks.push(blockID);
+                $compile(graphBlock)($scope);
+            });
+        }
+    };
+
+    // Generate the experiment charts
+    $scope.expPlot = {
+        histogram: function () {
             if ($scope.exps.selected.length === 0) {
+                alert("No " + $scope.config.columnsName.singular + " selected.");
                 return;
             }
 
@@ -214,7 +251,34 @@ angular.module("cassandre").controller("MainController", [
             }, function (cells) {
                 var blockID = $scope.config.columnsName.plural + Date.now();
                 var graphDiv = angular.element("#visual");
-                var graphBlock = angular.element("<graph-block></graph-block>")
+                var graphBlock = angular.element("<graph-block-histogram></graph-block-histogram>")
+                    .attr("id", blockID)
+                    .attr("data-type", "{{ config.columnsName.plural }}")
+                    .attr("data-datasets", "datasets.selected")
+                    .attr("data-list", "exps.selected")
+                    .attr("data-cells", "data.cells")
+                    .attr("data-displayed-block", "displayedBlock")
+                    .attr("data-remove", "remove(blockID)");
+
+                graphDiv.append(graphBlock);
+                $scope.graphBlocks.push(blockID);
+                $compile(graphBlock)($scope);
+            });
+        },
+        scatter: function () {
+            if ($scope.exps.selected.length !== 2) {
+                alert("Scatter plots needs two " + $scope.config.columnsName.plural + " to be generated.\n" +
+                      "Currently selected: " + $scope.exps.selected.length + ".");
+                return;
+            }
+
+            $scope.data.cells = data.get({
+                sets: encodeURIComponent($scope.datasets.selected),
+                exps: $scope.exps.selected
+            }, function (cells) {
+                var blockID = $scope.config.columnsName.plural + Date.now();
+                var graphDiv = angular.element("#visual");
+                var graphBlock = angular.element("<graph-block-scatter></graph-block-scatter>")
                     .attr("id", blockID)
                     .attr("data-type", "{{ config.columnsName.plural }}")
                     .attr("data-datasets", "datasets.selected")
@@ -228,5 +292,6 @@ angular.module("cassandre").controller("MainController", [
                 $compile(graphBlock)($scope);
             });
         }
-    }
+    };
+
 }]);

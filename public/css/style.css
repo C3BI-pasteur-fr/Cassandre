@@ -72,11 +72,25 @@ th, td {
     padding: 10px 15px 10px 25px;
 }
 
-.asideListButton {
+.asideList li .title{
+    display: inline-block;
+    text-align: center;
+    width: 49%;
+}
+
+.asideListButton.wide {
     background: transparent;
     border: 1px solid #F0F0F0;
     border-radius: 3px;
     width: 100%;
+}
+
+.asideListButton.halfwide {
+    background: transparent;
+    border: 1px solid #F0F0F0;
+    border-radius: 3px;
+    display: inline-block;
+    width: 49%;
 }
 
 .asideListButton:hover {
