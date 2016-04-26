@@ -68,7 +68,7 @@ angular.module("cassandre").filter("geneFilter", function () {
             return false;
         }
 
-        // Filter the lines
+        // Filter all the genes
         for (var ID in genes) {
             if (limit && counter === limit) break;
 

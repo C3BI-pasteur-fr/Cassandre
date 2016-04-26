@@ -10,7 +10,7 @@
  *
  * Cassandre is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * GNU General Public License for more details.
  *
  * You should have received a copy of the GNU General Public License
@@ -27,39 +27,69 @@
  */
 
 angular.module("cassandre").filter("expFilter", function () {
-    return function (experiments, search, limit) {
-        
-        if (!experiments) return {};
-        if (!search) return {};
-        
-        var filteredExps = {};
-        var counter = 0;
-        var criteria = search.toLowerCase();
-        
-        for (var ID in experiments) {
-            var exp = experiments[ID];
+    return function (experiments, request, limit) {
 
-            if (limit && counter === limit) break;
+        if (!experiments) return {};
+        if (!request) return {};
+
+        var filteredExps = {};                  // The list of filtered exps to return
+        var counter = 0;                        // A counter to stop at the limit       
+        var terms = request                     // Parse the request
+            .match(/"[^"]*"|\S+/g)
+            .map(function (term) {
+                return term
+                    .replace(/"/g, '')
+                    .toLowerCase()
+                    .trim();
+            });
+
+        // Function to test if an experiment match the request
+        function match(term, ID, exp) {
 
             // Match an experiment name
-            if (ID.toLowerCase().indexOf(criteria) > -1) {
-                counter++;
-                filteredExps[ID] = exp;
-                continue;
+            if (ID.toLowerCase().indexOf(term) > -1) {
+                return true;
             }
 
-            // Match a dataset name
+            // Match a dataset name or a metadata value
             for (var i = 0; i < exp.datasets.length; i++) {
                 var dataset = exp.datasets[i];
+                var metadata = exp.metadata[dataset];
 
-                if (dataset.toLowerCase().indexOf(criteria) > -1) {
-                    counter++;
-                    filteredExps[ID] = exp;
-                    break;
+                // Match a dataset name
+                if (dataset.toLowerCase().indexOf(term) > -1) {
+                    return true;
                 }
+
+                // Match a value in the metadata
+                for (var field in metadata) {
+                    var value = metadata[field]
+                        .toString()
+                        .toLowerCase();
+
+                    if (value.indexOf(term) > -1) {
+                        return true;
+                    }
+                }
+
+                return false;
             }
         }
-        
+
+        // Filter all the experiments
+        for (var ID in experiments) {
+            if (limit && counter === limit) break;
+
+            var expMatch = terms.every(function (term) {
+                return match(term, ID, experiments[ID]);
+            });
+
+            if (expMatch) {
+                counter ++;
+                filteredExps[ID] = experiments[ID];
+            }
+        }
+
         return filteredExps;
     }
 });

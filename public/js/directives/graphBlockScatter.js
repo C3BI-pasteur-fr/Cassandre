@@ -35,19 +35,8 @@ angular.module("cassandre").directive("graphBlockScatter", ["$rootScope", functi
             remove: "&"                 // The remove function from the parent controller
         },
         link: function (scope, block, attrs) {
-            scope.datatype = "";
-            scope.labeltype = "";
-            scope.graphtype = "scatter plots";
 
-            // Determine what is the value and label for the cells - Needs to be changed in the future
-            if (scope.type === $rootScope.config.rowsName.plural) {
-                datatype = "gene";
-                labeltype = "exp";
-            }
-            else {
-                datatype = "exp";
-                labeltype = "gene";
-            }
+            scope.graphtype = "scatter plots";
 
             // The list of graph titles
             scope.graphList = [];
@@ -80,9 +69,11 @@ angular.module("cassandre").directive("graphBlockScatter", ["$rootScope", functi
                     title: dataset,
                     xaxis: { title: scope.list[0] },
                     yaxis: { title: scope.list[1] },
+                    hovermode: "closest",
                     autosize: false
                 };
 
+                // Get all the values
                 scope.cells
 
                 // Filter non-numeric values
@@ -90,18 +81,31 @@ angular.module("cassandre").directive("graphBlockScatter", ["$rootScope", functi
                     return typeof cell.value === "number";
                 })
 
-                // Get the x and y values
+                // Get the x and y values and the label of each point
                 .forEach(function (cell) {
                     if (cell.set !== dataset) return;
 
-                    if (cell[datatype] === scope.list[0]) {
+                    var data = "";
+                    var label = "";
+
+                    // Determine what is the relevant content of the cell - Needs to be changed in the future
+                    if (scope.type === $rootScope.config.rowsName.plural) {
+                        data = cell.gene;
+                        label = cell.exp;
+                    }
+                    else {
+                        data = cell.exp;
+                        label = cell.gene;
+                    }
+
+                    if (data === scope.list[0]) {
                         xvalues.push(cell.value);
                     }
                     else {
                         yvalues.push(cell.value);
                     }
 
-                    labels.push(cell[labeltype]);
+                    labels.push(label);
                 });
 
                 // Stop here if the current dataset doesn't contain

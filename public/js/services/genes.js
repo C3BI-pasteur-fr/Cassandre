@@ -22,8 +22,8 @@
 // ============================================================================
 
 /*
- *  Angular service to share the list of genes between every part
- *  of the application.
+ * Angular service to share the list of genes between every part
+ * of the application.
  *
  */
 

@@ -24,7 +24,7 @@
 // Get the statistics about the datasets, experiments and genes
 module.exports = function (req, res) {
 
-    // Get the collection 
+    // Get the collection
     var data = req.app.locals.data;
 
     // Aggregation pipeline

@@ -22,8 +22,8 @@
 // ============================================================================
 
 /*
- *  Angular service to share the list of experiments between every part
- *  of the application.
+ * Angular service to share the list of experiments between every part
+ * of the application.
  *
  */
 
