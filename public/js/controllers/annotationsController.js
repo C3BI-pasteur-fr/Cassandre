@@ -72,7 +72,7 @@ angular.module("cassandre").controller("AnnotationsController", [
     // Get all annotations
     $scope.showAnnotations = function () {
         if ($scope.genes.annotationsFields.length === 0) {
-            alert("No annotations found in the database.");
+            alert("No " + $scope.config.metadataName.plural + " found in the database.");
             return;
         }
 
@@ -92,7 +92,7 @@ angular.module("cassandre").controller("AnnotationsController", [
 
     // Remove all annotations from the database
     $scope.deleteAnnotations = function () {
-        if (confirm("Do you really want to remove all annotations permanently?")) {
+        if (confirm("Do you really want to remove all " + $scope.config.metadataName.plural + " permanently?")) {
             genes.remove.annotations();
         }
     };
@@ -107,8 +107,8 @@ angular.module("cassandre").controller("AnnotationsController", [
 
         annotationsHttp.add(allData, function () {
             $scope.annotIsUploading = false;
-            alert("Annotations successfully stored.");
-            document.getElementById("dataUploadForm").reset(); // No better solution found with Angular
+            alert($scope.config.metadataName.plural + " successfully stored.");
+            document.getElementById("dataUploadForm").reset();       // No better solution found with Angular
             genes.get.all();
         }, function (err) {
             $scope.dataIsUploading = false;

@@ -134,7 +134,7 @@ angular.module("cassandre").factory("genes", ["genesHttp", "annotationsHttp", fu
                 annotationsHttp.remove({}, function (response) {
                     genes.all = genesHttp.get();
                     genes.annotationsFields = [];
-                    alert("Annotations successfully deleted.");
+                    alert($scope.config.metadataName.plural + " successfully deleted.");
                 });
             },
             list: function (list) {
