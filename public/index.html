@@ -52,20 +52,20 @@
 
         <main>
             <div class="container-fluid">
-                <section id="annotationsSection" ng-show="activeSection === 'annotationsSection'" ng-controller="AnnotationsController">
-                    <ng-include src="'views/annotationsSection.html'"></ng-include>
-                </section>
-
-                <section id="datasetsSection" ng-show="activeSection === 'datasetsSection'" ng-controller="DatasetsController">
-                    <ng-include src="'views/datasetsSection.html'"></ng-include>
+                <section id="genesSection" ng-show="activeSection === 'genesSection'" ng-controller="GenesController">
+                    <ng-include src="'views/genesSection.html'"></ng-include>
                 </section>
 
                 <section id="experimentsSection" ng-show="activeSection === 'experimentsSection'" ng-controller="ExperimentsController">
                     <ng-include src="'views/experimentsSection.html'"></ng-include>
                 </section>
 
-                <section id="genesSection" ng-show="activeSection === 'genesSection'" ng-controller="GenesController">
-                    <ng-include src="'views/genesSection.html'"></ng-include>
+                <section id="datasetsSection" ng-show="activeSection === 'datasetsSection'" ng-controller="DatasetsController">
+                    <ng-include src="'views/datasetsSection.html'"></ng-include>
+                </section>
+
+                <section id="annotationsSection" ng-show="activeSection === 'annotationsSection'" ng-controller="AnnotationsController">
+                    <ng-include src="'views/annotationsSection.html'"></ng-include>
                 </section>
 
                 <div id="visual" ng-show="graphBlocks.length > 0">

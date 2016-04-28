@@ -11,16 +11,16 @@
     </div>
     <div id="navbar-menu" class="collapse navbar-collapse">
         <ul class="nav navbar-nav">
-            <li ng-class="{ active: activeSection === 'experimentsSection' }" title="Search for {{ config.columnsName.plural }} in the database">
-                <a role="button" ng-click="activate('experimentsSection')" tabindex=2>
-                    <span class="glyphicon glyphicon-search"></span>
-                    Search {{ config.columnsName.plural }}
-                </a>
-            </li>
             <li ng-class="{ active: activeSection === 'genesSection' }" title="Search for {{ config.rowsName.plural }} in the database">
                 <a role="button" ng-click="activate('genesSection')" tabindex=3>
                     <span class="glyphicon glyphicon-search"></span>
                     Search {{ config.rowsName.plural }}
+                </a>
+            </li>
+            <li ng-class="{ active: activeSection === 'experimentsSection' }" title="Search for {{ config.columnsName.plural }} in the database">
+                <a role="button" ng-click="activate('experimentsSection')" tabindex=2>
+                    <span class="glyphicon glyphicon-search"></span>
+                    Search {{ config.columnsName.plural }}
                 </a>
             </li>
             <li ng-class="{ active: activeSection === 'datasetsSection' }" title="Manage the datasets">
