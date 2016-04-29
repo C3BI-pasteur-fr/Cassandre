@@ -81,9 +81,13 @@ angular.module("cassandre").controller("AnnotationsController", [
         // Turn the object into an array of objects
         for (var ID in $scope.genes.all) {
             var row = { "ID": ID };
+            var gene = $scope.genes.all[ID];
+
+            // Do not display the genes with no annotations
+            if (Object.keys(gene.annotation).length === 0) continue;
 
             $scope.genes.annotationsFields.forEach(function (field) {
-                row[field] = $scope.genes.all[ID].annotation[field];
+                row[field] = gene.annotation[field];
             });
 
             $scope.data.rows.push(row);
