@@ -97,6 +97,10 @@ angular.module("cassandre").controller("MainController", [
     $scope.filters = {
         active: false,
         list: {},
+        activate: function (bool) {
+            this.active = bool;
+            this.list = {};
+        },
         reset: function () {
             this.list = {};
         }
@@ -119,6 +123,8 @@ angular.module("cassandre").controller("MainController", [
     // Format data into rows to ease the display in the view
     $scope.cellsToRows = function(cells) {
         $scope.data.rows = [];
+        $scope.filters.reset();
+        
         var headers = [];
         var rows = {};
 

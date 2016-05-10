@@ -19,8 +19,8 @@
     <div class="input-group">
         <span class="input-group-addon">Filters</span>
         <span class="input-group-btn">
-            <button class="btn btn-default" ng-class="{ 'btn-success': filters.active, active: filters.active }" type="button" ng-click="filters.active = true" title="Activate filters">ON</button>
-            <button class="btn btn-default" ng-class="{ 'btn-primary': !filters.active, active: !filters.active }" type="button" ng-click="filters.active = false" title="Deactivate filters">OFF</button>
+            <button class="btn btn-default" ng-class="{ 'btn-success': filters.active, active: filters.active }" type="button" ng-click="filters.activate(true)" title="Activate filters">ON</button>
+            <button class="btn btn-default" ng-class="{ 'btn-primary': !filters.active, active: !filters.active }" type="button" ng-click="filters.activate(false)" title="Deactivate filters">OFF</button>
             <button class="btn btn-default" ng-click="filters.reset()" title="Reset all filters">Reset</button>
         </span>
     </div>
@@ -77,7 +77,7 @@
         </tr>
     </thead>
     <tbody>
-        <tr ng-repeat="row in data.rows.slice(0, limit) | filter:filters.list track by $index">
+        <tr ng-repeat="row in data.rows | filter:filters.list | limitTo:limit track by $index">
             <td ng-repeat="(header, value) in row track by header"
                 ng-class="{ numericCell: typeof(value) === 'number' }"
                 ng-bind="value">
