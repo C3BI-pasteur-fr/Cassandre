@@ -40,9 +40,7 @@ exports.connect = function (callback) {
     // ========================================================================
 
     MongoClient.connect(url, function (err, db) {
-        if (err) {
-            throw err;
-        }
+        if (err) throw err;
 
         console.log('Connected to the ' + name + ' database on port ' + port);
 

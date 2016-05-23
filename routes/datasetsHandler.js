@@ -176,7 +176,9 @@ exports.POST = [
         var rows = req.cassandre.dataset
         var setName = req.body.name;
 
-        data.insertMany(rowsToCells(rows, setName), function (err) {
+        data.insertMany(rowsToCells(rows, setName), {
+            ordered: false
+        }, function (err) {
             if (err) return next({status: 500, error: err});
             res.status(201).send({ name: req.body.name });
             return next();
