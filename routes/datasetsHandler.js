@@ -22,6 +22,7 @@
 // ============================================================================
 
 var fs = require('fs');
+var stream = require('stream');
 var parseFile = require('../lib/parseFile');
 var rowsToCells = require('../lib/rowsToCells');
 var rollback = require('./datasetsRollbacks');
@@ -80,20 +81,7 @@ exports.POST = [
         });
     },
 
-    // Read the dataset
-    function (req, res, next) {
-        parseFile(req.files.dataset[0], function (err, dataset) {
-            if (err) {
-                return next({ status: 400, error: err});
-            }
-
-            req.cassandre.dataset = dataset;
-
-            return next();
-        });
-    },
-
-    //// Check the compatibility between metadata and dataset //////
+    //// TODO: Check the compatibility between metadata and dataset //////
 
     // Insert the dataset information
     function (req, res, next) {
@@ -112,8 +100,28 @@ exports.POST = [
         });
     },
 
-    // Upsert the genes
+    // SPREADSHEETS --- Read the dataset
     function (req, res, next) {
+        if (req.app.locals.acceptedMimeTypes.spreadsheet.indexOf(req.files.dataset[0].mimetype) === -1) {
+            return next();
+        }
+
+        parseFile(req.files.dataset[0], function (err, dataset) {
+            if (err) {
+                return next({ status: 400, error: err});
+            }
+
+            req.cassandre.dataset = dataset;
+
+            return next();
+        });
+    },
+
+    // SPREADSHEETS --- Upsert the genes
+    function (req, res, next) {
+        if (req.app.locals.acceptedMimeTypes.spreadsheet.indexOf(req.files.dataset[0].mimetype) === -1) {
+            return next();
+        }
 
         // Get the collection
         var genes = req.app.locals.genes;
@@ -137,8 +145,11 @@ exports.POST = [
         });
     },
 
-    // Upsert the experiments
+    // SPREADSHEETS --- Upsert the experiments
     function (req, res, next) {
+        if (req.app.locals.acceptedMimeTypes.spreadsheet.indexOf(req.files.dataset[0].mimetype) === -1) {
+            return next();
+        }
 
         // Get the collection
         var experiments = req.app.locals.experiments;
@@ -167,8 +178,11 @@ exports.POST = [
         });
     },
 
-    // Insert the dataset, turn every row into cells before insertion
+    // SPREADSHEETS --- Insert the dataset, turn every row into cells before insertion
     function (req, res, next) {
+        if (req.app.locals.acceptedMimeTypes.spreadsheet.indexOf(req.files.dataset[0].mimetype) === -1) {
+            return next();
+        }
 
         // Get the collection
         var data = req.app.locals.data;
@@ -183,6 +197,169 @@ exports.POST = [
             res.status(201).send({ name: req.body.name });
             return next();
         });
+    },
+
+    // TEXT FILES --- Insert the data with streams
+    function (req, res, next) {
+        if (req.app.locals.acceptedMimeTypes.text.indexOf(req.files.dataset[0].mimetype) === -1) {
+            return next();
+        }
+
+        var datasetName = req.body.name;
+
+        // Database collections
+        var experiments = req.app.locals.experiments;
+        var genes = req.app.locals.genes;
+        var data = req.app.locals.data;
+
+        // Bulk operations for each collection
+        var expBulk = experiments.initializeUnorderedBulkOp();
+        var geneBulk = genes.initializeUnorderedBulkOp();
+        var dataBulk = data.initializeUnorderedBulkOp();
+
+        // The headers list
+        var expList = [];
+
+        // Counter to execute the bulks for each specified amount of cells
+        var cellsCounter = 0;
+
+        // Stream to read the file
+        var fileStream = fs.createReadStream(req.files.dataset[0].path);
+
+        // Stream to split files line by line
+        var buffer = '';
+        var lineStream = new stream.Transform({
+            transform: function (chunk, encoding, nextChunk) {
+                var stream = this;
+
+                // Store the piece of file
+                buffer += chunk.toString();
+
+                // Get the lines from the piece
+                var lines = buffer.split(/\r\n|\n/g);
+
+                // Extract the last unfinished line
+                buffer = lines.pop();
+
+                // Send each line to the next stream
+                lines.forEach(function (line) {
+                    stream.push(line);
+                });
+
+                nextChunk();
+            }
+        });
+
+        // Stream to insert each line in the database
+        var firstLine = true;
+        var insertStream = new stream.Writable({
+            write: function (line, encoding, nextLine) {
+
+                // Handle the headers
+                if (firstLine) {
+
+                    expList = line.toString().trim().split('\t');
+                    expList.shift();
+
+                    expList.forEach(function (exp) {
+                        var metadata = req.cassandre.metadata ? (req.cassandre.metadata[exp] || {}) : {};
+                        var upserts = {
+                            $addToSet: { datasets: datasetName },
+                            $set: {}
+                        };
+
+                        upserts.$set['metadata.' + datasetName] = metadata;
+
+                        expBulk.find({ ID: exp })
+                            .upsert()
+                            .updateOne(upserts);
+                    });
+
+                    expBulk.execute(function (err) {
+                        if (err) return nextLine(err);
+                        firstLine = false;
+                        return nextLine();
+                    });
+                }
+
+                // Handle the other lines
+                else {
+                    var values = line.toString().trim().split('\t');
+                    var gene = values.shift();
+
+                    // First upsert the gene, adding it to the bulk
+                    geneBulk.find({ ID: gene })
+                        .upsert()
+                        .updateOne({
+                            $addToSet: { datasets: datasetName },
+                            $setOnInsert: { annotation: {} }
+                        });
+
+                    // Then insert all the values, adding them to the bulk
+                    values.forEach(function (value, index) {
+                        cellsCounter++;
+                        dataBulk.insert({
+                            set: datasetName,
+                            exp: expList[index],
+                            gene: gene,
+                            value : value
+                        });
+                    });
+
+                    // Insert the for each specified amount of cells
+                    if (cellsCounter >= 50000) {
+                        geneBulk.execute(function (err) {
+                            if (err) return nextLine(err);
+
+                            dataBulk.execute(function (err) {
+                                if (err) return nextLine(err);
+
+                                // Reinitialize
+                                geneBulk = genes.initializeUnorderedBulkOp();
+                                dataBulk = data.initializeUnorderedBulkOp();
+                                cellsCounter = 0;
+
+                                return nextLine();
+                            });
+                        });
+                    }
+                    else {
+                        return nextLine();
+                    }
+                }
+            }
+        });
+
+        // Handling stream errors
+        fileStream.on('error', function (err) {
+            return next(err);
+        });
+
+        lineStream.on('error', function (err) {
+            return next(err);
+        });
+
+        insertStream.on('error', function (err) {
+            return next(err);
+        });
+
+        // Insert the last remaining data and go on
+        insertStream.on('finish', function () {
+            if (cellsCounter > 0) {
+                geneBulk.execute(function (err) {
+                    if (err) return next(err);
+
+                    dataBulk.execute(function (err) {
+                        if (err) return next(err);
+                        res.status(201).send({ name: req.body.name });
+                        return next();
+                    });
+                });
+            }
+        });
+
+        // Chain and start the streams
+        fileStream.pipe(lineStream).pipe(insertStream);
     },
 
     // Error handler

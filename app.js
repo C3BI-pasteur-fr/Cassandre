@@ -42,6 +42,17 @@ Database.connect(function (err, db) {
     var serverHost = config('web.host', 'localhost');
 
     // File handlers configuration
+    var acceptedMimeTypes = {
+        spreadsheet: [
+            'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+            'application/vnd.ms-excel'
+        ],
+        text: [
+            'text/tab-separated-values',
+            'text/plain'
+        ]
+    };
+
     var storage = multer.diskStorage({
         destination: './uploads/',
         filename: function (req, file, callback) {
@@ -72,6 +83,7 @@ Database.connect(function (err, db) {
     // File handlers
     app.locals.datasetFileHandler = datasetFileHandler;
     app.locals.annotationsFileHandler = annotationsFileHandler;
+    app.locals.acceptedMimeTypes = acceptedMimeTypes;
 
     // Start
     app.listen(serverPort, serverHost, function () {

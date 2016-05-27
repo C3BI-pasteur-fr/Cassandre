@@ -50,6 +50,7 @@ exports.connect = function (callback) {
         db.collection("datasets").createIndex({ name: 1 }, { unique: true, background: true });
         db.collection("genes").createIndex({ ID: 1 }, { unique: true, background: true });
         db.collection("experiments").createIndex({ ID: 1 }, { unique: true, background: true });
+        db.collection("data").createIndex({ set: 1 }, { background: true });
 
         // EVENTS
         // ====================================================================
