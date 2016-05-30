@@ -41,7 +41,7 @@ Database.connect(function (err, db) {
     var serverPort = config('web.port', 8080);
     var serverHost = config('web.host', 'localhost');
 
-    // File handlers configuration
+    // Allowed MIME types for the uploaded files
     var acceptedMimeTypes = {
         spreadsheet: [
             'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
@@ -53,6 +53,7 @@ Database.connect(function (err, db) {
         ]
     };
 
+    // File handlers configuration
     var storage = multer.diskStorage({
         destination: './uploads/',
         filename: function (req, file, callback) {
@@ -60,7 +61,20 @@ Database.connect(function (err, db) {
         }
     });
 
-    var upload = multer({ storage: storage });
+    var upload = multer({
+        storage: storage,
+        fileFilter: function (req, file, callback) {
+            if (acceptedMimeTypes.spreadsheet.indexOf(file.mimetype) > -1) {
+                return callback(null, true);
+            }
+
+            if (acceptedMimeTypes.text.indexOf(file.mimetype) > -1) {
+                return callback(null, true);
+            }
+
+            return callback(new Error('This file format is invalid.'));
+        }
+    });
 
     var annotationsFileHandler = upload.single('annotations');
     var datasetFileHandler = upload.fields([

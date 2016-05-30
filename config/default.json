@@ -10,16 +10,17 @@
     },
     "interface": {
         "columnsName": {
-            "singular": "column",
-            "plural": "columns"
+            "singular": "experiment",
+            "plural": "Experiments"
         },
         "metadataName": {
-            "singular": "metadata",
-            "plural": "metadata"
+            "singular": "annotation",
+            "plural": "Annotations"
         },
         "rowsName": {
-            "singular": "row",
-            "plural": "rows"
-        }
+            "singular": "gene",
+            "plural": "Genes"
+        },
+        "adminMail": "simon.malesys@pasteur.fr"
     }
 }

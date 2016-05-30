@@ -387,7 +387,9 @@ exports.POST = [
 
     // Remove the files from the system, errors or not
     function (req, res, next) {
-        fs.unlinkSync(req.files.dataset[0].path);
+        if (req.files.dataset) {
+            fs.unlinkSync(req.files.dataset[0].path);
+        }
 
         if (req.files.metadata) {
             fs.unlinkSync(req.files.metadata[0].path);
