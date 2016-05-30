@@ -39,10 +39,10 @@
   "main": "app.js",
   "dependencies": {
     "async": "^1.5.2",
-    "body-parser": "^1.15.0",
-    "config": "^1.14.0",
+    "body-parser": "^1.15.1",
+    "config": "^1.20.4",
     "express": "^4.13.4",
-    "mongodb": "^2.1.7",
+    "mongodb": "^2.1.20",
     "multer": "^1.0.5",
     "xlsx": "^0.8.0"
   },
@@ -55,7 +55,7 @@
     "url": "https://projets.pasteur.fr/git/cassandre"
   },
   "engines": {
-    "node": ">=4.2.6",
-    "npm": ">=3.0.0"
+    "node": ">=4.4.5",
+    "npm": ">=3.8.6"
   }
 }
